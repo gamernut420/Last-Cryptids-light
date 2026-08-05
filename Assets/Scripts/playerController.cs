@@ -1,14 +1,20 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
     [SerializeField] CharacterController controller;
+    [Header("Player Stats:")]
     [Range(1, 10)][SerializeField] int Hp;
     [Range(1f, 10f)][SerializeField] float speed;
     [Range(2f, 5f)][SerializeField] float sprintMod;
     [Range(8, 15)][SerializeField] int jumpSpeed;
     [Range(1, 3)][SerializeField] int jumpMax;
+    [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
+    [Header("UI & Game Over")]
+    public GameObject gameOverPanel;
 
     int jumpCount;
     int HPOrig;
@@ -18,8 +24,7 @@ public class playerController : MonoBehaviour
     Vector3 moveDir;
     Vector3 playerVel;
 
-
-
+    bool isDead = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,8 +36,15 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDead) return;
+
         movement();
         sprint();
+
+        ///////   Testing Logic    ///////
+
+        // Testing key: 'K' to instantly kill the playerand test the death screen
+        if (Input.GetKeyDown(KeyCode.K)) TakeDamage(Hp);
     }
 
     void movement()
@@ -54,7 +66,6 @@ public class playerController : MonoBehaviour
     void sprint()
     {
         if (Input.GetButtonDown("Sprint")) speed *= sprintMod;
-
         else if (Input.GetButtonUp("Sprint")) speed /= sprintMod;
     }
 
@@ -65,5 +76,38 @@ public class playerController : MonoBehaviour
             jumpCount++;
             playerVel.y = jumpSpeed;
         }
+    }
+
+    // Implememtation of the IDamage intherface for raycast
+    public void TakeDamage(float amount)
+    {
+        if (isDead) return;
+
+        Hp -= Mathf.RoundToInt(amount);
+        Hp = Mathf.Clamp(Hp, 0, HPOrig);
+
+        Debug.Log("Player took damge. Current HP: " + Hp);
+
+        if (Hp == 0) Die();
+       
+    }
+
+    void Die()
+    {
+        isDead = true;
+        Debug.Log("Player has died.");
+        // Add game over UI or scene reload logic here
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
+        // Unlock and show the mouse
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+    }
+
+    // Restart game
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc36aea41c55554d8506e5ac3e7b0ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::cameraController
-  sens: 0
-  lockVertMin: 0
-  lockVertMax: 0
+  sens: 25
+  lockVertMin: -90
+  lockVertMax: 90
 --- !u!20 &6895406975966574838
 Camera:
   m_ObjectHideFlags: 0
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 8658993058510956839}
   - component: {fileID: 5866693792444434996}
   - component: {fileID: 9170469016527242597}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,11 +201,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d38fc4e548e4d7449873ef236160f3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
-  controller: {fileID: 0}
+  controller: {fileID: 8658993058510956839}
   Hp: 10
-  speed: 6.71
-  sprintMod: 2.65
-  jumpSpeed: 12
+  speed: 2.23
+  sprintMod: 3.16
+  jumpSpeed: 9
   jumpMax: 2
   gravity: 35
 --- !u!143 &8658993058510956839
