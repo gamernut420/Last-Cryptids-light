@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4318161315796766228
+--- !u!1 &933213447475855599
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,66 +8,67 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1314465799500743994}
-  - component: {fileID: 8835406579189144785}
-  - component: {fileID: 4263289482073940216}
-  - component: {fileID: 2809274056909888132}
-  - component: {fileID: 3777673205387272534}
+  - component: {fileID: 6774183218358104665}
+  - component: {fileID: 7081015731866389269}
+  - component: {fileID: 6471054444810374049}
+  - component: {fileID: 5021741516778485005}
+  - component: {fileID: 3097934545586289267}
   m_Layer: 0
-  m_Name: Radio Tube
+  m_Name: Beacon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1314465799500743994
+--- !u!4 &6774183218358104665
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4318161315796766228}
+  m_GameObject: {fileID: 933213447475855599}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 44.40546, y: 1, z: 67.00749}
-  m_LocalScale: {x: 0.06596773, y: 0.3400749, z: 0.3940122}
+  m_LocalPosition: {x: 48.16957, y: 0.5, z: 64.51967}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8835406579189144785
+--- !u!114 &7081015731866389269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4318161315796766228}
+  m_GameObject: {fileID: 933213447475855599}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdf1a4ad44fc5eb40b3a6b241edd8d4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
-  itemName: Radio Tube
-  quantity: 1
-  interactRange: 3
+  m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
+  interactRange: 1.4
   playerCamera: {fileID: 0}
   interactionPromptText: {fileID: 0}
-  PromptMessage: Press E
---- !u!33 &4263289482073940216
+  PromptMessage: Press E to repair
+  requiredBatteries: 1
+  requiredRadioTubes: 1
+  requiredFuel: 1
+--- !u!33 &6471054444810374049
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4318161315796766228}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2809274056909888132
+  m_GameObject: {fileID: 933213447475855599}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &5021741516778485005
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4318161315796766228}
+  m_GameObject: {fileID: 933213447475855599}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -110,13 +111,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3777673205387272534
-CapsuleCollider:
+--- !u!135 &3097934545586289267
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4318161315796766228}
+  m_GameObject: {fileID: 933213447475855599}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -128,8 +129,6 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
