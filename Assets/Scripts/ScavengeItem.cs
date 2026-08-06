@@ -16,13 +16,20 @@ public class ScavengeItem : MonoBehaviour
 
     // TODO: Added player inventory Reference 
 
+    [SerializeField] PlayerInventory playerInventory;
+
 
     void Start()
     {
         // TODO: Added player inventory
 
+        if (playerInventory == null)
+        {
+            playerInventory = FindAnyObjectByType<PlayerInventory>();
+        }
+
         // Ensure promt id hidden at start
-        if(interactionPromptText != null) interactionPromptText.gameObject.SetActive(false);
+        if (interactionPromptText != null) interactionPromptText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -62,8 +69,14 @@ public class ScavengeItem : MonoBehaviour
         Debug.Log("Collected: " + itemName);
         // TODO: Add to player's inventory/tracker script when we build it 
 
+        if (playerInventory != null)
+        {
+            playerInventory.AddItem(itemName, quantity);
+        }
+
+
         // Hide UI after collected
-        if(interactionPromptText != null ) interactionPromptText.gameObject.SetActive(false);
+        if (interactionPromptText != null ) interactionPromptText.gameObject.SetActive(false);
 
         // Destroy the world object once picked up
         Destroy(gameObject);
