@@ -63,9 +63,10 @@ public class RescueBeacon : MonoBehaviour
 
         int batteries = requiredBatteries;
         int radio = requiredRadioTubes;
-        int fuel = 0;
+        int fuel = requiredFuel;
+        ;
 
-        if(batteries >= requiredBatteries && radio >= requiredRadioTubes && fuel >= requiredFuel)
+        if (batteries >= requiredBatteries && radio >= requiredRadioTubes && fuel >= requiredFuel)
         {
             isRequried = true;
             Debug.Log("Beacon repaired successfully! Starting extraction phase..");
