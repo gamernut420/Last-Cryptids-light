@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1928965015630235560}
   - component: {fileID: 2219849294837526558}
   m_Layer: 0
-  m_Name: Fual
+  m_Name: Fuel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,12 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdf1a4ad44fc5eb40b3a6b241edd8d4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
-  itemName: Fual
+  itemName: Fuel
   quantity: 1
   interactRange: 3
   playerCamera: {fileID: 0}
   interactionPromptText: {fileID: 0}
   PromptMessage: Press E
+  playerInventory: {fileID: 0}
 --- !u!33 &1132549844006811253
 MeshFilter:
   m_ObjectHideFlags: 0
