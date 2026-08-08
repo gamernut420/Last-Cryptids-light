@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerInventory : MonoBehaviour
 {
     Dictionary<string, int> items = new Dictionary<string, int>();
+
+    [SerializeField] TextMeshProUGUI inventoryText;
 
     public void AddItem(string itemName, int amount)
     {
@@ -17,6 +20,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         Debug.Log(itemName + ": " + items[itemName]);
+        UpdateUI();
     }
 
     public bool HasItem(string itemName)
@@ -32,5 +36,15 @@ public class PlayerInventory : MonoBehaviour
         }
 
         return 0;
+    }
+
+    void UpdateUI()
+    {
+        inventoryText.text = "";
+
+        foreach (KeyValuePair<string, int> item in items)
+        {
+            inventoryText.text += item.Key + ": " + item.Value + "\n";
+        }
     }
 }
