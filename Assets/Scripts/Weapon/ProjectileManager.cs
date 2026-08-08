@@ -63,13 +63,11 @@ public class ProjectileManager : MonoBehaviour
                 }
 
                 projectiles.RemoveAt(i);
-                Debug.Log("Removed Projectile");
             }
             //projectiles life ran out
             else if(proj.projData.LifeTime <= 0)
             {
                 projectiles.RemoveAt(i);
-                Debug.Log("Removed Projectile from lifetime");
             }
             //projectile should continue
             else
