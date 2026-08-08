@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
     [Range(50f, 100f)] [SerializeField] float detectionRange;
@@ -12,6 +13,7 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent agent;
     private Rigidbody playerRb;
     private Vector3 lastPlayerPosition;
+    private bool flee = false, stalk = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,17 +42,51 @@ public class EnemyAI : MonoBehaviour
 
         if(!isPlayerMoving)
         {
-            agent.isStopped = true;
+            if (!agent.isStopped)
+            {
+                agent.isStopped = true;
+            }
             return;
         }
 
-        if (distanceToPlayer <= detectionRange)
+        if (agent.isStopped)
         {
-            StalkPlayer(distanceToPlayer);
+            agent.isStopped = false;
         }
-        else
+
+        if (distanceToPlayer <= maxStalkDistance)
+            stalk = false;
+
+        if (distanceToPlayer < minStalkDistance)
         {
-            agent.ResetPath();
+            if (agent.hasPath && !flee)
+            {
+                FleeFromPlayer();
+                flee = true;
+            }
+            else if (!agent.hasPath)
+            {
+                FleeFromPlayer();
+            }
+            return;
+        }
+
+        bool hasReachedDestination = agent.remainingDistance <= agent.stoppingDistance;
+
+        if (hasReachedDestination || !agent.hasPath || agent.velocity.sqrMagnitude == 0f || distanceToPlayer > maxStalkDistance)
+        {
+            if (distanceToPlayer <= detectionRange)
+            {
+                if (agent.hasPath && !stalk)
+                {
+                    StalkPlayer();
+                    stalk = true;
+                }
+                else if (!agent.hasPath)
+                {
+                    StalkPlayer();
+                }
+            }
         }
     }
 
@@ -67,42 +103,51 @@ public class EnemyAI : MonoBehaviour
         return displacement > (movementThreshold * Time.deltaTime);
     }
 
-    void StalkPlayer(float currentDistance)
+    void StalkPlayer()
     {
+        stalk = true;
+        flee = false;
         Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
         transform.LookAt(lookDirection);
 
+        Vector3 randDir = Random.insideUnitSphere ;
+        randDir.y = 0;
 
-        if(currentDistance > maxStalkDistance)
-        {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
-        }
-        else if(currentDistance < minStalkDistance)
-        {
-            agent.isStopped = false;
-            Vector3 distanceToPlayer = transform.position - player.position;
-            Vector3 rawFleeTarget = transform.position + distanceToPlayer.normalized * minStalkDistance;
+        float randDis = Random.Range(minStalkDistance, maxStalkDistance);
+        Vector3 targetPos = player.position + randDir.normalized * randDis;
 
-            if (NavMesh.SamplePosition(rawFleeTarget, out NavMeshHit hit, minStalkDistance, NavMesh.AllAreas))
-            {
-                agent.SetDestination(hit.position);
-            }
-        }
-        else
-        {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
-        }
+        SetValidDestination(targetPos);
     }
 
-    void RandomPathFinding()
+    void FleeFromPlayer()
     {
+        flee = true;
+        stalk = false;
+        Vector3 fleeDirection = (transform.position - player.position).normalized;
+        fleeDirection.y = 0;
 
+        Vector3 variance = Random.insideUnitSphere * 0.3f;
+        variance.y = 0;
+        fleeDirection = (fleeDirection + variance).normalized;
+
+        float escapeDistance = maxStalkDistance;
+        Vector3 targetPos = transform.position + fleeDirection * escapeDistance;
+
+        SetValidDestination(targetPos);
     }
 
+    void SetValidDestination(Vector3 targetPos)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPos, out hit, 10f, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+    }
     private void OnDrawGizmosSelected()
     {
+        if (player == null) return;
+
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, minStalkDistance);
         Gizmos.color = Color.yellow;
