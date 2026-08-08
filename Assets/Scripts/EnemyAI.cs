@@ -3,15 +3,15 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform player;
-    private NavMeshAgent agent;
-    private Rigidbody playerRb;
-    private Vector3 lastPlayerPosition;
-
     [Range(50f, 100f)] [SerializeField] float detectionRange;
     [Range(20f, 40f)] [SerializeField] float minStalkDistance;
     [Range(40f, 80f)] [SerializeField] float maxStalkDistance;
     [SerializeField] float movementThreshold = 0.05f; 
+    
+    public Transform player;
+    private NavMeshAgent agent;
+    private Rigidbody playerRb;
+    private Vector3 lastPlayerPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -80,13 +80,25 @@ public class EnemyAI : MonoBehaviour
         }
         else if(currentDistance < minStalkDistance)
         {
-            agent.isStopped = true;
+            agent.isStopped = false;
+            Vector3 distanceToPlayer = transform.position - player.position;
+            Vector3 rawFleeTarget = transform.position + distanceToPlayer.normalized * minStalkDistance;
+
+            if (NavMesh.SamplePosition(rawFleeTarget, out NavMeshHit hit, minStalkDistance, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
         }
         else
         {
             agent.isStopped = false;
             agent.SetDestination(player.position);
         }
+    }
+
+    void RandomPathFinding()
+    {
+
     }
 
     private void OnDrawGizmosSelected()

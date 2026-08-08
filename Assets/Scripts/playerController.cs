@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging.Abstractions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
