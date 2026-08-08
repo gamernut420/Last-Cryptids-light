@@ -4,16 +4,27 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
+    [Range(10, 50)] [SerializeField] int HP;
+    [Range(100f, 300f)] [SerializeField] float listenerRange;
     [Range(50f, 100f)] [SerializeField] float detectionRange;
     [Range(20f, 40f)] [SerializeField] float minStalkDistance;
     [Range(40f, 80f)] [SerializeField] float maxStalkDistance;
-    [SerializeField] float movementThreshold = 0.05f; 
+    [SerializeField] float movementThreshold = 0.05f;
+
+    [Header("Attack Settings")]
+    [SerializeField] float attackReach = 2f;
+    [SerializeField] LayerMask playerLayer;
     
     public Transform player;
-    private NavMeshAgent agent;
-    private Rigidbody playerRb;
-    private Vector3 lastPlayerPosition;
-    private bool flee = false, stalk = false;
+    NavMeshAgent agent;
+    Rigidbody playerRb;
+    Vector3 lastPlayerPosition;
+
+    bool flee = false, stalk = false;
+    bool hit = false;
+    bool attack = false;
+    float attackTimer;
+    float afterAttack = 10;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,10 +48,37 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
+        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(lookDirection);
+
+        attackTimer += Time.deltaTime;
+        afterAttack += Time.deltaTime;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         bool isPlayerMoving = CheckIfPlayerIsMoving();
+        bool hasLineOfSight = CheckLineOfSight(distanceToPlayer);
+        
+        if (attack)
+        {
+            Attack(distanceToPlayer);
+            return;
+        }
 
-        if(!isPlayerMoving)
+        //Change attackTimer to for a quicker attack debug
+        if (attackTimer > 30 && distanceToPlayer <= detectionRange && Random.Range(0,10) < 5 && hasLineOfSight)
+        {
+            attack = true;
+            agent.isStopped = false;
+            return;
+        }
+
+        if (afterAttack < 10)
+        {
+            if (!flee)
+                FleeFromPlayer();
+            return;
+        }
+
+        if (!isPlayerMoving)
         {
             if (!agent.isStopped)
             {
@@ -62,7 +100,6 @@ public class EnemyAI : MonoBehaviour
             if (agent.hasPath && !flee)
             {
                 FleeFromPlayer();
-                flee = true;
             }
             else if (!agent.hasPath)
             {
@@ -90,6 +127,47 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    bool CheckLineOfSight(float distanceToPlayer)
+    {
+        // Cast a ray from the enemy's chest area toward the player's chest area
+        Vector3 startPos = transform.position + Vector3.up * 1f;
+        Vector3 targetPos = player.position + Vector3.up * 1f;
+        Vector3 direction = (targetPos - startPos).normalized;
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(startPos, direction, out hitInfo, distanceToPlayer))
+        {
+            // Return true only if the ray directly strikes the player object
+            if (hitInfo.transform == player)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void Attack(float currentDistance)
+    {
+        agent.SetDestination(player.position);
+
+        Vector3 startPos = transform.position + Vector3.up * 1f;
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(startPos, transform.forward, out hitInfo, attackReach, playerLayer))
+        {
+            if (hitInfo.transform == player)
+            {
+                Debug.Log("Player Hit!");
+
+                afterAttack = 0;
+                attackTimer = 0;
+                attack = false;
+                stalk = false;
+                flee = false;
+            }
+        }
+    }
+
     bool CheckIfPlayerIsMoving()
     {
         if(playerRb != null)
@@ -107,8 +185,13 @@ public class EnemyAI : MonoBehaviour
     {
         stalk = true;
         flee = false;
-        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
-        transform.LookAt(lookDirection);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer > maxStalkDistance)
+        {
+            agent.SetDestination(player.position);
+            return;
+        }
 
         Vector3 randDir = Random.insideUnitSphere ;
         randDir.y = 0;
@@ -144,6 +227,18 @@ public class EnemyAI : MonoBehaviour
             agent.SetDestination(hit.position);
         }
     }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        hit = true;
+
+        if(HP <= 0)
+        {
+            //Trigger Win event
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (player == null) return;
@@ -154,5 +249,7 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, maxStalkDistance);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.darkGreen;
+        Gizmos.DrawWireSphere(transform.position, listenerRange);
     }
 }
