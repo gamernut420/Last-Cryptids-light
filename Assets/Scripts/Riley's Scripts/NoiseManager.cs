@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public static class NoiseManager
+public class NoiseManager : MonoBehaviour
 {
     public enum NoiseType { Footstep, Gunshot, Distraction }
 
