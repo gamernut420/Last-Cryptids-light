@@ -1,11 +1,8 @@
 using UnityEngine;
-using System.Collections;
-using Unity.VisualScripting;
 
 public class Damage : MonoBehaviour
 {
-    //light does 0 damage but will be used for the enemy to detect if light is on him
-    enum damageType { bullet, light, enemyAttack };
+    enum damageType { bullet, enemyAttack };
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;
 

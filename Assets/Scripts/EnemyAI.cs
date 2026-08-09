@@ -20,11 +20,16 @@ public class EnemyAI : MonoBehaviour
     Rigidbody playerRb;
     Vector3 lastPlayerPosition;
 
-    bool flee = false, stalk = false;
+    private bool playingFootsteps = false;
+    public float footstepSpeed = 0.5f;
+
+    public bool flee = false, stalk = false;
     bool hit = false;
-    bool attack = false;
-    float attackTimer;
-    float afterAttack = 10;
+    public bool attack = false;
+    public float attackTimer;
+    public float afterAttack = 10;
+    public float stun = 2;
+    bool stopStun = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,9 +58,21 @@ public class EnemyAI : MonoBehaviour
 
         attackTimer += Time.deltaTime;
         afterAttack += Time.deltaTime;
+        stun += Time.deltaTime;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         bool isPlayerMoving = CheckIfPlayerIsMoving();
         bool hasLineOfSight = CheckLineOfSight(distanceToPlayer);
+
+        if (stun < 1)
+        {
+            agent.isStopped = true;
+            stopStun = true;
+            return;
+        }
+        else if (stun >= 1 && stopStun)
+        {
+            agent.isStopped = false;
+        }
         
         if (attack)
         {
@@ -64,14 +81,14 @@ public class EnemyAI : MonoBehaviour
         }
 
         //Change attackTimer to for a quicker attack debug
-        if (attackTimer > 30 && distanceToPlayer <= detectionRange && Random.Range(0,10) < 5 && hasLineOfSight)
+        if (attackTimer > 10 && distanceToPlayer <= detectionRange && Random.Range(0,10) < 5 && hasLineOfSight)
         {
             attack = true;
             agent.isStopped = false;
             return;
         }
 
-        if (afterAttack < 10)
+        if (afterAttack < 10 && distanceToPlayer <= maxStalkDistance)
         {
             if (!flee)
                 FleeFromPlayer();

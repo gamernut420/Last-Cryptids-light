@@ -48,10 +48,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 370a1614f3b1ad346a8282d25f4fcb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  HP: 10
+  listenerRange: 100
   detectionRange: 100
   minStalkDistance: 25
   maxStalkDistance: 60
   movementThreshold: 0.05
+  attackReach: 2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
   player: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
 --- !u!195 &1096803020203183725
 NavMeshAgent:
