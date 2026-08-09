@@ -12,6 +12,10 @@ public class playerController : MonoBehaviour
     [Range(1, 3)][SerializeField] int jumpMax;
     [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
+
+    [Header("Audio")]
+    public float audioRadius;
+
     [Header("UI & Game Over")]
     public GameObject gameOverPanel;
 
@@ -39,6 +43,11 @@ public class playerController : MonoBehaviour
 
         movement();
         sprint();
+
+        if (Input.GetButtonDown("Sprint"))
+        {
+            NoiseManager.ReportNoise(transform.position, audioRadius, NoiseManager.NoiseType.Footstep);
+        }
 
         ///////   Testing Logic    ///////
 
