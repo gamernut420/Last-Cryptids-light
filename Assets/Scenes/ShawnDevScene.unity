@@ -797,6 +797,7 @@ MonoBehaviour:
   FireRate: 0.1
   MagSize: 30
   MaxReserveAmmo: 120
+  SpreadAmmount: 0
   BulletData:
     Damage: 3
     Speed: 30
@@ -813,17 +814,34 @@ MonoBehaviour:
   PlayerCamera: {fileID: 1104222869}
   VerticleRecoil: 50
   HorizontalRecoil: 10
+--- !u!1 &1069625566 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8660593964082814984, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+  m_PrefabInstance: {fileID: 4993314803519687842}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1069625568 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5021004332404994926, guid: 6f317c1eb1707624d96179c504804283, type: 3}
   m_PrefabInstance: {fileID: 4993314803519687842}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1069625566}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1069625570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069625566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0595826be7fd00448b2719983ce336ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &1104222865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1928,6 +1946,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1628448599}
     m_Modifications:
+    - target: {fileID: 594913291340517443, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 948193962901401365, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975819756849539657, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_Name
+      value: CrosshairDown
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023267824750708808, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_Name
+      value: CrosshairUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2885905441013384129, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3013544117213885177, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_Name
+      value: CrosshairRight
+      objectReference: {fileID: 0}
     - target: {fileID: 4925980717198022120, guid: 6f317c1eb1707624d96179c504804283, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2008,6 +2050,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5021004332404994926, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_text
+      value: Debug / Debug
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411905418989276604, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_Name
+      value: CrosshairLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166964269288339809, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673025229970852256, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: baseScale
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673025229970852256, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      propertyPath: m_EditorClassIdentifier
+      value: Assembly-CSharp::Crosshair
+      objectReference: {fileID: 0}
     - target: {fileID: 8917146067163044607, guid: 6f317c1eb1707624d96179c504804283, type: 3}
       propertyPath: m_Name
       value: WeaponUI
@@ -2015,7 +2077,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8660593964082814984, guid: 6f317c1eb1707624d96179c504804283, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1069625570}
   m_SourcePrefab: {fileID: 100100000, guid: 6f317c1eb1707624d96179c504804283, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

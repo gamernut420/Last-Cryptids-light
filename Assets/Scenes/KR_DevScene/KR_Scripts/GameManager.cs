@@ -54,9 +54,4 @@ public class gameManager : MonoBehaviour
     {
         WeaponUI.SetActive(active);
     }
-
-    public void UpdateAmmoCount(int ammount)
-    {
-        AmmoCounter.text = "Ammo: " + ammount.ToString();
-    }
 }
