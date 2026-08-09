@@ -47,6 +47,8 @@ public class GunController : MonoBehaviour
         normalRotaion = transform.localRotation;
 
         aimLocation = AimingObject.transform.localPosition * -1;
+
+        gameManager.instance.UpdateAmmoCount(currentAmmo);
     }
 
     private void Update()
@@ -109,7 +111,7 @@ public class GunController : MonoBehaviour
 
         yield return new WaitForSeconds(FireRate);
 
-        Debug.LogFormat("Ammo Left: {0}", currentAmmo);
+        gameManager.instance.UpdateAmmoCount(currentAmmo);
 
         if (currentAmmo > 0)
         {
@@ -148,6 +150,7 @@ public class GunController : MonoBehaviour
         Destroy(flash, 0.1f);
     }
 
+    //This is also used to reset the weapons rotation
     void DetermineAim()
     {
         Vector3 target = normalLocalPosition;

@@ -1,3 +1,5 @@
+using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class gameManager : MonoBehaviour
@@ -6,6 +8,8 @@ public class gameManager : MonoBehaviour
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
+    [SerializeField] GameObject WeaponUI;
+    [SerializeField] TextMeshProUGUI AmmoCounter;
 
     public bool isPaused;
 
@@ -43,5 +47,16 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 1;
         menuActive.SetActive(false);
         menuActive = null;
+    }
+
+    //If the player does not start with a weapon the UI can be shown when they get one
+    public void ToggleWeaponInfo(bool active)
+    {
+        WeaponUI.SetActive(active);
+    }
+
+    public void UpdateAmmoCount(int ammount)
+    {
+        AmmoCounter.text = "Ammo: " + ammount.ToString();
     }
 }
