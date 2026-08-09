@@ -4,6 +4,8 @@ using UnityEngine;
 public class GunController : MonoBehaviour
 {
     [Header("Gun Settings")]
+    [SerializeField] AudioSource gunAudio;
+    [SerializeField] AudioClip gunShootSound;
     [Min(0f)] public float FireRate = 0.5f;
     [Min(1)] public int MagSize = 30;
     [Min(1)] public int MaxReserveAmmo = 120;
@@ -98,6 +100,11 @@ public class GunController : MonoBehaviour
     IEnumerator Shootgun()
     {
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
+
+        if(gunAudio !=null && gunShootSound != null)
+        {
+            gunAudio.PlayOneShot(gunShootSound);
+        }
 
         MuzzleFlash();
 
