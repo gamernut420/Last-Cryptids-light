@@ -1758,7 +1758,16 @@ MonoBehaviour:
   requiredBatteries: 1
   requiredRadioTubes: 1
   requiredFuel: 1
-  requiredParts: []
+  requiredParts:
+  - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
+    itemName: Battery
+    requriedAmount: 1
+  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
+    itemName: Fuel
+    requriedAmount: 1
+  - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
+    itemName: Radio Tube
+    requriedAmount: 1
 --- !u!1001 &1157430890
 PrefabInstance:
   m_ObjectHideFlags: 0
