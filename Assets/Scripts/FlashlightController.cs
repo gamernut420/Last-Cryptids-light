@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class FlashlightController : MonoBehaviour
@@ -10,12 +8,16 @@ public class FlashlightController : MonoBehaviour
     [Range(1f, 100f)][SerializeField] float maxBattery;
     [Range(1f, 100f)][SerializeField] float currentBattery;
     [Range(1f, 10f)][SerializeField] float drainRate;
-
-    private bool isOn = false;
-    private bool isLockedOut = false;
+    [SerializeField] float raycastRange;
+    [SerializeField] LayerMask enemyLayer;
 
     [Header("UI Reference")]
     [SerializeField] TextMeshProUGUI batteryText;
+
+    private bool isOn = false;
+    private bool isLockedOut = false;
+    
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,9 +37,11 @@ public class FlashlightController : MonoBehaviour
     {
         // Toggle input (Press 'F' 
         if (Input.GetKeyDown(KeyCode.F)) ToggleFlashlight();
-        // Hanle battery drian when active
+        // Handle battery drian when active
         if(isOn)
         {
+            CheckForEnemy();
+
             currentBattery -= drainRate * Time.deltaTime;
             currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
 
@@ -62,7 +66,7 @@ public class FlashlightController : MonoBehaviour
     }
     void ToggleFlashlight()
     {
-        // If it's locked out because battery is dead, prevent turnig it back on
+        // If it's locked out because battery is dead, prevent turning it back on
         if (isLockedOut && currentBattery <= 0f)
         {
             Debug.Log("Bettery is dead! Find a battery to recharge.");
@@ -72,6 +76,8 @@ public class FlashlightController : MonoBehaviour
         isOn = !isOn;
         if (flashlightLight != null) flashlightLight.enabled = isOn;
     }
+
+
     void TurnOffFlashLigh()
     {
         isOn = false;
@@ -95,4 +101,30 @@ public class FlashlightController : MonoBehaviour
         UpdateBatteryUI(); 
     }
 
+    void CheckForEnemy()
+    {
+        RaycastHit hit;
+        Vector3 forward = transform.forward;
+
+        if (Physics.Raycast(transform.position, forward, out hit, raycastRange, enemyLayer))
+        {
+            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
+            
+            if (enemy != null)
+            {
+                enemy.stun = 0;
+                enemy.afterAttack = 0;
+                enemy.attackTimer = 0;
+                enemy.attack = false;
+                enemy.stalk = false;
+                enemy.flee = false;
+            }
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.purple;
+        Gizmos.DrawRay(transform.position, transform.forward * raycastRange);
+    }
 }

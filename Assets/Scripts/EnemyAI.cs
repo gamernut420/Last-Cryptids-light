@@ -1,17 +1,35 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
-    public Transform player;
-    private NavMeshAgent agent;
-    private Rigidbody playerRb;
-    private Vector3 lastPlayerPosition;
-
+    [Range(10, 50)] [SerializeField] int HP;
+    [Range(100f, 300f)] [SerializeField] float listenerRange;
     [Range(50f, 100f)] [SerializeField] float detectionRange;
     [Range(20f, 40f)] [SerializeField] float minStalkDistance;
     [Range(40f, 80f)] [SerializeField] float maxStalkDistance;
-    [SerializeField] float movementThreshold = 0.05f; 
+    [SerializeField] float movementThreshold = 0.05f;
+
+    [Header("Attack Settings")]
+    [SerializeField] float attackReach = 2f;
+    [SerializeField] LayerMask playerLayer;
+    
+    public Transform player;
+    NavMeshAgent agent;
+    Rigidbody playerRb;
+    Vector3 lastPlayerPosition;
+
+    private bool playingFootsteps = false;
+    public float footstepSpeed = 0.5f;
+
+    public bool flee = false, stalk = false;
+    bool hit = false;
+    public bool attack = false;
+    public float attackTimer;
+    public float afterAttack = 10;
+    public float stun = 2;
+    bool stopStun = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,22 +53,135 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
+        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(lookDirection);
+
+        attackTimer += Time.deltaTime;
+        afterAttack += Time.deltaTime;
+        stun += Time.deltaTime;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         bool isPlayerMoving = CheckIfPlayerIsMoving();
+        bool hasLineOfSight = CheckLineOfSight(distanceToPlayer);
 
-        if(!isPlayerMoving)
+        if (stun < 1)
         {
             agent.isStopped = true;
+            stopStun = true;
+            return;
+        }
+        else if (stun >= 1 && stopStun)
+        {
+            agent.isStopped = false;
+        }
+        
+        if (attack)
+        {
+            Attack(distanceToPlayer);
             return;
         }
 
-        if (distanceToPlayer <= detectionRange)
+        //Change attackTimer to for a quicker attack debug
+        if (attackTimer > 10 && distanceToPlayer <= detectionRange && Random.Range(0,10) < 5 && hasLineOfSight)
         {
-            StalkPlayer(distanceToPlayer);
+            attack = true;
+            agent.isStopped = false;
+            return;
         }
-        else
+
+        if (afterAttack < 10 && distanceToPlayer <= maxStalkDistance)
         {
-            agent.ResetPath();
+            if (!flee)
+                FleeFromPlayer();
+            return;
+        }
+
+        if (!isPlayerMoving)
+        {
+            if (!agent.isStopped)
+            {
+                agent.isStopped = true;
+            }
+            return;
+        }
+
+        if (agent.isStopped)
+        {
+            agent.isStopped = false;
+        }
+
+        if (distanceToPlayer <= maxStalkDistance)
+            stalk = false;
+
+        if (distanceToPlayer < minStalkDistance)
+        {
+            if (agent.hasPath && !flee)
+            {
+                FleeFromPlayer();
+            }
+            else if (!agent.hasPath)
+            {
+                FleeFromPlayer();
+            }
+            return;
+        }
+
+        bool hasReachedDestination = agent.remainingDistance <= agent.stoppingDistance;
+
+        if (hasReachedDestination || !agent.hasPath || agent.velocity.sqrMagnitude == 0f || distanceToPlayer > maxStalkDistance)
+        {
+            if (distanceToPlayer <= detectionRange)
+            {
+                if (agent.hasPath && !stalk)
+                {
+                    StalkPlayer();
+                    stalk = true;
+                }
+                else if (!agent.hasPath)
+                {
+                    StalkPlayer();
+                }
+            }
+        }
+    }
+
+    bool CheckLineOfSight(float distanceToPlayer)
+    {
+        // Cast a ray from the enemy's chest area toward the player's chest area
+        Vector3 startPos = transform.position + Vector3.up * 1f;
+        Vector3 targetPos = player.position + Vector3.up * 1f;
+        Vector3 direction = (targetPos - startPos).normalized;
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(startPos, direction, out hitInfo, distanceToPlayer))
+        {
+            // Return true only if the ray directly strikes the player object
+            if (hitInfo.transform == player)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void Attack(float currentDistance)
+    {
+        agent.SetDestination(player.position);
+
+        Vector3 startPos = transform.position + Vector3.up * 1f;
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(startPos, transform.forward, out hitInfo, attackReach, playerLayer))
+        {
+            if (hitInfo.transform == player)
+            {
+                Debug.Log("Player Hit!");
+
+                afterAttack = 0;
+                attackTimer = 0;
+                attack = false;
+                stalk = false;
+                flee = false;
+            }
         }
     }
 
@@ -67,35 +198,75 @@ public class EnemyAI : MonoBehaviour
         return displacement > (movementThreshold * Time.deltaTime);
     }
 
-    void StalkPlayer(float currentDistance)
+    void StalkPlayer()
     {
-        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
-        transform.LookAt(lookDirection);
+        stalk = true;
+        flee = false;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
+        if (distanceToPlayer > maxStalkDistance)
+        {
+            agent.SetDestination(player.position);
+            return;
+        }
 
-        if(currentDistance > maxStalkDistance)
+        Vector3 randDir = Random.insideUnitSphere ;
+        randDir.y = 0;
+
+        float randDis = Random.Range(minStalkDistance, maxStalkDistance);
+        Vector3 targetPos = player.position + randDir.normalized * randDis;
+
+        SetValidDestination(targetPos);
+    }
+
+    void FleeFromPlayer()
+    {
+        flee = true;
+        stalk = false;
+        Vector3 fleeDirection = (transform.position - player.position).normalized;
+        fleeDirection.y = 0;
+
+        Vector3 variance = Random.insideUnitSphere * 0.3f;
+        variance.y = 0;
+        fleeDirection = (fleeDirection + variance).normalized;
+
+        float escapeDistance = maxStalkDistance;
+        Vector3 targetPos = transform.position + fleeDirection * escapeDistance;
+
+        SetValidDestination(targetPos);
+    }
+
+    void SetValidDestination(Vector3 targetPos)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPos, out hit, 10f, NavMesh.AllAreas))
         {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
+            agent.SetDestination(hit.position);
         }
-        else if(currentDistance < minStalkDistance)
+    }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        hit = true;
+
+        if(HP <= 0)
         {
-            agent.isStopped = true;
-        }
-        else
-        {
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
+            //Trigger Win event
         }
     }
 
     private void OnDrawGizmosSelected()
     {
+        if (player == null) return;
+
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, minStalkDistance);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, maxStalkDistance);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.darkGreen;
+        Gizmos.DrawWireSphere(transform.position, listenerRange);
     }
 }
