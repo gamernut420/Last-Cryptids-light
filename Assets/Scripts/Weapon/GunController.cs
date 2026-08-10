@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class GunController : MonoBehaviour
+public class GunController : MonoBehaviour, IWeapon
 {
     [Header("Gun Settings")]
     [SerializeField][Min(0f)] float FireRate = 0.5f;
@@ -160,19 +160,6 @@ public class GunController : MonoBehaviour
         canShoot = true;
     }
 
-    bool RefillAmmo(int amount)
-    {
-        if(currentReserveAmmo >= MaxReserveAmmo)
-        {
-            return false;
-        }
-        else
-        {
-            currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
-            return true;
-        }
-    }
-
     void DetermainRecoil()
     {
         float randomHorizontalRecoil = Random.Range(-HorizontalRecoil, HorizontalRecoil);
@@ -227,5 +214,21 @@ public class GunController : MonoBehaviour
         Vector2 mouseAxis = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
         transform.localPosition += (Vector3)mouseAxis * SwayAmmount / 1000;
+    }
+
+    public bool WeaponRefillAmmo(int amount)
+    {
+        if (currentReserveAmmo >= MaxReserveAmmo)
+        {
+            return false;
+        }
+        else
+        {
+            currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
+
+            ReserveAmmoChanged(currentReserveAmmo);
+
+            return true;
+        }
     }
 }

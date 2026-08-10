@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IInteract
 {
-    void Interact();
+    bool Interact(GameObject interactor);
 
     //Return an empty string or null to hide text
     string ScreenMessage();

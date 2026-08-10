@@ -815,17 +815,19 @@ MonoBehaviour:
     Speed: 30
     GravityScale: 1
     LifeTime: 3
+  AimingObject: {fileID: 1987726808}
+  AimSmoothing: 10
+  PlayerCamera: {fileID: 1104222869}
+  VerticleRecoil: 50
+  HorizontalRecoil: 10
   Muzzle: {fileID: 732445750}
   Flashes:
   - {fileID: 100004, guid: b7d03fb0762c75449af69d624547e358, type: 3}
   - {fileID: 100004, guid: 510e0a736e5e66243b242a076c59611a, type: 3}
   - {fileID: 100004, guid: ce94000a78298f447b82a7e25b9ab359, type: 3}
   SwayAmmount: 10
-  AimingObject: {fileID: 1987726808}
-  AimSmoothing: 10
-  PlayerCamera: {fileID: 1104222869}
-  VerticleRecoil: 50
-  HorizontalRecoil: 10
+  gunAudio: {fileID: 0}
+  gunShootSound: {fileID: 0}
 --- !u!1 &884843030
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,6 +948,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 944948598716401364, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+      propertyPath: ActiveWeapon
+      value: 
+      objectReference: {fileID: 546620630}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8378294

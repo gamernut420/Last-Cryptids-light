@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IPlayer
 {
     [SerializeField] CharacterController controller;
     [Header("Player Stats:")]
@@ -14,6 +14,9 @@ public class playerController : MonoBehaviour
     [Range(15, 45)][SerializeField] int gravity;
     [Header("UI & Game Over")]
     public GameObject gameOverPanel;
+
+    [Header("Weapon")]
+    [SerializeField] GameObject ActiveWeapon;
 
     int jumpCount;
     int HPOrig;
@@ -109,5 +112,20 @@ public class playerController : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public bool PlayerRefillAmmo(int amount)
+    {
+        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+        if(wep != null)
+        {
+            Debug.Log("refilling Weapon");
+            return wep.WeaponRefillAmmo(amount);
+        }
+        else
+        {
+            return false;
+        }
     }
 }

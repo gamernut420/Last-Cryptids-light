@@ -11,6 +11,8 @@ public class PlayerInteraction : MonoBehaviour
 
     public static System.Action<string> UpdateScreenText;
 
+    GameObject player;
+
     Vector3 boxTraceLocation;
 
     Collider[] boxHits = new Collider[4];
@@ -19,7 +21,9 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Start()
     {
-        
+        player = gameObject;
+
+        Debug.Log(player);
     }
 
     private void Update()
@@ -82,7 +86,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactable != null)
         {
-            interactable.Interact();
+            interactable.Interact(player);
         }
     }
 }

@@ -2,9 +2,24 @@ using UnityEngine;
 
 public class AmmoBox : MonoBehaviour, IInteract
 {
-    public void Interact()
+    [SerializeField] int RefillAmmount = 5;
+
+    public bool Interact(GameObject interactor)
     {
-        Debug.Log("Interacted with ammo");
+        IPlayer player = interactor.GetComponent<IPlayer>();
+
+        if(player != null)
+        {
+            Debug.Log("Interacted with ammo");
+
+            player.PlayerRefillAmmo(RefillAmmount);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public string ScreenMessage()
