@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IPlayer
 {
     [SerializeField] CharacterController controller;
     [Header("Player Stats:")]
@@ -18,6 +18,9 @@ public class playerController : MonoBehaviour
 
     [Header("UI & Game Over")]
     public GameObject gameOverPanel;
+
+    [Header("Weapon")]
+    [SerializeField] GameObject ActiveWeapon;
 
     int jumpCount;
     int HPOrig;
@@ -67,7 +70,8 @@ public class playerController : MonoBehaviour
         controller.Move(moveDir * speed * Time.deltaTime);
 
         jump();
-        controller.Move(playerVel * speed * Time.deltaTime);
+        //Fixed jump speed bug
+        controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
     }
 
@@ -117,5 +121,19 @@ public class playerController : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public bool PlayerRefillAmmo(int amount)
+    {
+        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+        if(wep != null)
+        {
+            return wep.WeaponRefillAmmo(amount);
+        }
+        else
+        {
+            return false;
+        }
     }
 }

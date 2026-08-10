@@ -1,32 +1,40 @@
 using System.Collections;
 using UnityEngine;
 
-public class GunController : MonoBehaviour
+public class GunController : MonoBehaviour, IWeapon
 {
     [Header("Gun Settings")]
-    [SerializeField] AudioSource gunAudio;
-    [SerializeField] AudioClip gunShootSound;
-    [Min(0f)] public float FireRate = 0.5f;
-    [Min(1)] public int MagSize = 30;
-    [Min(1)] public int MaxReserveAmmo = 120;
-    public ProjectileData BulletData;
-
-    [Header("VFX")]
-    public GameObject Muzzle;
-    public GameObject[] Flashes;
-    public float SwayAmmount = 10;
+    [SerializeField][Min(0f)] float FireRate = 0.5f;
+    [SerializeField][Min(1)] int MagSize = 30;
+    [SerializeField][Min(1)] int MaxReserveAmmo = 120;
+    [SerializeField][Min(0)] float SpreadAmmount = 0;
+    [SerializeField] ProjectileData BulletData;
 
     [Header("Aim")]
-    public GameObject AimingObject;
-    public float AimSmoothing = 10;
+    [SerializeField] GameObject AimingObject;
+    [SerializeField] float AimSmoothing = 10;
     Vector3 normalLocalPosition;
     Vector3 aimLocation;
     Quaternion normalRotaion;
 
     [Header("Recoil")]
-    public Camera PlayerCamera;
-    public float VerticleRecoil;
-    public float HorizontalRecoil;
+    [SerializeField] Camera PlayerCamera;
+    [SerializeField] float VerticleRecoil;
+    [SerializeField] float HorizontalRecoil;
+
+    [Header("VFX")]
+    [SerializeField] GameObject Muzzle;
+    [SerializeField] GameObject[] Flashes;
+    [SerializeField] float SwayAmmount = 10;
+
+    [Header("Audio")]
+    [SerializeField] AudioSource gunAudio;
+    [SerializeField] AudioClip gunShootSound;
+
+    //Event speakers
+    public static System.Action<float> ShotFired;
+    public static System.Action<int> CurrentAmmoChanged;
+    public static System.Action<int> ReserveAmmoChanged;
 
     //Shooting Variables
     ProjectileManager projectileManager;
@@ -49,6 +57,16 @@ public class GunController : MonoBehaviour
         normalRotaion = transform.localRotation;
 
         aimLocation = AimingObject.transform.localPosition * -1;
+
+        if (CurrentAmmoChanged != null)
+        {
+            CurrentAmmoChanged(currentAmmo);
+        }
+
+        if (ReserveAmmoChanged != null)
+        {
+            ReserveAmmoChanged(currentReserveAmmo);
+        }
     }
 
     private void Update()
@@ -68,27 +86,7 @@ public class GunController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
         {
-            Debug.LogFormat("Ammo: {0}, Reserve: {1}", currentAmmo, currentReserveAmmo);
-            int ammoNeeded = MagSize - currentAmmo;
-
-            if (ammoNeeded < currentReserveAmmo)
-            {
-                Debug.Log("Had spare ammo");
-                currentAmmo = MagSize;
-
-                currentReserveAmmo -= ammoNeeded;
-            }
-            else
-            {
-                Debug.Log("No more spare ammo");
-                currentAmmo += currentReserveAmmo;
-
-                currentReserveAmmo = 0;
-            }
-
-            canShoot = true;
-
-            Debug.LogFormat("Current Ammo: {0}, Current reserve: {1}", currentAmmo, currentReserveAmmo);
+            Reload();
         }
 
         if (tryingShoot && canShoot)
@@ -101,9 +99,14 @@ public class GunController : MonoBehaviour
     {
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
-        if(gunAudio !=null && gunShootSound != null)
+        if (gunAudio != null && gunShootSound != null)
         {
             gunAudio.PlayOneShot(gunShootSound);
+        }
+
+        if (ShotFired != null)
+        {
+            ShotFired(SpreadAmmount);
         }
 
         MuzzleFlash();
@@ -116,12 +119,45 @@ public class GunController : MonoBehaviour
 
         yield return new WaitForSeconds(FireRate);
 
-        Debug.LogFormat("Ammo Left: {0}", currentAmmo);
+        if (CurrentAmmoChanged != null)
+        {
+            CurrentAmmoChanged(currentAmmo);
+        }
 
         if (currentAmmo > 0)
         {
             canShoot = true;
         }
+    }
+
+    void Reload()
+    {
+        int ammoNeeded = MagSize - currentAmmo;
+
+        if (ammoNeeded < currentReserveAmmo)
+        {
+            currentAmmo = MagSize;
+
+            currentReserveAmmo -= ammoNeeded;
+        }
+        else
+        {
+            currentAmmo += currentReserveAmmo;
+
+            currentReserveAmmo = 0;
+        }
+
+        if (CurrentAmmoChanged != null)
+        {
+            CurrentAmmoChanged(currentAmmo);
+        }
+
+        if(ReserveAmmoChanged != null)
+        {
+            ReserveAmmoChanged(currentReserveAmmo);
+        }
+
+        canShoot = true;
     }
 
     void DetermainRecoil()
@@ -140,9 +176,8 @@ public class GunController : MonoBehaviour
 
         camRotX = Mathf.Clamp(camRotX, -90, 90);
 
-        Debug.LogFormat("Verticle Recoil For cam: {0}", camRotX);
-
-        PlayerCamera.transform.localRotation = Quaternion.Euler(recoil.x, 0, 0);
+        //Something else is needed to modify verticle recoil
+        //PlayerCamera.transform.localRotation = Quaternion.Euler(recoil.x, 0, 0);
 
         PlayerCamera.transform.parent.Rotate(0, recoil.y, 0);
 
@@ -155,6 +190,7 @@ public class GunController : MonoBehaviour
         Destroy(flash, 0.1f);
     }
 
+    //This is also used to reset the weapons rotation
     void DetermineAim()
     {
         Vector3 target = normalLocalPosition;
@@ -178,5 +214,21 @@ public class GunController : MonoBehaviour
         Vector2 mouseAxis = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
         transform.localPosition += (Vector3)mouseAxis * SwayAmmount / 1000;
+    }
+
+    public bool WeaponRefillAmmo(int amount)
+    {
+        if (currentReserveAmmo >= MaxReserveAmmo)
+        {
+            return false;
+        }
+        else
+        {
+            currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
+
+            ReserveAmmoChanged(currentReserveAmmo);
+
+            return true;
+        }
     }
 }
