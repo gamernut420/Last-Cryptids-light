@@ -9,7 +9,6 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject WeaponUI;
-    [SerializeField] TextMeshProUGUI AmmoCounter;
 
     public bool isPaused;
 
