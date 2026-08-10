@@ -22,8 +22,6 @@ public class PlayerInteraction : MonoBehaviour
     private void Start()
     {
         player = gameObject;
-
-        Debug.Log(player);
     }
 
     private void Update()

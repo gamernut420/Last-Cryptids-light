@@ -10,11 +10,16 @@ public class AmmoBox : MonoBehaviour, IInteract
 
         if(player != null)
         {
-            Debug.Log("Interacted with ammo");
+            if (player.PlayerRefillAmmo(RefillAmmount))
+            {
+                Destroy(gameObject);
 
-            player.PlayerRefillAmmo(RefillAmmount);
-
-            return true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
