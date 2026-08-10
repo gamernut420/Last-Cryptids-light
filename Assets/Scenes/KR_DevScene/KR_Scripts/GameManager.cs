@@ -1,5 +1,3 @@
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +8,6 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] Image playerHPBar;
-    [SerializeField] GameObject WeaponUI;
 
     public bool isPaused;
 
@@ -48,11 +45,5 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 1;
         menuActive.SetActive(false);
         menuActive = null;
-    }
-
-    //If the player does not start with a weapon the UI can be shown when they get one
-    public void ToggleWeaponInfo(bool active)
-    {
-        WeaponUI.SetActive(active);
     }
 }
