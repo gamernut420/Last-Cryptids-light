@@ -70,8 +70,7 @@ public class playerController : MonoBehaviour, IPlayer
         controller.Move(moveDir * speed * Time.deltaTime);
 
         jump();
-        //Fixed jump speed bug
-        controller.Move(playerVel * Time.deltaTime);
+        controller.Move(playerVel * speed * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
     }
 
