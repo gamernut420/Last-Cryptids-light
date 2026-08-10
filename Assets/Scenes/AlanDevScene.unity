@@ -135,7 +135,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &160872516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2037,6 +2037,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
   m_PrefabInstance: {fileID: 2096653296}
   m_PrefabAsset: {fileID: 0}
+--- !u!82 &1128717219 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3138422616257942000, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+  m_PrefabInstance: {fileID: 2096653296}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1157430890
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2504,6 +2509,26 @@ PrefabInstance:
     - target: {fileID: 629081156142882564, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
       propertyPath: m_Name
       value: Flintlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: MagSize
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: FireRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: gunAudio
+      value: 
+      objectReference: {fileID: 1128717219}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: MaxReserveAmmo
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: BulletData.GravityScale
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

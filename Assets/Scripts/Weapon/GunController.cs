@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class GunController : MonoBehaviour
@@ -31,10 +30,9 @@ public class GunController : MonoBehaviour
     //Shooting Variables
     ProjectileManager projectileManager;
     bool canShoot;
-    bool tryingShoot;
     int currentAmmo;
     int currentReserveAmmo;
-
+    float shootTimer;
 
 
     private void Start()
@@ -43,7 +41,7 @@ public class GunController : MonoBehaviour
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
-        tryingShoot = false;
+        shootTimer = 0f;
 
         normalLocalPosition = transform.localPosition;
         normalRotaion = transform.localRotation;
@@ -57,13 +55,13 @@ public class GunController : MonoBehaviour
 
         WeaponSway();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            tryingShoot = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            tryingShoot = false;
+        if (shootTimer > 0f)
+        { 
+        shootTimer -= Time.deltaTime;
+            if (shootTimer <= 0f && currentAmmo > 0)
+            {
+                canShoot = true;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
@@ -71,7 +69,7 @@ public class GunController : MonoBehaviour
             Debug.LogFormat("Ammo: {0}, Reserve: {1}", currentAmmo, currentReserveAmmo);
             int ammoNeeded = MagSize - currentAmmo;
 
-            if (ammoNeeded < currentReserveAmmo)
+            if (ammoNeeded <= currentReserveAmmo)
             {
                 Debug.Log("Had spare ammo");
                 currentAmmo = MagSize;
@@ -91,14 +89,26 @@ public class GunController : MonoBehaviour
             Debug.LogFormat("Current Ammo: {0}, Current reserve: {1}", currentAmmo, currentReserveAmmo);
         }
 
-        if (tryingShoot && canShoot)
+       if(Input.GetMouseButtonDown(0) && canShoot && currentAmmo >0)
         {
-            StartCoroutine(Shootgun());
+            Shootgun();
         }
     }
 
-    IEnumerator Shootgun()
+    void Shootgun()
     {
+        
+
+        if (currentAmmo <=0)
+        {
+            return;
+        }
+
+        canShoot=false;
+        shootTimer = FireRate;
+        currentAmmo--;
+        Debug.LogFormat("Shot Fired!: {0}, Reserve{1}", currentAmmo, currentReserveAmmo);
+
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
         if(gunAudio !=null && gunShootSound != null)
@@ -107,21 +117,8 @@ public class GunController : MonoBehaviour
         }
 
         MuzzleFlash();
-
         DetermainRecoil();
 
-        canShoot = false;
-
-        currentAmmo--;
-
-        yield return new WaitForSeconds(FireRate);
-
-        Debug.LogFormat("Ammo Left: {0}", currentAmmo);
-
-        if (currentAmmo > 0)
-        {
-            canShoot = true;
-        }
     }
 
     void DetermainRecoil()
