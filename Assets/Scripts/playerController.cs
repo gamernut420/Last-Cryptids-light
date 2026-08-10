@@ -1,8 +1,7 @@
-using Microsoft.Extensions.Logging.Abstractions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IPlayer
 {
     [SerializeField] CharacterController controller;
     [Header("Player Stats:")]
@@ -13,8 +12,15 @@ public class playerController : MonoBehaviour
     [Range(1, 3)][SerializeField] int jumpMax;
     [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
+
+    [Header("Audio")]
+    public float audioRadius;
+
     [Header("UI & Game Over")]
     public GameObject gameOverPanel;
+
+    [Header("Weapon")]
+    [SerializeField] GameObject ActiveWeapon;
 
     int jumpCount;
     int HPOrig;
@@ -40,6 +46,11 @@ public class playerController : MonoBehaviour
 
         movement();
         sprint();
+
+        if (Input.GetButtonDown("Sprint"))
+        {
+            NoiseManager.ReportNoise(transform.position, audioRadius, NoiseManager.NoiseType.Footstep);
+        }
 
         ///////   Testing Logic    ///////
 
@@ -109,5 +120,19 @@ public class playerController : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public bool PlayerRefillAmmo(int amount)
+    {
+        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+        if(wep != null)
+        {
+            return wep.WeaponRefillAmmo(amount);
+        }
+        else
+        {
+            return false;
+        }
     }
 }
