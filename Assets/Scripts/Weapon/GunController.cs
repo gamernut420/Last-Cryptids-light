@@ -1,18 +1,16 @@
-using System.Collections;
 using UnityEngine;
 
 public class GunController : MonoBehaviour, IWeapon
 {
     [Header("Gun Settings")]
-    [SerializeField][Min(0f)] float FireRate = 0.5f;
-    [SerializeField][Min(1)] int MagSize = 30;
-    [SerializeField][Min(1)] int MaxReserveAmmo = 120;
-    [SerializeField][Min(0)] float SpreadAmmount = 0;
-    [SerializeField] ProjectileData BulletData;
+    [Min(0f)] public float FireRate = 0.5f;
+    [Min(1)] public int MagSize = 30;
+    [Min(1)] public int MaxReserveAmmo = 120;
+    public ProjectileData BulletData;
 
     [Header("Aim")]
-    [SerializeField] GameObject AimingObject;
-    [SerializeField] float AimSmoothing = 10;
+    public GameObject AimingObject;
+    public float AimSmoothing = 10;
     Vector3 normalLocalPosition;
     Vector3 aimLocation;
     Quaternion normalRotaion;
@@ -39,10 +37,9 @@ public class GunController : MonoBehaviour, IWeapon
     //Shooting Variables
     ProjectileManager projectileManager;
     bool canShoot;
-    bool tryingShoot;
     int currentAmmo;
     int currentReserveAmmo;
-
+    float shootTimer;
 
 
     private void Start()
@@ -51,22 +48,12 @@ public class GunController : MonoBehaviour, IWeapon
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
-        tryingShoot = false;
+        shootTimer = 0f;
 
         normalLocalPosition = transform.localPosition;
         normalRotaion = transform.localRotation;
 
         aimLocation = AimingObject.transform.localPosition * -1;
-
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
-
-        if (ReserveAmmoChanged != null)
-        {
-            ReserveAmmoChanged(currentReserveAmmo);
-        }
     }
 
     private void Update()
@@ -75,28 +62,60 @@ public class GunController : MonoBehaviour, IWeapon
 
         WeaponSway();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            tryingShoot = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            tryingShoot = false;
+        if (shootTimer > 0f)
+        { 
+        shootTimer -= Time.deltaTime;
+            if (shootTimer <= 0f && currentAmmo > 0)
+            {
+                canShoot = true;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
         {
-            Reload();
+            Debug.LogFormat("Ammo: {0}, Reserve: {1}", currentAmmo, currentReserveAmmo);
+            int ammoNeeded = MagSize - currentAmmo;
+
+            if (ammoNeeded <= currentReserveAmmo)
+            {
+                Debug.Log("Had spare ammo");
+                currentAmmo = MagSize;
+
+                currentReserveAmmo -= ammoNeeded;
+            }
+            else
+            {
+                Debug.Log("No more spare ammo");
+                currentAmmo += currentReserveAmmo;
+
+                currentReserveAmmo = 0;
+            }
+
+            canShoot = true;
+
+            Debug.LogFormat("Current Ammo: {0}, Current reserve: {1}", currentAmmo, currentReserveAmmo);
         }
 
-        if (tryingShoot && canShoot)
+       if(Input.GetMouseButtonDown(0) && canShoot && currentAmmo >0)
         {
-            StartCoroutine(Shootgun());
+            Shootgun();
         }
     }
 
-    IEnumerator Shootgun()
+    void Shootgun()
     {
+        
+
+        if (currentAmmo <=0)
+        {
+            return;
+        }
+
+        canShoot=false;
+        shootTimer = FireRate;
+        currentAmmo--;
+        Debug.LogFormat("Shot Fired!: {0}, Reserve{1}", currentAmmo, currentReserveAmmo);
+
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
         if (gunAudio != null && gunShootSound != null)
@@ -106,58 +125,12 @@ public class GunController : MonoBehaviour, IWeapon
 
         if (ShotFired != null)
         {
-            ShotFired(SpreadAmmount);
+            ShotFired(currentAmmo);
         }
 
         MuzzleFlash();
-
         DetermainRecoil();
 
-        canShoot = false;
-
-        currentAmmo--;
-
-        yield return new WaitForSeconds(FireRate);
-
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
-
-        if (currentAmmo > 0)
-        {
-            canShoot = true;
-        }
-    }
-
-    void Reload()
-    {
-        int ammoNeeded = MagSize - currentAmmo;
-
-        if (ammoNeeded < currentReserveAmmo)
-        {
-            currentAmmo = MagSize;
-
-            currentReserveAmmo -= ammoNeeded;
-        }
-        else
-        {
-            currentAmmo += currentReserveAmmo;
-
-            currentReserveAmmo = 0;
-        }
-
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
-
-        if(ReserveAmmoChanged != null)
-        {
-            ReserveAmmoChanged(currentReserveAmmo);
-        }
-
-        canShoot = true;
     }
 
     void DetermainRecoil()
@@ -176,8 +149,9 @@ public class GunController : MonoBehaviour, IWeapon
 
         camRotX = Mathf.Clamp(camRotX, -90, 90);
 
-        //Something else is needed to modify verticle recoil
-        //PlayerCamera.transform.localRotation = Quaternion.Euler(recoil.x, 0, 0);
+        Debug.LogFormat("Verticle Recoil For cam: {0}", camRotX);
+
+        PlayerCamera.transform.localRotation = Quaternion.Euler(recoil.x, 0, 0);
 
         PlayerCamera.transform.parent.Rotate(0, recoil.y, 0);
 
@@ -190,7 +164,6 @@ public class GunController : MonoBehaviour, IWeapon
         Destroy(flash, 0.1f);
     }
 
-    //This is also used to reset the weapons rotation
     void DetermineAim()
     {
         Vector3 target = normalLocalPosition;
