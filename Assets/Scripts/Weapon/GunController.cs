@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class GunController : MonoBehaviour
@@ -9,6 +8,12 @@ public class GunController : MonoBehaviour
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
     [SerializeField][Min(0)] float SpreadAmmount = 0;
     [SerializeField] ProjectileData BulletData;
+    [SerializeField] AudioSource gunAudio;
+    [SerializeField] AudioClip gunShootSound;
+    [Min(0f)] public float FireRate = 0.5f;
+    [Min(1)] public int MagSize = 30;
+    [Min(1)] public int MaxReserveAmmo = 120;
+    public ProjectileData BulletData;
 
     [Header("VFX")]
     [SerializeField] GameObject Muzzle;
@@ -35,10 +40,9 @@ public class GunController : MonoBehaviour
     //Shooting Variables
     ProjectileManager projectileManager;
     bool canShoot;
-    bool tryingShoot;
     int currentAmmo;
     int currentReserveAmmo;
-
+    float shootTimer;
 
 
     private void Start()
@@ -47,7 +51,7 @@ public class GunController : MonoBehaviour
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
-        tryingShoot = false;
+        shootTimer = 0f;
 
         normalLocalPosition = transform.localPosition;
         normalRotaion = transform.localRotation;
@@ -71,13 +75,13 @@ public class GunController : MonoBehaviour
 
         WeaponSway();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            tryingShoot = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            tryingShoot = false;
+        if (shootTimer > 0f)
+        { 
+        shootTimer -= Time.deltaTime;
+            if (shootTimer <= 0f && currentAmmo > 0)
+            {
+                canShoot = true;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
@@ -85,13 +89,13 @@ public class GunController : MonoBehaviour
             Reload();
         }
 
-        if (tryingShoot && canShoot)
+       if(Input.GetMouseButtonDown(0) && canShoot && currentAmmo >0)
         {
-            StartCoroutine(Shootgun());
+            Shootgun();
         }
     }
 
-    IEnumerator Shootgun()
+    void Shootgun()
     {
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
@@ -104,9 +108,15 @@ public class GunController : MonoBehaviour
 
         DetermainRecoil();
 
-        canShoot = false;
+        if (currentAmmo <=0)
+        {
+            return;
+        }
 
+        canShoot=false;
+        shootTimer = FireRate;
         currentAmmo--;
+        Debug.LogFormat("Shot Fired!: {0}, Reserve{1}", currentAmmo, currentReserveAmmo);
 
         yield return new WaitForSeconds(FireRate);
 
@@ -115,10 +125,14 @@ public class GunController : MonoBehaviour
             CurrentAmmoChanged(currentAmmo);
         }
 
-        if (currentAmmo > 0)
+        if(gunAudio !=null && gunShootSound != null)
         {
-            canShoot = true;
+            gunAudio.PlayOneShot(gunShootSound);
         }
+
+        MuzzleFlash();
+        DetermainRecoil();
+
     }
 
     void Reload()

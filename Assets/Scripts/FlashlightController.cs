@@ -4,6 +4,9 @@ using TMPro;
 public class FlashlightController : MonoBehaviour
 {
     [Header("Flashlight Settings")]
+    [SerializeField] AudioSource flashlightAudio;
+    [SerializeField] AudioClip soundOn;
+    [SerializeField] AudioClip soundOff;
     [SerializeField] Light flashlightLight;
     [Range(1f, 100f)][SerializeField] float maxBattery;
     [Range(1f, 100f)][SerializeField] float currentBattery;
@@ -75,6 +78,18 @@ public class FlashlightController : MonoBehaviour
         }
         isOn = !isOn;
         if (flashlightLight != null) flashlightLight.enabled = isOn;
+
+        if (flashlightAudio != null)
+        {
+            if (isOn)
+            {
+                flashlightAudio.PlayOneShot(soundOn);
+            }
+            else
+            {
+                flashlightAudio.PlayOneShot(soundOff);
+            }
+        }
     }
 
 
@@ -82,6 +97,8 @@ public class FlashlightController : MonoBehaviour
     {
         isOn = false;
         if (flashlightLight != null) flashlightLight.enabled = false; 
+        if (flashlightAudio != null && soundOff != null)
+            flashlightAudio.PlayOneShot(soundOff);
     }
 
     void UpdateBatteryUI()
