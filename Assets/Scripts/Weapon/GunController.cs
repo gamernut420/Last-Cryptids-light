@@ -10,11 +10,6 @@ public class GunController : MonoBehaviour
     [SerializeField][Min(0)] float SpreadAmmount = 0;
     [SerializeField] ProjectileData BulletData;
 
-    [Header("VFX")]
-    [SerializeField] GameObject Muzzle;
-    [SerializeField] GameObject[] Flashes;
-    [SerializeField] float SwayAmmount = 10;
-
     [Header("Aim")]
     [SerializeField] GameObject AimingObject;
     [SerializeField] float AimSmoothing = 10;
@@ -26,6 +21,15 @@ public class GunController : MonoBehaviour
     [SerializeField] Camera PlayerCamera;
     [SerializeField] float VerticleRecoil;
     [SerializeField] float HorizontalRecoil;
+
+    [Header("VFX")]
+    [SerializeField] GameObject Muzzle;
+    [SerializeField] GameObject[] Flashes;
+    [SerializeField] float SwayAmmount = 10;
+
+    [Header("Audio")]
+    [SerializeField] AudioSource gunAudio;
+    [SerializeField] AudioClip gunShootSound;
 
     //Event speakers
     public static System.Action<float> ShotFired;
@@ -95,7 +99,12 @@ public class GunController : MonoBehaviour
     {
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
-        if(ShotFired != null)
+        if (gunAudio != null && gunShootSound != null)
+        {
+            gunAudio.PlayOneShot(gunShootSound);
+        }
+
+        if (ShotFired != null)
         {
             ShotFired(SpreadAmmount);
         }
@@ -149,6 +158,19 @@ public class GunController : MonoBehaviour
         }
 
         canShoot = true;
+    }
+
+    bool RefillAmmo(int amount)
+    {
+        if(currentReserveAmmo >= MaxReserveAmmo)
+        {
+            return false;
+        }
+        else
+        {
+            currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
+            return true;
+        }
     }
 
     void DetermainRecoil()
