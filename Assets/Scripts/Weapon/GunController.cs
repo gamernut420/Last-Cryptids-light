@@ -1,19 +1,12 @@
 using UnityEngine;
 
-public class GunController : MonoBehaviour
+public class GunController : MonoBehaviour, IWeapon
 {
     [Header("Gun Settings")]
-    [SerializeField] AudioSource gunAudio;
-    [SerializeField] AudioClip gunShootSound;
     [Min(0f)] public float FireRate = 0.5f;
     [Min(1)] public int MagSize = 30;
     [Min(1)] public int MaxReserveAmmo = 120;
     public ProjectileData BulletData;
-
-    [Header("VFX")]
-    public GameObject Muzzle;
-    public GameObject[] Flashes;
-    public float SwayAmmount = 10;
 
     [Header("Aim")]
     public GameObject AimingObject;
@@ -23,9 +16,23 @@ public class GunController : MonoBehaviour
     Quaternion normalRotaion;
 
     [Header("Recoil")]
-    public Camera PlayerCamera;
-    public float VerticleRecoil;
-    public float HorizontalRecoil;
+    [SerializeField] Camera PlayerCamera;
+    [SerializeField] float VerticleRecoil;
+    [SerializeField] float HorizontalRecoil;
+
+    [Header("VFX")]
+    [SerializeField] GameObject Muzzle;
+    [SerializeField] GameObject[] Flashes;
+    [SerializeField] float SwayAmmount = 10;
+
+    [Header("Audio")]
+    [SerializeField] AudioSource gunAudio;
+    [SerializeField] AudioClip gunShootSound;
+
+    //Event speakers
+    public static System.Action<float> ShotFired;
+    public static System.Action<int> CurrentAmmoChanged;
+    public static System.Action<int> ReserveAmmoChanged;
 
     //Shooting Variables
     ProjectileManager projectileManager;
@@ -111,9 +118,14 @@ public class GunController : MonoBehaviour
 
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
-        if(gunAudio !=null && gunShootSound != null)
+        if (gunAudio != null && gunShootSound != null)
         {
             gunAudio.PlayOneShot(gunShootSound);
+        }
+
+        if (ShotFired != null)
+        {
+            ShotFired(currentAmmo);
         }
 
         MuzzleFlash();
@@ -175,5 +187,21 @@ public class GunController : MonoBehaviour
         Vector2 mouseAxis = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
 
         transform.localPosition += (Vector3)mouseAxis * SwayAmmount / 1000;
+    }
+
+    public bool WeaponRefillAmmo(int amount)
+    {
+        if (currentReserveAmmo >= MaxReserveAmmo)
+        {
+            return false;
+        }
+        else
+        {
+            currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
+
+            ReserveAmmoChanged(currentReserveAmmo);
+
+            return true;
+        }
     }
 }
