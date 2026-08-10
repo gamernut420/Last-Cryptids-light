@@ -120,7 +120,6 @@ public class playerController : MonoBehaviour, IPlayer
 
         if(wep != null)
         {
-            Debug.Log("refilling Weapon");
             return wep.WeaponRefillAmmo(amount);
         }
         else
