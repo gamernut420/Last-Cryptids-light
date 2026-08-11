@@ -4,8 +4,7 @@ public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] float InteractionRange = 5f;
     [SerializeField] float InteractionSize = 0.1f;
-    [SerializeField] LayerMask IngoreLayer = 0;
-    [SerializeField] LayerMask InteractionIndex = 0;
+    [SerializeField] LayerMask IngoreLayer = 8;
     [SerializeField] bool DebugInteractionTraces = false;
     [SerializeField] bool DebugInteractionLogs = false;
 
@@ -14,8 +13,6 @@ public class PlayerInteraction : MonoBehaviour
     GameObject player;
 
     Vector3 boxTraceLocation;
-
-    Collider[] boxHits = new Collider[4];
 
     IInteract interactable = null;
 
@@ -41,6 +38,7 @@ public class PlayerInteraction : MonoBehaviour
 
         RaycastHit lineHit;
 
+
         if(Physics.Raycast(startPoint, rayDirection, out lineHit, InteractionRange, ~IngoreLayer))
         {
             boxTraceLocation = lineHit.point;
@@ -49,7 +47,7 @@ public class PlayerInteraction : MonoBehaviour
 
             interactable = null;
 
-            foreach (Collider hit in Physics.OverlapBox(boxTraceLocation, boxSize, Quaternion.identity, InteractionIndex))
+            foreach (Collider hit in Physics.OverlapBox(boxTraceLocation, boxSize, Quaternion.identity))
             {
                 interactable = hit.GetComponent<IInteract>();
 
@@ -59,13 +57,17 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
 
-            if (interactable != null && UpdateScreenText != null)
+            if(UpdateScreenText != null)
             {
-                UpdateScreenText(interactable.ScreenMessage());
-            }
-            else
-            {
-                UpdateScreenText(null);
+                Debug.Log(interactable);
+                if (interactable != null)
+                {
+                    UpdateScreenText(interactable.ScreenMessage());
+                }
+                else
+                {
+                    UpdateScreenText(null);
+                }
             }
         }
 

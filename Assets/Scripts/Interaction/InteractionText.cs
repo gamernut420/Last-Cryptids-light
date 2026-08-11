@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class InteractionText : MonoBehaviour
 {
+    //This is used to append something like "Press E to" to "Pickup item"
+    [SerializeField] string PreText = "Press E to ";
+
     TextMeshProUGUI interationText;
 
     private void OnEnable()
@@ -12,7 +15,7 @@ public class InteractionText : MonoBehaviour
         PlayerInteraction.UpdateScreenText += UpdateText;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         PlayerInteraction.UpdateScreenText -= UpdateText;
     }
@@ -25,7 +28,7 @@ public class InteractionText : MonoBehaviour
         }
         else
         {
-            interationText.text = "E To " + input;
+            interationText.text = PreText + input;
         }
     }
 }

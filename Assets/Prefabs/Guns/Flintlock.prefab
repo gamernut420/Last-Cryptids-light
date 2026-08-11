@@ -172,27 +172,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a222e718ac50f4a8e2308a1511973f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
-  gunAudio: {fileID: 0}
-  gunShootSound: {fileID: 8300000, guid: 30114844b380b88418785402b1e582c0, type: 3}
   FireRate: 0.1
   MagSize: 30
   MaxReserveAmmo: 120
+  SpreadAmmount: 0
   BulletData:
     Damage: 3
     Speed: 30
     GravityScale: 1
     LifeTime: 3
+  AimingObject: {fileID: 4000946998428048186}
+  AimSmoothing: 10
+  PlayerCamera: {fileID: 0}
+  VerticleRecoil: 50
+  HorizontalRecoil: 10
   Muzzle: {fileID: 3412123592564154992}
   Flashes:
   - {fileID: 100004, guid: b7d03fb0762c75449af69d624547e358, type: 3}
   - {fileID: 100004, guid: 510e0a736e5e66243b242a076c59611a, type: 3}
   - {fileID: 100004, guid: ce94000a78298f447b82a7e25b9ab359, type: 3}
   SwayAmmount: 10
-  AimingObject: {fileID: 4000946998428048186}
-  AimSmoothing: 10
-  PlayerCamera: {fileID: 0}
-  VerticleRecoil: 50
-  HorizontalRecoil: 10
+  gunAudio: {fileID: 3138422616257942000}
+  gunShootSound: {fileID: 8300000, guid: 30114844b380b88418785402b1e582c0, type: 3}
 --- !u!82 &3138422616257942000
 AudioSource:
   m_ObjectHideFlags: 0

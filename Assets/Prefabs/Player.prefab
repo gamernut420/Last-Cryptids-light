@@ -164,6 +164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2483160741635494670}
+  - component: {fileID: 5315753236146374053}
   - component: {fileID: 944948598716401364}
   - component: {fileID: 4824105635487887755}
   - component: {fileID: 6404745909963969671}
@@ -193,6 +194,25 @@ Transform:
   - {fileID: 3210098913573034285}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5315753236146374053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9da78a7fe59a1e4bbc93608c98ae36e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  InteractionRange: 5
+  InteractionSize: 0.1
+  IngoreLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  DebugInteractionTraces: 0
+  DebugInteractionLogs: 0
 --- !u!114 &944948598716401364
 MonoBehaviour:
   m_ObjectHideFlags: 0
