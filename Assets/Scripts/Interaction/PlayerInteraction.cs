@@ -58,14 +58,11 @@ public class PlayerInteraction : MonoBehaviour
                     break;
                 }
             }
+            if (UpdateScreenText != null)
+            {
+                if (interactable != null) UpdateScreenText(interactable.ScreenMessage());
 
-            if (interactable != null && UpdateScreenText != null)
-            {
-                UpdateScreenText(interactable.ScreenMessage());
-            }
-            else
-            {
-                UpdateScreenText(null);
+                else UpdateScreenText(null);
             }
         }
 
