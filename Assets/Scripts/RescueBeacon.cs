@@ -10,6 +10,7 @@ public class RescueBeacon : MonoBehaviour
     [SerializeField] Transform playerCamera;
     [SerializeField] TextMeshProUGUI interactionPromptText;
     [SerializeField] string PromptMessage = "Message";
+    [SerializeField] ExtractionCountdown extractionCountdown;
 
     [Header("Wave Timer")]
     [SerializeField] float countDownDuration = 300f;
@@ -106,7 +107,8 @@ public class RescueBeacon : MonoBehaviour
             if (interactionPromptText != null)
                 interactionPromptText.text = "Beacon Repaired! Defend the Area!";
 
-            //TODO: Trigger extraction countdown timer and boost emery to attack more
+            // Trigger extraction countdown timer and boost emery to attack more
+            extractionCountdown.StartExtractionTimer();
         }
         else
         {
