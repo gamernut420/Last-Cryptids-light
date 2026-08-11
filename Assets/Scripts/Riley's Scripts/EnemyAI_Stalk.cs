@@ -9,6 +9,8 @@ public class EnemyAI : MonoBehaviour
     [Range(50f, 100f)][SerializeField] float detectionRange;
     [Range(20f, 40f)][SerializeField] float minStalkDistance;
     [Range(40f, 80f)][SerializeField] float maxStalkDistance;
+    [Range(1f, 10f)][SerializeField] float hearingSensitivity;
+    
     [SerializeField] float movementThreshold = 0.05f;
 
     [Header("Attack Settings")]
@@ -56,7 +58,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void HearNoise(Vector3 noiseLocation, float noiseRadius, NoiseManager.NoiseType type)
+    void HearNoise(Vector3 noiseLocation, float noiseRadius)
     {
         if (player == null) return;
 
@@ -69,8 +71,9 @@ public class EnemyAI : MonoBehaviour
         }
 
         float distanceToNoise = Vector3.Distance(transform.position, noiseLocation);
+        float actualHearingDistance = noiseRadius * hearingSensitivity;
 
-        if (distanceToNoise <= listenerRange && distanceToNoise <= noiseRadius)
+        if (distanceToNoise <= listenerRange && distanceToNoise <= actualHearingDistance)
         {
             investigatingSound = true;
             soundTargetPosition = noiseLocation;

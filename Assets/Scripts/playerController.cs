@@ -14,7 +14,9 @@ public class playerController : MonoBehaviour, IPlayer
     [Range(15, 45)][SerializeField] int gravity;
 
     [Header("Audio")]
-    public float audioRadius;
+    public float walkHearingRadius = 5f;
+    public float sprintHearingRadius = 10f;
+    public KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("UI & Game Over")]
     public GameObject gameOverPanel;
@@ -24,11 +26,15 @@ public class playerController : MonoBehaviour, IPlayer
 
     int jumpCount;
     int HPOrig;
+    float speedOrig;
+
+    private int sprintCount = 0;
 
     float shootTimer;
 
     Vector3 moveDir;
     Vector3 playerVel;
+
 
     bool isDead = false;
 
@@ -36,22 +42,20 @@ public class playerController : MonoBehaviour, IPlayer
     void Start()
     {
         HPOrig = Hp;
-
+        speedOrig = speed;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (isDead) return;
-
+ 
         movement();
         sprint();
-
-        if (Input.GetButtonDown("Sprint"))
+        if (sprintCount == 1)
         {
-            NoiseManager.ReportNoise(transform.position, audioRadius, NoiseManager.NoiseType.Footstep);
+            NoiseManager.MakeNoise(transform.position, sprintHearingRadius);
         }
-
         ///////   Testing Logic    ///////
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
@@ -66,6 +70,15 @@ public class playerController : MonoBehaviour, IPlayer
             playerVel.y = 0;
         }
 
+        if (speed > speedOrig)
+        {
+            sprintCount = 1;
+        }
+        else
+        {
+            sprintCount = 0;
+        }
+
         moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
         controller.Move(moveDir * speed * Time.deltaTime);
 
@@ -76,8 +89,14 @@ public class playerController : MonoBehaviour, IPlayer
 
     void sprint()
     {
-        if (Input.GetButtonDown("Sprint")) speed *= sprintMod;
-        else if (Input.GetButtonUp("Sprint")) speed /= sprintMod;
+        if (Input.GetButtonDown("Sprint"))
+        {
+            speed *= sprintMod;
+        }
+        else if (Input.GetButtonUp("Sprint"))
+        {
+            speed /= sprintMod;
+        }
     }
 
     void jump()

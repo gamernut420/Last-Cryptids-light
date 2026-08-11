@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7470153992109662563}
-  - component: {fileID: 3714372860038321598}
   - component: {fileID: 1096803020203183725}
   - component: {fileID: 8679048875965724716}
   - component: {fileID: 5421355557582252187}
   - component: {fileID: 1962249849740420420}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,36 +35,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3714372860038321598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3284924769525365948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370a1614f3b1ad346a8282d25f4fcb60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  HP: 10
-  listenerRange: 100
-  detectionRange: 100
-  minStalkDistance: 25
-  maxStalkDistance: 60
-  movementThreshold: 0.05
-  attackReach: 2
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  player: {fileID: 0}
-  flee: 0
-  stalk: 0
-  investigatingSound: 0
-  attack: 0
-  attackTimer: 0
-  afterAttack: 10
-  stun: 1
 --- !u!195 &1096803020203183725
 NavMeshAgent:
   m_ObjectHideFlags: 0
