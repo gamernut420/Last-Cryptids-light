@@ -84,9 +84,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
-        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
-        transform.LookAt(lookDirection);
-
         attackTimer += Time.deltaTime;
         afterAttack += Time.deltaTime;
         stun += Time.deltaTime;
@@ -114,6 +111,7 @@ public class EnemyAI : MonoBehaviour
         // Handle Attack State
         if (attack)
         {
+            TransformLookAtPlayer();
             Attack(distanceToPlayer);
             return;
         }
@@ -131,6 +129,10 @@ public class EnemyAI : MonoBehaviour
         if (distanceToPlayer < minStalkDistance || (afterAttack < 10f && distanceToPlayer <= maxStalkDistance))
         {
             investigatingSound = false; // Drop sound investigation to run away
+            if (afterAttack >= 10f)
+            {
+                TransformLookAtPlayer();
+            }
             if (agent.hasPath && !flee)
             {
                 FleeFromPlayer();
@@ -146,6 +148,7 @@ public class EnemyAI : MonoBehaviour
         if (distanceToPlayer <= detectionRange)
         {
             investigatingSound = false; // Drop sound investigation to stalk the player
+            TransformLookAtPlayer();
 
             if (!isPlayerMoving && distanceToPlayer <= detectionRange)
             {
@@ -187,6 +190,12 @@ public class EnemyAI : MonoBehaviour
         // Reset tracking states if nothing is happening out of range
         stalk = false;
         flee = false;
+    }
+
+    void TransformLookAtPlayer()
+    {
+        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
+        transform.LookAt(lookDirection);
     }
 
     bool CheckLineOfSight(float distanceToPlayer)
