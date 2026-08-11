@@ -35,7 +35,6 @@ Transform:
   m_Children:
   - {fileID: 726164981457830611}
   - {fileID: 6612042935204524149}
-  - {fileID: 1503244002842270240}
   m_Father: {fileID: 2483160741635494670}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7475888700791633446
@@ -235,7 +234,7 @@ MonoBehaviour:
   gravity: 35
   audioRadius: 0
   gameOverPanel: {fileID: 0}
-  ActiveWeapon: {fileID: 0}
+  ActiveWeapon: {fileID: 5803278072342866639}
 --- !u!114 &4824105635487887755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -648,93 +647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51ba97c9c6df8c94ba426b9676c7a455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
---- !u!1001 &1670194593114611614
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3210098913573034285}
-    m_Modifications:
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.000000029802322
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -9.992007e-16
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -2.6469772e-23
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 629081156142882564, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: m_Name
-      value: Flintlock
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: MagSize
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: FireRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: gunAudio
-      value: 
-      objectReference: {fileID: 4368583584827870830}
-    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: MaxReserveAmmo
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-      propertyPath: BulletData.GravityScale
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
---- !u!4 &1503244002842270240 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-  m_PrefabInstance: {fileID: 1670194593114611614}
-  m_PrefabAsset: {fileID: 0}
---- !u!82 &4368583584827870830 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 3138422616257942000, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
-  m_PrefabInstance: {fileID: 1670194593114611614}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6355585482164188619
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -800,6 +712,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8340237628701795387}
     - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+      propertyPath: PlayerCamera
+      value: 
+      objectReference: {fileID: 6895406975966574838}
+    - target: {fileID: 7964554609638841755, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
       propertyPath: MaxReserveAmmo
       value: 120
       objectReference: {fileID: 0}
@@ -812,6 +728,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+--- !u!1 &5803278072342866639 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 629081156142882564, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
+  m_PrefabInstance: {fileID: 6355585482164188619}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6612042935204524149 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 284044908585125310, guid: 5846e14b0eadb3e46ac96809cd058554, type: 3}
