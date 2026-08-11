@@ -14,12 +14,12 @@ public class Crosshair : MonoBehaviour
     private void OnEnable()
     {
         returnDelayTimer = ReturnDelay;
-        GunController.ShotFired += OnSHotFired;
+        GunController.SendReticleSpread += ReciveSpread;
     }
 
     private void OnDisable()
     {
-        GunController.ShotFired -= OnSHotFired;
+        GunController.SendReticleSpread -= ReciveSpread;
     }
 
     private void Update()
@@ -38,7 +38,7 @@ public class Crosshair : MonoBehaviour
         }
     }
 
-    void OnSHotFired(float spreadAmmount)
+    void ReciveSpread(float spreadAmmount)
     {
         returnDelayTimer = ReturnDelay;
 
