@@ -31,6 +31,7 @@ public class EnemyAI : MonoBehaviour
     public float stun;
     bool stopStun = false;
 
+
     void OnEnable()
     {
         NoiseManager.OnNoiseMade += HearNoise;
@@ -118,7 +119,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Trigger Attack Chance
-        if (attackTimer > 15f && distanceToPlayer <= detectionRange && Random.Range(0f, 10f) < 5f && hasLineOfSight)
+        if (attackTimer > 30f && distanceToPlayer <= detectionRange && Random.Range(0f, 10f) < 5f && hasLineOfSight)
         {
             attack = true;
             investigatingSound = false;
@@ -142,7 +143,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Default Stalk Behavior (High Priority over Sound)
-        if ((distanceToPlayer <= maxStalkDistance && distanceToPlayer >= minStalkDistance) || (distanceToPlayer > maxStalkDistance && flee))
+        if (distanceToPlayer <= detectionRange)
         {
             investigatingSound = false; // Drop sound investigation to stalk the player
 
@@ -154,17 +155,19 @@ public class EnemyAI : MonoBehaviour
 
             if (agent.isStopped) agent.isStopped = false;
 
-            if (distanceToPlayer <= detectionRange)
+            if (agent.hasPath && !stalk)
             {
-                if (agent.hasPath && !stalk)
-                {
-                    StalkPlayer();
-                }
-                else if (agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    StalkPlayer();
-                }
+                StalkPlayer();
             }
+            else if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                StalkPlayer();
+            }
+            if (distanceToPlayer > maxStalkDistance)
+            {
+                stalk = false;
+            }
+
             return;
         }
 
@@ -240,6 +243,7 @@ public class EnemyAI : MonoBehaviour
         if (distanceToPlayer > maxStalkDistance)
         {
             agent.SetDestination(player.position);
+            stalk = false;
             return;
         }
 
