@@ -47,14 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
-  interactRange: 1.4
+  interactRange: 3
   playerCamera: {fileID: 0}
   interactionPromptText: {fileID: 0}
   PromptMessage: Press E to repair
   countDownDuration: 300
-  requiredBatteries: 1
-  requiredRadioTubes: 1
-  requiredFuel: 1
   requiredParts:
   - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
     itemName: Battery
