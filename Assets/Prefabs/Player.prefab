@@ -236,9 +236,12 @@ MonoBehaviour:
   jumpSpeed: 9
   jumpMax: 2
   gravity: 35
+  walkHearingRadius: 10
+  sprintHearingRadius: 25
   walkHearingRadius: 5
   sprintHearingRadius: 10
   sprintKey: 304
+  audioRadius: 0
   gameOverPanel: {fileID: 0}
   ActiveWeapon: {fileID: 5803278072342866639}
 --- !u!114 &4824105635487887755
@@ -450,10 +453,6 @@ PrefabInstance:
       propertyPath: flashlightAudio
       value: 
       objectReference: {fileID: 26284211197979587}
-    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
-      propertyPath: enemyLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
