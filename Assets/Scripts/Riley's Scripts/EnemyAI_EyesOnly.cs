@@ -1,13 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
 public class EnemyAI_EyesOnly : MonoBehaviour
 {
     public Transform player;
-    [SerializeField] Renderer model;
     [SerializeField] LayerMask playerLayer;
-
 
     public float viewRadius = 10f;
     [Range(0f, 360f)] public float viewAngle = 90f;

@@ -5,10 +5,14 @@ using TMPro;
 public class gameManager : MonoBehaviour
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     public GameObject player;
     public static GameManager instance;
 =======
     public static gameManager instance;
+=======
+
+>>>>>>> parent of 8b07894 (Take damage in progress)
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -36,9 +40,7 @@ public class gameManager : MonoBehaviour
     private GameState currentState;
     private void Awake()
     {
-        instance = this;
         currentState = GameState.Playing;
-        player = GameObject.FindWithTag("Player");
     }
     public void SetGameState(GameState newState)
     {

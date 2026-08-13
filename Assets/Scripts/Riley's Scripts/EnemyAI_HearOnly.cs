@@ -1,13 +1,10 @@
 using UnityEngine.AI;
 using UnityEngine;
-using System.Collections;
+using Unity.VisualScripting;
 
-public class EnemyAI_HearOnly : MonoBehaviour, IDamage
+public class EnemyAI_HearOnly : MonoBehaviour
 {
-    [SerializeField] Renderer model;
-    [Header("Enemy Settings")]
-    [Range(1, 10)][SerializeField] int HP;
-    
+    [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
 
@@ -23,8 +20,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private enum State { Patrol, InvestigateSound }
     private State currentState = State.Patrol;
 
-    Color colorOrig;
-
     void OnEnable()
     {
         NoiseManager.OnNoiseMade += HearNoise;
@@ -38,7 +33,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        colorOrig = model.material.color;
         agent = GetComponent<NavMeshAgent>();
         MoveToRandomPoint();
     }
@@ -112,33 +106,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
     }
 
-    public void takeDamage(int amount)
-    {
-        HP -= amount;
-        agent.SetDestination(GameManager.instance.player.transform.position);
-        if (HP <= 0)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            StartCoroutine(flashRed());
-        }
-    }
-
-    IEnumerator flashRed()
-    {
-        model.material.color = Color.red;
-        yield return new WaitForSeconds(0.1f);
-        model.material.color = colorOrig;
-    }
-
     void OnDrawGizmosSelected()
     {
         if (currentState == State.InvestigateSound)
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, patrolRadius);
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(lastHeardPosition, 1f);
             Gizmos.DrawLine(transform.position, lastHeardPosition);

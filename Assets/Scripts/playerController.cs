@@ -111,16 +111,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
     // Implememtation of the IDamage intherface for raycast
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         if (isDead) return;
 
-        Hp -= (amount);
+        Hp -= Mathf.RoundToInt(amount);
         Hp = Mathf.Clamp(Hp, 0, HPOrig);
 
         Debug.Log("Player took damge. Current HP: " + Hp);
 
-        if (Hp <= 0) Die();
+        if (Hp == 0) Die();
+       
     }
 
     void Die()
