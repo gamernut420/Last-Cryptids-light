@@ -6,17 +6,23 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
+
+    // Menu references
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
-
     [SerializeField] GameObject hud;
 
-    [SerializeField] cameraController cameraScript;
 
+    // Player camera and gun
+    [SerializeField] cameraController cameraScript;
     [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GunController gunScript;
+
+
+    // death tracking for ai placed or spawned to trigger win
+    [SerializeField] int enemiesRemaining = 2;
 
     public Image playerHPBar;
     public GameObject player;
@@ -29,6 +35,8 @@ public class gameManager : MonoBehaviour
 
     int waveCounter;
 
+
+    // Sets up references
     void Awake()
     {
         instance = this;
@@ -48,6 +56,8 @@ public class gameManager : MonoBehaviour
         
     }
 
+
+    
     void Update()
     {
         if (Input.GetButtonDown("Cancel"))
@@ -65,6 +75,8 @@ public class gameManager : MonoBehaviour
         }
     }
 
+
+    // Pauses the game
     public void statePause()
     {
         isPaused = true;
@@ -76,6 +88,8 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
+
+    // Unpauses the game
     public void stateUnpause()
     {
         isPaused = false;
@@ -88,6 +102,9 @@ public class gameManager : MonoBehaviour
         menuActive.SetActive(false);
         menuActive = null;
     }
+
+
+    
     public void updateGameGoal(int amount)
     {
         // Update number of waver till you win
@@ -102,6 +119,8 @@ public class gameManager : MonoBehaviour
         }
     }
 
+
+    // completed beacon to win
     public void extractionWin()
     {
         statePause();
@@ -116,6 +135,23 @@ public class gameManager : MonoBehaviour
     {
         statePause();
         menuActive = menuLose;
+        hud.SetActive(false);
         menuActive.SetActive(true);
     }
+
+
+    // killed all ai to win
+    public void AllEnemysKilled()
+    {
+        enemiesRemaining--;
+
+        if (enemiesRemaining <= 0)
+        {
+            statePause();
+            menuActive = menuWin;
+            hud.SetActive(false);
+            menuActive.SetActive(true);
+        }
+    }
+
 }

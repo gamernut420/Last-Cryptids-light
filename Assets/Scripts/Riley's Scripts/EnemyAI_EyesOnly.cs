@@ -218,6 +218,10 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
         if (hpCurrent <= 0)
         {
             Destroy(gameObject);
+
+
+            // gameManager death tracking 
+            gameManager.instance.AllEnemysKilled();
         }
     }
 

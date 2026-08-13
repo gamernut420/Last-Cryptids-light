@@ -4,10 +4,14 @@ using TMPro;
 
 public class PlayerInventory : MonoBehaviour
 {
+
+    // Stores item amounts
     Dictionary<string, int> items = new Dictionary<string, int>();
 
     [SerializeField] TextMeshProUGUI inventoryText;
 
+
+    // Adds items
     public void AddItem(string itemName, int amount)
     {
         if (items.ContainsKey(itemName))
@@ -23,11 +27,16 @@ public class PlayerInventory : MonoBehaviour
         UpdateUI();
     }
 
+
+
+    // Checks for item
     public bool HasItem(string itemName)
     {
         return items.ContainsKey(itemName);
     }
 
+
+    // Gets item amount
     public int GetAmount(string itemName)
     {
         if (items.ContainsKey(itemName))
@@ -38,6 +47,8 @@ public class PlayerInventory : MonoBehaviour
         return 0;
     }
 
+
+    // Update inventory UI in GM
     void UpdateUI()
     {
         inventoryText.text = "Fuel: " + GetAmount("Fuel") + "\n";
