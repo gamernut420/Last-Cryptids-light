@@ -28,7 +28,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
     private NavMeshAgent agent;
     private float timeSinceLostPlayer;
     private float waitTimer;
-    private bool isWaiting;
+    public bool isWaiting;
     private bool isChasing;
 
     private enum State { Patrol, Chase }
@@ -60,6 +60,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
+
         switch (currentState)
         {
             case State.Patrol:
@@ -69,6 +70,14 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
                 ChaseLogic();
                 break;
         }
+    }
+
+    public void ApplyFlashlightStun(float duration)
+    {
+        isWaiting = true;
+        waitTimer = duration;
+        if (agent != null) agent.isStopped = true;
+        Debug.Log("Enemy is blinded by flashlight");
     }
 
     void PatrolLogic()
@@ -92,7 +101,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
             return;
         }
 
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        if (!agent.pathPending && agent.remainingDistance < 2f)
         {
             isWaiting = true;
             waitTimer = Random.Range(minWaitTime, maxWaitTime);
