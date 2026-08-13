@@ -10,7 +10,7 @@ public class EnemyAI : MonoBehaviour
     [Range(20f, 40f)][SerializeField] float minStalkDistance;
     [Range(40f, 80f)][SerializeField] float maxStalkDistance;
     [Range(1f, 10f)][SerializeField] float hearingSensitivity;
-    
+
     [SerializeField] float movementThreshold = 0.05f;
 
     [Header("Attack Settings")]
@@ -96,7 +96,10 @@ public class EnemyAI : MonoBehaviour
         bool hasLineOfSight = CheckLineOfSight(distanceToPlayer);
 
         if (flee && distanceToPlayer > maxStalkDistance)
+        {
             afterAttack = 10f;
+            flee = false;
+        }
 
         // Handle Stun (Highest Priority)
         if (stun < 1f)
@@ -298,9 +301,10 @@ public class EnemyAI : MonoBehaviour
     {
         HP -= amount;
         hit = true;
+        stun = 0f;
         if (HP <= 0)
         {
-            // Trigger Win/Death event
+            Destroy(gameObject);
         }
     }
 
