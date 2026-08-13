@@ -4,11 +4,6 @@ using TMPro;
 
 public class gameManager : MonoBehaviour
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public GameObject player;
-    public static GameManager instance;
-=======
     public static gameManager instance;
 
     [SerializeField] GameObject menuActive;
@@ -28,7 +23,7 @@ public class gameManager : MonoBehaviour
 
     void Awake()
     {
-        instance = this; 
+        instance = this;
         player = GameObject.FindWithTag("Player");
         timeScaleOrig = Time.timeScale;
     }
