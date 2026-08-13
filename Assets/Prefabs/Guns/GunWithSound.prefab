@@ -128,7 +128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d97cc860ac4ee0a4c8484e664bd5b12d, type: 3}
       propertyPath: m_Name
-      value: FlintlockUnity
+      value: GunWithSound
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -145,10 +145,10 @@ PrefabInstance:
       addedObject: {fileID: 3958903327746571775}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d97cc860ac4ee0a4c8484e664bd5b12d, type: 3}
       insertIndex: 2
-      addedObject: {fileID: 4829308495897686663}
+      addedObject: {fileID: 3516694585348161844}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d97cc860ac4ee0a4c8484e664bd5b12d, type: 3}
       insertIndex: 3
-      addedObject: {fileID: 3516694585348161844}
+      addedObject: {fileID: 4829308495897686663}
   m_SourcePrefab: {fileID: 100100000, guid: d97cc860ac4ee0a4c8484e664bd5b12d, type: 3}
 --- !u!1 &7153256604995238125 stripped
 GameObject:
@@ -188,19 +188,6 @@ MonoBehaviour:
   PlayerCamera: {fileID: 0}
   VerticleRecoil: 50
   HorizontalRecoil: 10
---- !u!114 &4829308495897686663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7153256604995238125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  DebugProjectiles: 1
 --- !u!82 &3516694585348161844
 AudioSource:
   m_ObjectHideFlags: 0
@@ -298,6 +285,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4829308495897686663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7153256604995238125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
+  DebugProjectiles: 1
 --- !u!4 &7498115521590944343 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d97cc860ac4ee0a4c8484e664bd5b12d, type: 3}

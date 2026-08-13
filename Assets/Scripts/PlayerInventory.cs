@@ -40,11 +40,8 @@ public class PlayerInventory : MonoBehaviour
 
     void UpdateUI()
     {
-        inventoryText.text = "";
-
-        foreach (KeyValuePair<string, int> item in items)
-        {
-            inventoryText.text += item.Key + ": " + item.Value + "\n";
-        }
+        inventoryText.text = "Fuel: " + GetAmount("Fuel") + "\n";
+        inventoryText.text += "Tubes: " + GetAmount("Radio Tube") + "\n";
+        inventoryText.text += "Batteries: " + GetAmount("Battery");
     }
 }

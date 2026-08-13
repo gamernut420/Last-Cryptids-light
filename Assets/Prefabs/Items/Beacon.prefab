@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6774183218358104665}
+  - component: {fileID: 6159327780116005454}
   - component: {fileID: 7081015731866389269}
   - component: {fileID: 6471054444810374049}
   - component: {fileID: 5021741516778485005}
@@ -35,6 +36,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6159327780116005454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933213447475855599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7467645584a1ac4f80817e6e6d0b169, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExtractionCountdown
+  timeRemaining: 300
+  timerText: {fileID: 0}
+  gameManager: {fileID: 0}
+  enemyDirector: {fileID: 0}
 --- !u!114 &7081015731866389269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,13 +64,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
-  interactRange: 1.4
-  playerCamera: {fileID: 0}
+  interactRange: 3
+  playerCamera: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
   interactionPromptText: {fileID: 0}
   PromptMessage: Press E to repair
-  requiredBatteries: 1
-  requiredRadioTubes: 1
-  requiredFuel: 1
+  countDownDuration: 300
+  requiredParts: []
 --- !u!33 &6471054444810374049
 MeshFilter:
   m_ObjectHideFlags: 0

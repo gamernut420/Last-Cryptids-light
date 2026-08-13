@@ -14,12 +14,6 @@ public class RescueBeacon : MonoBehaviour
     [Header("Wave Timer")]
     [SerializeField] float countDownDuration = 300f;
 
-
-    [Header("Required Parts")]
-    [Range(1, 10)][SerializeField] int requiredBatteries = 1;
-    [Range(1, 10)][SerializeField] int requiredRadioTubes = 1;
-    [Range(1, 10)][SerializeField] int requiredFuel = 1;
-
     [System.Serializable]
     public class RequiredItem
     {
@@ -31,7 +25,7 @@ public class RescueBeacon : MonoBehaviour
         public int requriedAmount = 1;
 
     }
-    [Header("Rewuired Parts List")]
+    [Header("Required Parts List")]
     public List<RequiredItem> requiredParts = new List<RequiredItem>();
     private void OnValidate()
     {
@@ -107,6 +101,7 @@ public class RescueBeacon : MonoBehaviour
                 interactionPromptText.text = "Beacon Repaired! Defend the Area!";
 
             //TODO: Trigger extraction countdown timer and boost emery to attack more
+            FindAnyObjectByType<ExtractionCountdown>().StartExtractionTimer();
         }
         else
         {

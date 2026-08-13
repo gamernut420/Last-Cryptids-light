@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 
-public class ScavengeItem : MonoBehaviour
+public class ScavengeItem : MonoBehaviour , IInteract
 {
     [Header("Item Settings")]
     [SerializeField] string itemName = "Item Name";
@@ -13,20 +13,12 @@ public class ScavengeItem : MonoBehaviour
     [SerializeField] Transform playerCamera;
     [SerializeField] TextMeshProUGUI interactionPromptText;
     [SerializeField] string PromptMessage = "Message";
-
-    // TODO: Added player inventory Reference 
-
     [SerializeField] PlayerInventory playerInventory;
 
 
     void Start()
     {
-        // TODO: Added player inventory
-
-        if (playerInventory == null)
-        {
-            playerInventory = FindAnyObjectByType<PlayerInventory>();
-        }
+        if (playerInventory == null) playerInventory = FindAnyObjectByType<PlayerInventory>();
 
         // Ensure promt id hidden at start
         if (interactionPromptText != null) interactionPromptText.gameObject.SetActive(false);
@@ -67,12 +59,7 @@ public class ScavengeItem : MonoBehaviour
     void CollectItem()
     {
         Debug.Log("Collected: " + itemName);
-        // TODO: Add to player's inventory/tracker script when we build it 
-
-        if (playerInventory != null)
-        {
-            playerInventory.AddItem(itemName, quantity);
-        }
+        if (playerInventory != null) playerInventory.AddItem(itemName, quantity);
 
 
         // Hide UI after collected
@@ -80,5 +67,15 @@ public class ScavengeItem : MonoBehaviour
 
         // Destroy the world object once picked up
         Destroy(gameObject);
+    }
+
+    public bool Interact(GameObject interactor)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public string ScreenMessage()
+    {
+        return PromptMessage;
     }
 }

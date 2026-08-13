@@ -22,6 +22,8 @@ public class GunController : MonoBehaviour, IWeapon
     [SerializeField] float VerticleRecoil;
     [SerializeField] float HorizontalRecoil;
 
+    ICamera camera;
+
     [Header("VFX")]
     [SerializeField] GameObject Muzzle;
     [SerializeField] GameObject[] Flashes;
@@ -32,7 +34,7 @@ public class GunController : MonoBehaviour, IWeapon
     [SerializeField] AudioClip gunShootSound;
 
     //Event speakers
-    public static System.Action<float> ShotFired;
+    public static System.Action<float> SendReticleSpread;
     public static System.Action<int> CurrentAmmoChanged;
     public static System.Action<int> ReserveAmmoChanged;
 
@@ -52,6 +54,8 @@ public class GunController : MonoBehaviour, IWeapon
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
         tryingShoot = false;
+
+        camera = PlayerCamera.GetComponent<ICamera>();
 
         normalLocalPosition = transform.localPosition;
         normalRotaion = transform.localRotation;
@@ -104,9 +108,9 @@ public class GunController : MonoBehaviour, IWeapon
             gunAudio.PlayOneShot(gunShootSound);
         }
 
-        if (ShotFired != null)
+        if (SendReticleSpread != null)
         {
-            ShotFired(SpreadAmmount);
+            SendReticleSpread(SpreadAmmount);
         }
 
         MuzzleFlash();
@@ -117,12 +121,12 @@ public class GunController : MonoBehaviour, IWeapon
 
         currentAmmo--;
 
-        yield return new WaitForSeconds(FireRate);
-
         if (CurrentAmmoChanged != null)
         {
             CurrentAmmoChanged(currentAmmo);
         }
+
+        yield return new WaitForSeconds(FireRate);
 
         if (currentAmmo > 0)
         {
@@ -152,7 +156,7 @@ public class GunController : MonoBehaviour, IWeapon
             CurrentAmmoChanged(currentAmmo);
         }
 
-        if(ReserveAmmoChanged != null)
+        if (ReserveAmmoChanged != null)
         {
             ReserveAmmoChanged(currentReserveAmmo);
         }
@@ -164,23 +168,8 @@ public class GunController : MonoBehaviour, IWeapon
     {
         float randomHorizontalRecoil = Random.Range(-HorizontalRecoil, HorizontalRecoil);
 
-        Vector2 recoil = new Vector2(VerticleRecoil, randomHorizontalRecoil);
-
-        transform.localPosition -= Vector3.forward * 0.1f;
-
-        transform.localRotation = Quaternion.Euler(-recoil.x, recoil.y, 0);
-
-        float camRotX = PlayerCamera.transform.localRotation.x;
-
-        camRotX += recoil.x;
-
-        camRotX = Mathf.Clamp(camRotX, -90, 90);
-
-        //Something else is needed to modify verticle recoil
-        //PlayerCamera.transform.localRotation = Quaternion.Euler(recoil.x, 0, 0);
-
-        PlayerCamera.transform.parent.Rotate(0, recoil.y, 0);
-
+        camera.ModifyCameraPitch(VerticleRecoil);
+        camera.ModifyCameraYaw(randomHorizontalRecoil);
     }
 
     void MuzzleFlash()
@@ -226,7 +215,10 @@ public class GunController : MonoBehaviour, IWeapon
         {
             currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
 
-            ReserveAmmoChanged(currentReserveAmmo);
+            if(ReserveAmmoChanged != null)
+            {
+                ReserveAmmoChanged(currentReserveAmmo);
+            }
 
             return true;
         }

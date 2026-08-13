@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7470153992109662563}
-  - component: {fileID: 3714372860038321598}
+  - component: {fileID: 7309668663033335472}
   - component: {fileID: 1096803020203183725}
   - component: {fileID: 8679048875965724716}
   - component: {fileID: 5421355557582252187}
   - component: {fileID: 1962249849740420420}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3714372860038321598
+--- !u!114 &7309668663033335472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,27 +45,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 3284924769525365948}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 370a1614f3b1ad346a8282d25f4fcb60, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a1b7305a1a8f994f899d8636a24d5b5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  HP: 10
-  listenerRange: 100
-  detectionRange: 100
-  minStalkDistance: 25
-  maxStalkDistance: 60
-  movementThreshold: 0.05
-  attackReach: 2
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_EyesOnly
+  player: {fileID: 0}
   playerLayer:
     serializedVersion: 2
-    m_Bits: 0
-  player: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  footstepSpeed: 0.5
-  flee: 0
-  stalk: 0
-  attack: 0
-  attackTimer: 0
-  afterAttack: 10
-  stun: 1
+    m_Bits: 8
+  viewRadius: 60
+  viewAngle: 104
+  timeToLoseAggro: 2
+  patrolSpeed: 4
+  chaseSpeed: 8
+  attackReach: 3
+  patrolRadius: 100
+  minWaitTime: 1
+  maxWaitTime: 3
 --- !u!195 &1096803020203183725
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -80,7 +75,7 @@ NavMeshAgent:
   m_Acceleration: 120
   avoidancePriority: 50
   m_AngularSpeed: 200
-  m_StoppingDistance: 0
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
