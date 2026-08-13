@@ -101,6 +101,7 @@ public class RescueBeacon : MonoBehaviour
                 interactionPromptText.text = "Beacon Repaired! Defend the Area!";
 
             //TODO: Trigger extraction countdown timer and boost emery to attack more
+            FindAnyObjectByType<ExtractionCountdown>().StartExtractionTimer();
         }
         else
         {

@@ -1,9 +1,11 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class playerController : MonoBehaviour, IPlayer
+public class playerController : MonoBehaviour, IPlayer, IDamage
 {
     [SerializeField] CharacterController controller;
+    [SerializeField] LayerMask ignoreLayer;
     [Header("Player Stats:")]
     [Range(1, 10)][SerializeField] int Hp;
     [Range(1f, 10f)][SerializeField] float speed;
@@ -152,5 +154,27 @@ public class playerController : MonoBehaviour, IPlayer
         {
             return false;
         }
+    }
+
+    public void takeDamage(int amount)
+    {
+        Hp -= amount;
+        updatePlayerUI();
+        StartCoroutine(flashDamage());
+        if (Hp <= 0)
+        {
+            // you i'm dead!!!
+            gameManager.instance.youLose();
+        }
+    }
+    IEnumerator flashDamage()
+    {
+        gameManager.instance.damageFlashPanel.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gameManager.instance.damageFlashPanel.SetActive(false);
+    }
+    public void updatePlayerUI()
+    {
+
     }
 }

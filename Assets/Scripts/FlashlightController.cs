@@ -30,7 +30,7 @@ public class FlashlightController : MonoBehaviour
 
         if(batteryText == null)
         {
-            batteryText = GameObject.Find("BatteryText").GetComponent<TextMeshProUGUI>();
+            batteryText = GameObject.Find("BatteryData").GetComponent<TextMeshProUGUI>();
         }
 
     }
@@ -106,7 +106,7 @@ public class FlashlightController : MonoBehaviour
         if(batteryText != null)
         {
             // Displays rounded battery percentage on screen
-           batteryText.text = "Battery: " + Mathf.Round(currentBattery) + "%";
+           batteryText.text = Mathf.Round(currentBattery) + "%";
         }
     }
 

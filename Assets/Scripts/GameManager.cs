@@ -1,19 +1,38 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
-
-public class GameManager : MonoBehaviour
+public class gameManager : MonoBehaviour
 {
+<<<<<<< HEAD
     public GameObject player;
     public static GameManager instance;
+=======
+    public static gameManager instance;
 
-    public enum GameState
+    [SerializeField] GameObject menuActive;
+    [SerializeField] GameObject menuPause;
+    [SerializeField] GameObject menuLose;
+
+    [SerializeField] Image playerHPBar;
+    public GameObject player;
+    public playerController playerScript;
+    public GameObject damageFlashPanel;
+
+>>>>>>> 483c77463df4decf38286182c7090723f5577009
+
+    float timeScaleOrig;
+    public bool isPaused;
+
+    int waveCounter;
+
+    void Awake()
     {
-        Playing,
-        Paused,
-        GameOver,
-        Won
+        instance = this; 
+        player = GameObject.FindWithTag("Player");
+        timeScaleOrig = Time.timeScale;
     }
+<<<<<<< HEAD
     private GameState currentState;
     private void Awake()
     {
@@ -24,30 +43,52 @@ public class GameManager : MonoBehaviour
     public void SetGameState(GameState newState)
     {
         currentState = newState;
+=======
+>>>>>>> 483c77463df4decf38286182c7090723f5577009
 
-        switch (currentState)
+    void Update()
+    {
+        if (Input.GetButtonDown("Cancel"))
         {
-            case GameState.Playing:
-                Time.timeScale = 1f;
-                break;
-
-            case GameState.Paused:
-                Time.timeScale = 0f;
-                break;
-
-            case GameState.GameOver:
-                Time.timeScale = 0f;
-                break;
-
-            case GameState.Won:
-                Time.timeScale = 0f;
-                break;
+            if (menuActive == null)
+            {
+                statePause();
+                menuActive = menuPause;
+                menuActive.SetActive(true);
+            }
+            else if (menuActive == menuPause)
+            {
+                stateUnpause();
+            }
         }
     }
-    public void RestartScene()
+
+    public void statePause()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        isPaused = true;
+        Time.timeScale = 0;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void stateUnpause()
+    {
+        isPaused = false;
+        Time.timeScale = 1;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        menuActive.SetActive(false);
+        menuActive = null;
+    }
+    public void updateGameGoal(int amount)
+    {
+        // Update number of waver till you win
+
+    }
+    public void youLose()
+    {
+        statePause();
+        menuActive = menuLose;
+        menuActive.SetActive(true);
     }
 }
-    
