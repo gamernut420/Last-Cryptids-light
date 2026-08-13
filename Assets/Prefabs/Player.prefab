@@ -165,7 +165,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2483160741635494670}
   - component: {fileID: 5315753236146374053}
+  - component: {fileID: 2823637973319857592}
   - component: {fileID: 944948598716401364}
+  - component: {fileID: 7412284334662018484}
   - component: {fileID: 4824105635487887755}
   - component: {fileID: 6404745909963969671}
   - component: {fileID: 8658993058510956839}
@@ -214,6 +216,25 @@ MonoBehaviour:
     m_Bits: 8
   DebugInteractionTraces: 0
   DebugInteractionLogs: 0
+--- !u!114 &2823637973319857592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b8b79d7b59426a4ebd648d1dd551e7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FearSystem
+  maxFear: 100
+  currentFear: 0
+  fearAccumulationRate: 0.6
+  calmRate: 0.8
+  fearText: {fileID: 0}
+  flashlightController: {fileID: 8065954428658049472}
+  isInsane: 0
 --- !u!114 &944948598716401364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,14 +249,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
   Hp: 10
-  speed: 2.23
+  speed: 5
   sprintMod: 3.16
   jumpSpeed: 9
   jumpMax: 2
   gravity: 35
-  audioRadius: 0
+  walkHearingRadius: 10
+  sprintHearingRadius: 25
+  sprintKey: 304
   gameOverPanel: {fileID: 0}
   ActiveWeapon: {fileID: 5803278072342866639}
+--- !u!114 &7412284334662018484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b66b14de1484684dae68a9e46579336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  inventoryText: {fileID: 0}
 --- !u!114 &4824105635487887755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,12 +475,20 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 7abccce1359ba0d4a8421bcc212783c5, type: 3}
     - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
       propertyPath: drainRate
-      value: 1.05
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
+      propertyPath: raycastRange
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
       propertyPath: flashlightAudio
       value: 
       objectReference: {fileID: 26284211197979587}
+    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-
+    public GameObject player;
+    public static GameManager instance;
 
     public enum GameState
     {
@@ -16,7 +17,9 @@ public class GameManager : MonoBehaviour
     private GameState currentState;
     private void Awake()
     {
+        instance = this;
         currentState = GameState.Playing;
+        player = GameObject.FindWithTag("Player");
     }
     public void SetGameState(GameState newState)
     {

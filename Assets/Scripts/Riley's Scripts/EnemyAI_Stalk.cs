@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamage
 {
+    [SerializeField] Renderer model;
     [Range(10, 50)][SerializeField] int HP;
     [Range(100f, 300f)][SerializeField] float listenerRange;
     [Range(50f, 100f)][SerializeField] float detectionRange;
@@ -15,12 +17,14 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Attack Settings")]
     [SerializeField] float attackReach = 2f;
+    [SerializeField] int attackDamage = 3;
     [SerializeField] LayerMask playerLayer;
 
     public Transform player;
     NavMeshAgent agent;
     Rigidbody playerRb;
     Vector3 lastPlayerPosition;
+    Color colorOrig;
 
     public bool flee = false, stalk = false;
     public bool investigatingSound = false;
@@ -46,6 +50,7 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
+        colorOrig = model.material.color;
         agent = GetComponent<NavMeshAgent>();
         if (player == null)
         {
@@ -225,7 +230,14 @@ public class EnemyAI : MonoBehaviour
         {
             if (hitInfo.transform == player)
             {
-                Debug.Log("Player Hit!");
+                Debug.Log(hitInfo.collider.name);
+
+                IDamage playerDamage = hitInfo.collider.GetComponent<IDamage>();
+                if (playerDamage != null)
+                {
+                    playerDamage.takeDamage(attackDamage);
+                }
+
                 afterAttack = 0f;
                 attackTimer = 0f;
                 attack = false;
@@ -297,11 +309,39 @@ public class EnemyAI : MonoBehaviour
     public void takeDamage(int amount)
     {
         HP -= amount;
-        hit = true;
+        agent.SetDestination(lastPlayerPosition);
         if (HP <= 0)
         {
-            // Trigger Win/Death event
+            Destroy(gameObject);
+            return;
         }
+
+        StartCoroutine(flashRed());
+
+        if (player != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // If the enemy can't see who shot it, investigate the player's current location
+            if (!CheckLineOfSight(distanceToPlayer))
+            {
+                stalk = false;
+                flee = false;
+                attack = false;
+
+                investigatingSound = true;
+                soundTargetPosition = player.position;
+                agent.isStopped = false;
+                agent.SetDestination(soundTargetPosition);
+            }
+        }
+    }
+
+    IEnumerator flashRed()
+    {
+        model.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        model.material.color = colorOrig;
     }
 
     private void OnDrawGizmosSelected()
