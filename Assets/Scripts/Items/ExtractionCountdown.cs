@@ -4,11 +4,13 @@ using TMPro;
 public class ExtractionCountdown : MonoBehaviour
 {
     [Header("Timer Settings")]
-    [SerializeField] float timeRemaining = 120f;
+    [SerializeField] float timeRemaining = 10f;
     private bool timerIsRunning = false;
 
     [Header("UI References")]
     [SerializeField] TextMeshProUGUI timerText;
+
+
 
     void Update()
     {
@@ -17,12 +19,18 @@ public class ExtractionCountdown : MonoBehaviour
             if (timeRemaining > 0)
             {
                 timeRemaining -= Time.deltaTime;
-                UpdateTimerDisplay(timeRemaining);
-            }
-            else
-            {
-                timeRemaining = 0;
-                timerIsRunning = false;
+
+                if (timeRemaining <= 0)
+                {
+                    timeRemaining = 0;
+                    timerIsRunning = false;
+                    UpdateTimerDisplay(timeRemaining);
+                    gameManager.instance.extractionWin();
+                }
+                else
+                {
+                    UpdateTimerDisplay(timeRemaining);
+                }
             }
         }
     }

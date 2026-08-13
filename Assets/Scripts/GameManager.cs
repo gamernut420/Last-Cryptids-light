@@ -15,6 +15,9 @@ public class gameManager : MonoBehaviour
 
     [SerializeField] cameraController cameraScript;
 
+    [SerializeField] GameObject menuExtractionWin;
+    [SerializeField] GunController gunScript;
+
     public Image playerHPBar;
     public GameObject player;
     public playerController playerScript;
@@ -36,6 +39,7 @@ public class gameManager : MonoBehaviour
         {
             playerScript = player.GetComponent<playerController>();
             cameraScript = player.GetComponentInChildren<cameraController>();
+            gunScript = player.GetComponentInChildren<GunController>();
         }
         else
         {
@@ -67,6 +71,7 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 0;
         cameraScript.enabled = false;
         hud.SetActive(false);
+        gunScript.enabled = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -77,6 +82,7 @@ public class gameManager : MonoBehaviour
         Time.timeScale = timeScaleOrig;
         cameraScript.enabled = true;
         hud.SetActive(true);
+        gunScript.enabled = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
@@ -95,6 +101,17 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
     }
+
+    public void extractionWin()
+    {
+        statePause();
+        hud.SetActive(false);
+        gunScript.enabled = false;
+        menuActive = menuExtractionWin;
+        menuActive.SetActive(true);
+    }
+
+
     public void youLose()
     {
         statePause();
