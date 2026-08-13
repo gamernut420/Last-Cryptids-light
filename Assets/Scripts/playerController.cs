@@ -12,7 +12,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Range(2f, 5f)][SerializeField] float sprintMod;
     [Range(8, 15)][SerializeField] int jumpSpeed;
     [Range(1, 3)][SerializeField] int jumpMax;
-
     [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
 
@@ -52,6 +51,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Update is called once per frame
     void Update()
     {
+
+        if (gameManager.instance.isPaused) return;
+
         if (isDead) return;
  
         movement();
@@ -64,9 +66,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
         if (Input.GetKeyDown(KeyCode.K)) takeDamage(Hp);
-
-        // Testing timer: 'T' to start timer
-        if(Input.GetKeyDown(KeyCode.T)) FindAnyObjectByType<ExtractionCountdown>().StartExtractionTimer();
     }
 
     void movement()
@@ -128,12 +127,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     }
 
-    // Restart game
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
     public bool PlayerRefillAmmo(int amount)
     {
         IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
@@ -147,6 +140,18 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
     }
+
+    public void takeDamage(int amount)
+    {
+        Hp -= amount;
+        updatePlayerUI();
+        StartCoroutine(flashDamage());
+        if (Hp <= 0)
+        {
+            // you i'm dead!!!
+            gameManager.instance.youLose();
+        }
+    }
     IEnumerator flashDamage()
     {
         gameManager.instance.damageFlashPanel.SetActive(true);
@@ -155,21 +160,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
     public void updatePlayerUI()
     {
-        if (gameManager.instance?.playerHPBar != null)
-        {
-            gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
-        }
-    }
-
-    public void takeDamage(int amount)
-    {
-        Hp -= amount;
-        if (isDead) return;
-        updatePlayerUI();
-        StartCoroutine(flashDamage());
-
-        Debug.Log("Player took damge. Current HP: " + Hp);
-
-        if (Hp <= 0) gameManager.instance.youLose();
+        gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
     }
 }
