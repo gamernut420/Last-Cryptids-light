@@ -48,12 +48,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
   itemName: Radio Tube
-  quantity: 1
+  quantity: 3
   interactRange: 3
-  playerCamera: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  interactionPromptText: {fileID: 5436986841776714965, guid: 0c7391f19202e74458d66a86f4801ba4, type: 3}
+  minimumLookAlignment: 0.8
+  playerCamera: {fileID: 0}
+  interactionPromptText: {fileID: 0}
   PromptMessage: Press E
-  playerInventory: {fileID: 4824105635487887755, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+  playerInventory: {fileID: 0}
 --- !u!33 &4263289482073940216
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -87,7 +88,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 492ec3608e3886c448e7dd5f2f3baa84, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -133,4 +134,4 @@ CapsuleCollider:
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0, y: 0, z: 0}
