@@ -1,5 +1,3 @@
-using System.ComponentModel.Design;
-using Unity.VisualScripting;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Rendering;
