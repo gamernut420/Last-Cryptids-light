@@ -12,6 +12,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Range(2f, 5f)][SerializeField] float sprintMod;
     [Range(8, 15)][SerializeField] int jumpSpeed;
     [Range(1, 3)][SerializeField] int jumpMax;
+
     [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
 
@@ -45,6 +46,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         HPOrig = Hp;
         speedOrig = speed;
+        updatePlayerUI();
     }
 
     // Update is called once per frame
@@ -61,7 +63,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         ///////   Testing Logic    ///////
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
-        if (Input.GetKeyDown(KeyCode.K)) TakeDamage(Hp);
+        if (Input.GetKeyDown(KeyCode.K)) takeDamage(Hp);
+
+        // Testing timer: 'T' to start timer
+        if(Input.GetKeyDown(KeyCode.T)) FindAnyObjectByType<ExtractionCountdown>().StartExtractionTimer();
     }
 
     void movement()
@@ -110,39 +115,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-    // Implememtation of the IDamage intherface for raycast
-    public void TakeDamage(float amount)
-    {
-        if (isDead) return;
-
-        Hp -= Mathf.RoundToInt(amount);
-        Hp = Mathf.Clamp(Hp, 0, HPOrig);
-
-        Debug.Log("Player took damge. Current HP: " + Hp);
-
-        if (Hp == 0) Die();
-       
-    }
-
-    void Die()
-    {
-        isDead = true;
-        Debug.Log("Player has died.");
-        // Add game over UI or scene reload logic here
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
-
-        // Unlock and show the mouse
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-    }
-
-    // Restart game
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
     public bool PlayerRefillAmmo(int amount)
     {
         IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
@@ -156,18 +128,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
     }
-
-    public void takeDamage(int amount)
-    {
-        Hp -= amount;
-        updatePlayerUI();
-        StartCoroutine(flashDamage());
-        if (Hp <= 0)
-        {
-            // you i'm dead!!!
-            gameManager.instance.youLose();
-        }
-    }
     IEnumerator flashDamage()
     {
         gameManager.instance.damageFlashPanel.SetActive(true);
@@ -176,6 +136,18 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
     public void updatePlayerUI()
     {
+        gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
+    }
 
+    public void takeDamage(int amount)
+    {
+        Hp -= amount;
+        if (isDead) return;
+        updatePlayerUI();
+        StartCoroutine(flashDamage());
+
+        Debug.Log("Player took damge. Current HP: " + Hp);
+
+        if (Hp <= 0) gameManager.instance.youLose();
     }
 }

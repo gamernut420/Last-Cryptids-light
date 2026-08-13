@@ -8,9 +8,10 @@ public class gameManager : MonoBehaviour
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
+    [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
 
-    [SerializeField] Image playerHPBar;
+    public Image playerHPBar;
     public GameObject player;
     public playerController playerScript;
     public GameObject damageFlashPanel;
@@ -25,6 +26,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this; 
         player = GameObject.FindWithTag("Player");
+        playerScript = player.GetComponent<playerController>();
         timeScaleOrig = Time.timeScale;
     }
 
@@ -56,7 +58,7 @@ public class gameManager : MonoBehaviour
     public void stateUnpause()
     {
         isPaused = false;
-        Time.timeScale = 1;
+        Time.timeScale = timeScaleOrig;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
@@ -65,7 +67,15 @@ public class gameManager : MonoBehaviour
     public void updateGameGoal(int amount)
     {
         // Update number of waver till you win
+        waveCounter += amount;
 
+        if (waveCounter <= 0)
+        {
+            // You Win!!
+            statePause();
+            menuActive = menuWin;
+            menuActive.SetActive(true);
+        }
     }
     public void youLose()
     {

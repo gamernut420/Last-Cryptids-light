@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6774183218358104665}
+  - component: {fileID: 6159327780116005454}
   - component: {fileID: 7081015731866389269}
   - component: {fileID: 6471054444810374049}
   - component: {fileID: 5021741516778485005}
@@ -35,6 +36,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6159327780116005454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933213447475855599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7467645584a1ac4f80817e6e6d0b169, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExtractionCountdown
+  timeRemaining: 300
+  timerText: {fileID: 0}
+  gameManager: {fileID: 0}
+  enemyDirector: {fileID: 0}
 --- !u!114 &7081015731866389269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,19 +66,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
   interactRange: 3
   playerCamera: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  interactionPromptText: {fileID: 5436986841776714965, guid: 0c7391f19202e74458d66a86f4801ba4, type: 3}
+  interactionPromptText: {fileID: 0}
   PromptMessage: Press E to repair
   countDownDuration: 300
-  requiredParts:
-  - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
-    itemName: Battery
-    requriedAmount: 1
-  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
-    itemName: Fuel
-    requriedAmount: 1
-  - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
-    itemName: Radio Tube
-    requriedAmount: 1
+  requiredParts: []
 --- !u!33 &6471054444810374049
 MeshFilter:
   m_ObjectHideFlags: 0
