@@ -11,6 +11,10 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
 
+    [SerializeField] GameObject hud;
+
+    [SerializeField] cameraController cameraScript;
+
     public Image playerHPBar;
     public GameObject player;
     public playerController playerScript;
@@ -31,6 +35,7 @@ public class gameManager : MonoBehaviour
         if (player != null)
         {
             playerScript = player.GetComponent<playerController>();
+            cameraScript = player.GetComponentInChildren<cameraController>();
         }
         else
         {
@@ -60,6 +65,8 @@ public class gameManager : MonoBehaviour
     {
         isPaused = true;
         Time.timeScale = 0;
+        cameraScript.enabled = false;
+        hud.SetActive(false);
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -68,6 +75,8 @@ public class gameManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = timeScaleOrig;
+        cameraScript.enabled = true;
+        hud.SetActive(true);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
