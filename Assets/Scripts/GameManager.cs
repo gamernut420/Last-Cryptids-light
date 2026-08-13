@@ -10,9 +10,6 @@ public class gameManager : MonoBehaviour
     public static GameManager instance;
 =======
     public static gameManager instance;
-=======
-
->>>>>>> parent of 8b07894 (Take damage in progress)
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -23,7 +20,6 @@ public class gameManager : MonoBehaviour
     public playerController playerScript;
     public GameObject damageFlashPanel;
 
->>>>>>> 483c77463df4decf38286182c7090723f5577009
 
     float timeScaleOrig;
     public bool isPaused;
@@ -36,17 +32,6 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         timeScaleOrig = Time.timeScale;
     }
-<<<<<<< HEAD
-    private GameState currentState;
-    private void Awake()
-    {
-        currentState = GameState.Playing;
-    }
-    public void SetGameState(GameState newState)
-    {
-        currentState = newState;
-=======
->>>>>>> 483c77463df4decf38286182c7090723f5577009
 
     void Update()
     {
