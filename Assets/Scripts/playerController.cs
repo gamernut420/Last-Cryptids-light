@@ -115,6 +115,39 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
+    // Implememtation of the IDamage intherface for raycast
+    public void TakeDamage(int amount)
+    {
+        if (isDead) return;
+
+        Hp -= amount;
+        Hp = Mathf.Clamp(Hp, 0, HPOrig);
+
+        Debug.Log("Player took damge. Current HP: " + Hp);
+
+        if (Hp == 0) Die();
+       
+    }
+
+    void Die()
+    {
+        isDead = true;
+        Debug.Log("Player has died.");
+        // Add game over UI or scene reload logic here
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
+        // Unlock and show the mouse
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+    }
+
+    // Restart game
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public bool PlayerRefillAmmo(int amount)
     {
         IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
