@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using JetBrains.Annotations;
 
 public class FlashlightController : MonoBehaviour
 {
@@ -126,6 +127,7 @@ public class FlashlightController : MonoBehaviour
         if (Physics.Raycast(transform.position, forward, out hit, raycastRange, enemyLayer))
         {
             EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
+            EnemyAI_EyesOnly eyesEnemy = hit.collider.GetComponent<EnemyAI_EyesOnly>();
             
             if (enemy != null)
             {
@@ -135,7 +137,18 @@ public class FlashlightController : MonoBehaviour
                 enemy.attack = false;
                 enemy.stalk = false;
                 enemy.flee = false;
+                return;
             }
+
+            if (eyesEnemy != null)
+            {
+                if (eyesEnemy.isWaiting)
+                {
+                    eyesEnemy.ApplyFlashlightStun(5f);
+                }
+                return;
+            }
+
         }
     }
 
