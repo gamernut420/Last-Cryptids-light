@@ -26,8 +26,17 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<playerController>();
         timeScaleOrig = Time.timeScale;
+
+        if (player != null)
+        {
+            playerScript = player.GetComponent<playerController>();
+        }
+        else
+        {
+            Debug.LogError("GameManager: No GameObject found with the tag 'Player'!");
+        }
+        
     }
 
     void Update()

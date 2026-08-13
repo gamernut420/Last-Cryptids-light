@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamage
 {
     [Range(10, 50)][SerializeField] int HP;
     [Range(100f, 300f)][SerializeField] float listenerRange;
@@ -16,7 +16,8 @@ public class EnemyAI : MonoBehaviour
     [Header("Attack Settings")]
     [SerializeField] float attackReach = 2f;
     [SerializeField] LayerMask playerLayer;
-    [SerializeField] Collider attackCollider;
+    [SerializeField] int attackDamage = 3;
+
 
     NavMeshAgent agent;
     Rigidbody playerRb;
@@ -235,9 +236,11 @@ public class EnemyAI : MonoBehaviour
 
         if (Physics.Raycast(startPos, transform.forward, out hitInfo, attackReach, playerLayer))
         {
-            if (hitInfo.transform == PlayerTransform)
+            IDamage dmg = hitInfo.transform.GetComponent<IDamage>();
+            if (dmg != null)
             {
                 Debug.Log("Player Hit!");
+                dmg.takeDamage(attackDamage);
                 afterAttack = 0f;
                 attackTimer = 0f;
                 attack = false;
@@ -311,8 +314,13 @@ public class EnemyAI : MonoBehaviour
     public void takeDamage(int amount)
     {
         HP -= amount;
-        hit = true;
-        stun = 0f;
+
+        afterAttack = 0f;
+        attackTimer = 0f;
+        flee = true;
+        attack = false;
+        stalk = false;
+
         if (HP <= 0)
         {
             Destroy(gameObject);

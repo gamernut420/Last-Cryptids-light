@@ -115,20 +115,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-    // Implememtation of the IDamage intherface for raycast
-    public void TakeDamage(int amount)
-    {
-        if (isDead) return;
-
-        Hp -= amount;
-        Hp = Mathf.Clamp(Hp, 0, HPOrig);
-
-        Debug.Log("Player took damge. Current HP: " + Hp);
-
-        if (Hp == 0) Die();
-       
-    }
-
     void Die()
     {
         isDead = true;
@@ -169,7 +155,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
     public void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
+        if (gameManager.instance?.playerHPBar != null)
+        {
+            gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
+        }
     }
 
     public void takeDamage(int amount)
