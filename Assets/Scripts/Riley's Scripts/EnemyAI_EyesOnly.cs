@@ -1,11 +1,16 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI_EyesOnly : MonoBehaviour
+public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
 {
-    public Transform player;
+    [Header("Enemy Health")]
+    [SerializeField] int hpMax = 20;
+    private int hpCurrent = 0;
+
+    [Header("Target Settings")]
     [SerializeField] LayerMask playerLayer;
 
+    [Header("Movement & Combat")]
     public float viewRadius = 10f;
     [Range(0f, 360f)] public float viewAngle = 90f;
     //loses aggro after not seeing player for this amount of time
@@ -13,6 +18,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour
     public float patrolSpeed = 2f;
     public float chaseSpeed = 4f;
     public float attackReach = 3f;
+    [SerializeField] int attackDamage = 3;
 
     [Header("Random Patrol Settings")]
     public float patrolRadius = 15f;
@@ -29,16 +35,31 @@ public class EnemyAI_EyesOnly : MonoBehaviour
     private State currentState = State.Patrol;
 
 
+    private Transform PlayerTransform
+    {
+        get
+        {
+            if (gameManager.instance != null && gameManager.instance.player != null)
+            {
+                return gameManager.instance.player.transform;
+            }
+            return null;
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        hpCurrent = hpMax;
         MoveToRandomPoint();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (PlayerTransform == null) return;
+
         switch (currentState)
         {
             case State.Patrol:
@@ -97,13 +118,18 @@ public class EnemyAI_EyesOnly : MonoBehaviour
 
         if (CanSeePlayer() && !isWaiting)
         {
-            agent.SetDestination(player.position);
+            agent.SetDestination(PlayerTransform.position);
             timeSinceLostPlayer = 0f;
             if (Physics.Raycast(startPos, transform.forward, out hitInfo, attackReach, playerLayer))
             {
-                if (hitInfo.transform == player)
+                if (hitInfo.transform == PlayerTransform)
                 {
-                    Debug.Log("Player Hit!");
+                    IDamage dmg = hitInfo.transform.GetComponent<IDamage>();
+                    if (dmg != null)
+                    {
+                        dmg.takeDamage(attackDamage);
+                    }
+
                     isWaiting = true;
                     waitTimer = 1f;
                     agent.isStopped = true;
@@ -123,7 +149,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour
 
     bool CanSeePlayer()
     {
-        Vector3 directionToPlayer = player.position - transform.position;
+        Vector3 directionToPlayer = PlayerTransform.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
         if (distanceToPlayer <= viewRadius)
@@ -134,9 +160,11 @@ public class EnemyAI_EyesOnly : MonoBehaviour
             if (angleBetweenNodes <= viewAngle / 2f)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, directionToPlayer.normalized, out hit, viewRadius))
+                Vector3 origin = transform.position + Vector3.up * 1f;
+                Vector3 targetDir = (PlayerTransform.position + Vector3.up * 1f) - origin;
+                if (Physics.Raycast(origin, targetDir.normalized, out hit, viewRadius))
                 {
-                    if (hit.transform == player)
+                    if (hit.transform == PlayerTransform)
                     {
                         return true;
                     }
@@ -165,6 +193,22 @@ public class EnemyAI_EyesOnly : MonoBehaviour
         if (NavMesh.SamplePosition(randomDirection, out hit, patrolRadius, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
+        }
+    }
+
+    public void takeDamage(int amount)
+    {
+        hpCurrent -= amount;
+        Debug.Log($"{gameObject.name} HP: {hpCurrent}/{hpMax}");
+
+        if (currentState != State.Chase)
+        {
+            SwitchToState(State.Chase);
+        }
+
+        if (hpCurrent <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 

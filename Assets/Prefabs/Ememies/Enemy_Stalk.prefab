@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &933213447475855599
+--- !u!1 &3284924769525365948
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,96 +8,102 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6774183218358104665}
-  - component: {fileID: 6159327780116005454}
-  - component: {fileID: 7081015731866389269}
-  - component: {fileID: 6471054444810374049}
-  - component: {fileID: 5021741516778485005}
-  - component: {fileID: 3097934545586289267}
-  m_Layer: 0
-  m_Name: Beacon
+  - component: {fileID: 7470153992109662563}
+  - component: {fileID: 4837248183735130050}
+  - component: {fileID: 1096803020203183725}
+  - component: {fileID: 8679048875965724716}
+  - component: {fileID: 5421355557582252187}
+  - component: {fileID: 1962249849740420420}
+  m_Layer: 6
+  m_Name: Enemy_Stalk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6774183218358104665
+--- !u!4 &7470153992109662563
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
+  m_GameObject: {fileID: 3284924769525365948}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48.16957, y: 0.5, z: 64.51967}
+  m_LocalPosition: {x: 62.45, y: 1, z: 66.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6159327780116005454
+--- !u!114 &4837248183735130050
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
+  m_GameObject: {fileID: 3284924769525365948}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7467645584a1ac4f80817e6e6d0b169, type: 3}
+  m_Script: {fileID: 11500000, guid: 370a1614f3b1ad346a8282d25f4fcb60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ExtractionCountdown
-  timeRemaining: 300
-  timerText: {fileID: 0}
-  gameManager: {fileID: 0}
-  enemyDirector: {fileID: 0}
---- !u!114 &7081015731866389269
-MonoBehaviour:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  HP: 10
+  listenerRange: 138
+  detectionRange: 100
+  minStalkDistance: 24.6
+  maxStalkDistance: 58.8
+  hearingSensitivity: 1
+  movementThreshold: 0.05
+  attackReach: 3
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  attackDamage: 3
+  flee: 0
+  stalk: 0
+  investigatingSound: 0
+  attack: 0
+  attackTimer: 0
+  afterAttack: 10
+  stun: 0
+--- !u!195 &1096803020203183725
+NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
+  m_GameObject: {fileID: 3284924769525365948}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
-  interactRange: 3
-  holdDuration: 3
-  playerCamera: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  interactionPromptText: {fileID: 0}
-  PromptMessage: Press E to repair
-  playerInventory: {fileID: 0}
-  extractionCountdown: {fileID: 0}
-  countDownDuration: 300
-  requiredParts:
-  - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
-    itemName: Battery
-    requiredAmount: 1
-  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
-    itemName: Fuel
-    requiredAmount: 1
-  - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
-    itemName: Radio Tube
-    requiredAmount: 1
-
---- !u!33 &6471054444810374049
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 8
+  m_Acceleration: 120
+  avoidancePriority: 50
+  m_AngularSpeed: 200
+  m_StoppingDistance: 2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!33 &8679048875965724716
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &5021741516778485005
+  m_GameObject: {fileID: 3284924769525365948}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &5421355557582252187
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
+  m_GameObject: {fileID: 3284924769525365948}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -116,7 +122,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 492ec3608e3886c448e7dd5f2f3baa84, type: 2}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -140,13 +146,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &3097934545586289267
-SphereCollider:
+--- !u!136 &1962249849740420420
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 933213447475855599}
+  m_GameObject: {fileID: 3284924769525365948}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -158,6 +164,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 2
   m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}

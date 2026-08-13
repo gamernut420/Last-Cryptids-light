@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamage
 {
     [Range(10, 50)][SerializeField] int HP;
     [Range(100f, 300f)][SerializeField] float listenerRange;
@@ -10,14 +10,15 @@ public class EnemyAI : MonoBehaviour
     [Range(20f, 40f)][SerializeField] float minStalkDistance;
     [Range(40f, 80f)][SerializeField] float maxStalkDistance;
     [Range(1f, 10f)][SerializeField] float hearingSensitivity;
-    
+
     [SerializeField] float movementThreshold = 0.05f;
 
     [Header("Attack Settings")]
     [SerializeField] float attackReach = 2f;
     [SerializeField] LayerMask playerLayer;
+    [SerializeField] int attackDamage = 3;
 
-    public Transform player;
+
     NavMeshAgent agent;
     Rigidbody playerRb;
     Vector3 lastPlayerPosition;
@@ -33,6 +34,17 @@ public class EnemyAI : MonoBehaviour
     public float stun;
     bool stopStun = false;
 
+    private Transform PlayerTransform
+    {
+        get
+        {
+            if (gameManager.instance != null && gameManager.instance.player != null)
+            {
+                return gameManager.instance.player.transform;
+            }
+            return null;
+        }
+    }
 
     void OnEnable()
     {
@@ -47,22 +59,18 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        if (player == null)
+        if (gameManager.instance != null && gameManager.instance.player != null)
         {
-            player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        }
-        if (player != null)
-        {
-            playerRb = player.GetComponent<Rigidbody>();
-            lastPlayerPosition = player.position;
+            playerRb = gameManager.instance.player.GetComponent<Rigidbody>();
+            lastPlayerPosition = PlayerTransform.position;
         }
     }
 
     void HearNoise(Vector3 noiseLocation, float noiseRadius)
     {
-        if (player == null) return;
+        if (PlayerTransform == null) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
         // FIX: Ignore noises completely if we are currently Stalking, Fleeing, or Attacking
         if (attack || flee || stalk || distanceToPlayer <= maxStalkDistance)
@@ -85,18 +93,21 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
+        if (PlayerTransform == null) return;
 
         attackTimer += Time.deltaTime;
         afterAttack += Time.deltaTime;
         stun += Time.deltaTime;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
         bool isPlayerMoving = CheckIfPlayerIsMoving();
         bool hasLineOfSight = CheckLineOfSight(distanceToPlayer);
 
         if (flee && distanceToPlayer > maxStalkDistance)
+        {
             afterAttack = 10f;
+            flee = false;
+        }
 
         // Handle Stun (Highest Priority)
         if (stun < 1f)
@@ -197,35 +208,39 @@ public class EnemyAI : MonoBehaviour
 
     void TransformLookAtPlayer()
     {
-        Vector3 lookDirection = new Vector3(player.position.x, transform.position.y, player.position.z);
+        Vector3 lookDirection = new Vector3(PlayerTransform.position.x, transform.position.y, PlayerTransform.position.z);
         transform.LookAt(lookDirection);
     }
 
     bool CheckLineOfSight(float distanceToPlayer)
     {
         Vector3 startPos = transform.position + Vector3.up * 1f;
-        Vector3 targetPos = player.position + Vector3.up * 1f;
+        Vector3 targetPos = PlayerTransform.position + Vector3.up * 1f;
         Vector3 direction = (targetPos - startPos).normalized;
         RaycastHit hitInfo;
 
         if (Physics.Raycast(startPos, direction, out hitInfo, distanceToPlayer))
         {
-            if (hitInfo.transform == player) return true;
+            if (hitInfo.transform == PlayerTransform) return true;
         }
         return false;
     }
 
     void Attack(float currentDistance)
     {
-        agent.SetDestination(player.position);
+        if (PlayerTransform == null) return;
+
+        agent.SetDestination(PlayerTransform.position);
         Vector3 startPos = transform.position + Vector3.up * 1f;
         RaycastHit hitInfo;
 
         if (Physics.Raycast(startPos, transform.forward, out hitInfo, attackReach, playerLayer))
         {
-            if (hitInfo.transform == player)
+            IDamage dmg = hitInfo.transform.GetComponent<IDamage>();
+            if (dmg != null)
             {
                 Debug.Log("Player Hit!");
+                dmg.takeDamage(attackDamage);
                 afterAttack = 0f;
                 attackTimer = 0f;
                 attack = false;
@@ -237,24 +252,26 @@ public class EnemyAI : MonoBehaviour
 
     bool CheckIfPlayerIsMoving()
     {
+        if (PlayerTransform == null) return false;
         if (playerRb != null)
         {
             return playerRb.linearVelocity.magnitude > movementThreshold;
         }
-        float displacement = Vector3.Distance(player.position, lastPlayerPosition);
-        lastPlayerPosition = player.position;
+        float displacement = Vector3.Distance(PlayerTransform.position, lastPlayerPosition);
+        lastPlayerPosition = PlayerTransform.position;
         return displacement > (movementThreshold * Time.deltaTime);
     }
 
     void StalkPlayer()
     {
+        if (PlayerTransform == null) return;
         stalk = true;
         flee = false;
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
         if (distanceToPlayer > maxStalkDistance)
         {
-            agent.SetDestination(player.position);
+            agent.SetDestination(PlayerTransform.position);
             stalk = false;
             return;
         }
@@ -263,7 +280,7 @@ public class EnemyAI : MonoBehaviour
         randDir.y = 0;
 
         float randDis = Random.Range(minStalkDistance, maxStalkDistance);
-        Vector3 targetPos = player.position + randDir.normalized * randDis;
+        Vector3 targetPos = PlayerTransform.position + randDir.normalized * randDis;
 
         SetValidDestination(targetPos);
     }
@@ -272,7 +289,7 @@ public class EnemyAI : MonoBehaviour
     {
         flee = true;
         stalk = false;
-        Vector3 fleeDirection = (transform.position - player.position).normalized;
+        Vector3 fleeDirection = (transform.position - PlayerTransform.position).normalized;
         fleeDirection.y = 0;
 
         Vector3 variance = Random.insideUnitSphere * 0.3f;
@@ -297,16 +314,22 @@ public class EnemyAI : MonoBehaviour
     public void takeDamage(int amount)
     {
         HP -= amount;
-        hit = true;
+
+        afterAttack = 0f;
+        attackTimer = 0f;
+        flee = true;
+        attack = false;
+        stalk = false;
+
         if (HP <= 0)
         {
-            // Trigger Win/Death event
+            Destroy(gameObject);
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (player == null) return;
+        if (PlayerTransform == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, minStalkDistance);
         Gizmos.color = Color.yellow;
