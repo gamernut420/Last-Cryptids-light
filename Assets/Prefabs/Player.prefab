@@ -233,7 +233,9 @@ MonoBehaviour:
   jumpSpeed: 9
   jumpMax: 2
   gravity: 35
-  audioRadius: 0
+  walkHearingRadius: 5
+  sprintHearingRadius: 10
+  sprintKey: 304
   gameOverPanel: {fileID: 0}
   ActiveWeapon: {fileID: 5803278072342866639}
 --- !u!114 &4824105635487887755
@@ -265,7 +267,7 @@ MonoBehaviour:
   currentFear: 0
   fearAccumulationRate: 0.6
   calmRate: 0.8
-  fearText: {fileID: 0}
+  fearData: {fileID: 0}
   flashlightController: {fileID: 8065954428658049472}
   isInsane: 0
 --- !u!143 &8658993058510956839
@@ -445,6 +447,10 @@ PrefabInstance:
       propertyPath: flashlightAudio
       value: 
       objectReference: {fileID: 26284211197979587}
+    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
+      propertyPath: enemyLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -15,7 +15,7 @@ public class FearSystem : MonoBehaviour
     [SerializeField] float calmRate;
 
     [Header("UI Reference")]
-    [SerializeField] TextMeshProUGUI fearText;
+    [SerializeField] TextMeshProUGUI fearData;
    
 
 
@@ -31,7 +31,8 @@ public class FearSystem : MonoBehaviour
         currentFear = 0f;
         isInsane = false;
         UpdateFearUI();
-       
+        if(fearData == null ) fearData = GameObject.Find("FearData").GetComponent<TextMeshProUGUI>();
+
     }
 
     // Update is called once per frame
@@ -64,14 +65,14 @@ public class FearSystem : MonoBehaviour
     }
     void UpdateFearUI()
     {
-        if (fearText != null) fearText.text = "Fear: " + Mathf.Round(currentFear) + "%";
+        if (fearData != null) fearData.text = Mathf.Round(currentFear) + "%";
     }
     void TriggerPanicState()
     {
         isInsane = true;
         Debug.Log("Player has reached maximun psycholgical fear/insanity!");
 
-        GameManager gameManager = FindFirstObjectByType<GameManager>();
+        gameManager GameManager = FindFirstObjectByType<gameManager>();
         // Change the game over message text
        // if (gameManager != null) gameManager.TriggerGameOver("You Went Insane!");
 
