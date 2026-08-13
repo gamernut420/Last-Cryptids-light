@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: -3155101964481643572}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -227,6 +227,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
   Hp: 10
   speed: 2.23
   sprintMod: 3.16

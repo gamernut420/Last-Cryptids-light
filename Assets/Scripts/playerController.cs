@@ -45,6 +45,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         HPOrig = Hp;
         speedOrig = speed;
+        updatePlayerUI();
     }
 
     // Update is called once per frame
@@ -61,7 +62,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         ///////   Testing Logic    ///////
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
-        if (Input.GetKeyDown(KeyCode.K)) TakeDamage(Hp);
+        if (Input.GetKeyDown(KeyCode.K)) takeDamage(Hp);
     }
 
     void movement()
@@ -110,20 +111,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-    // Implememtation of the IDamage intherface for raycast
-    public void TakeDamage(float amount)
-    {
-        if (isDead) return;
-
-        Hp -= Mathf.RoundToInt(amount);
-        Hp = Mathf.Clamp(Hp, 0, HPOrig);
-
-        Debug.Log("Player took damge. Current HP: " + Hp);
-
-        if (Hp == 0) Die();
-       
-    }
-
     void Die()
     {
         isDead = true;
@@ -135,12 +122,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-    }
-
-    // Restart game
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public bool PlayerRefillAmmo(int amount)
@@ -176,6 +157,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
     public void updatePlayerUI()
     {
-
+        gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
     }
 }

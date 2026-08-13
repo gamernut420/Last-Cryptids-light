@@ -676,7 +676,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4395909903220579461
 RectTransform:
   m_ObjectHideFlags: 0
@@ -744,6 +744,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2558282743792912165}
   - component: {fileID: 80372283146266185}
+  - component: {fileID: 7028779408446195910}
   m_Layer: 0
   m_Name: GameManger
   m_TagString: Untagged
@@ -775,16 +776,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 6054779845066175074}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac06ef432e632bf40a0fdec51cf31dba, type: 3}
+  m_Script: {fileID: 11500000, guid: e7f965080b3af5342bfd6fcd5e724303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   menuActive: {fileID: 0}
   menuPause: {fileID: 871133043131415204}
   menuLose: {fileID: 8019050012385608165}
-  playerHPBar: {fileID: 0}
-  player: {fileID: 6567020517736814643}
+  playerHPBar: {fileID: 8483085084238329024}
+  player: {fileID: 0}
   playerScript: {fileID: 0}
-  damageFlashPanel: {fileID: 0}
+  damageFlashPanel: {fileID: 5872003117020856513}
+  isPaused: 0
+--- !u!114 &7028779408446195910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6054779845066175074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f965080b3af5342bfd6fcd5e724303, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::gameManager
+  menuActive: {fileID: 0}
+  menuPause: {fileID: 871133043131415204}
+  menuLose: {fileID: 8019050012385608165}
+  playerHPBar: {fileID: 8483085084238329024}
+  player: {fileID: 0}
+  playerScript: {fileID: 0}
+  damageFlashPanel: {fileID: 5872003117020856513}
   isPaused: 0
 --- !u!1 &6461132980210915520
 GameObject:
@@ -1646,16 +1667,22 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4172497606365175541, guid: 6c374765945439c469a4a4008edef217, type: 3}
   m_PrefabInstance: {fileID: 1894348126035827740}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &6567020517736814643 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4713208099399091247, guid: 6c374765945439c469a4a4008edef217, type: 3}
-  m_PrefabInstance: {fileID: 1894348126035827740}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8457251003603211530 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8004061400804559126, guid: 6c374765945439c469a4a4008edef217, type: 3}
   m_PrefabInstance: {fileID: 1894348126035827740}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8483085084238329024 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8067050177249831132, guid: 6c374765945439c469a4a4008edef217, type: 3}
+  m_PrefabInstance: {fileID: 1894348126035827740}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &4404403732681608112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1664,6 +1691,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4983294185658442017}
     m_Modifications:
+    - target: {fileID: 3436474568337649900, guid: 38438878c9aceee43be601a165ec59f9, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8088799345587365447}
     - target: {fileID: 3533486468776833300, guid: 38438878c9aceee43be601a165ec59f9, type: 3}
       propertyPath: m_Name
       value: PauseMenu
@@ -1752,6 +1783,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7588148477837135798, guid: 38438878c9aceee43be601a165ec59f9, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8088799345587365447}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
