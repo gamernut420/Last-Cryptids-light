@@ -45,13 +45,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 933213447475855599}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7467645584a1ac4f80817e6e6d0b169, type: 3}
+  m_Script: {fileID: 11500000, guid: 63c1b97062955e44b9510f369e6beca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExtractionCountdown
-  timeRemaining: 300
+  timeRemaining: 120
   timerText: {fileID: 0}
-  gameManager: {fileID: 0}
-  enemyDirector: {fileID: 0}
 --- !u!114 &7081015731866389269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,7 +69,6 @@ MonoBehaviour:
   PromptMessage: Press E to repair
   playerInventory: {fileID: 0}
   extractionCountdown: {fileID: 0}
-  countDownDuration: 300
   requiredParts:
   - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
     itemName: Battery
@@ -82,7 +79,6 @@ MonoBehaviour:
   - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
     itemName: Radio Tube
     requiredAmount: 1
-
 --- !u!33 &6471054444810374049
 MeshFilter:
   m_ObjectHideFlags: 0
