@@ -13,10 +13,7 @@ public class GunController : MonoBehaviour, IWeapon
     [Header("Aim")]
     [SerializeField] GameObject AimingObject;
     [SerializeField] float AimSmoothing = 10;
-    Vector3 normalLocalPosition;
-    Vector3 aimLocation;
-    Quaternion normalRotaion;
-
+    
     [Header("Recoil")]
     [SerializeField] Camera PlayerCamera;
     [SerializeField] float VerticleRecoil;
@@ -45,6 +42,12 @@ public class GunController : MonoBehaviour, IWeapon
     int currentAmmo;
     int currentReserveAmmo;
 
+    //Position variables
+    Vector3 basePosition;
+    Quaternion baseRotation;
+    Vector3 activePosition;
+    Quaternion activeRotation;
+    Vector3 aimLocation;
 
 
     private void Start()
@@ -57,8 +60,8 @@ public class GunController : MonoBehaviour, IWeapon
 
         camera = PlayerCamera.GetComponent<ICamera>();
 
-        normalLocalPosition = transform.localPosition;
-        normalRotaion = transform.localRotation;
+        basePosition = transform.localPosition;
+        baseRotation = transform.localRotation;
 
         aimLocation = AimingObject.transform.localPosition * -1;
 
@@ -95,11 +98,11 @@ public class GunController : MonoBehaviour, IWeapon
 
         if (tryingShoot && canShoot)
         {
-            StartCoroutine(Shootgun());
+            StartCoroutine(ShootGun());
         }
     }
 
-    IEnumerator Shootgun()
+    IEnumerator ShootGun()
     {
         projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
 
@@ -168,6 +171,12 @@ public class GunController : MonoBehaviour, IWeapon
     {
         float randomHorizontalRecoil = Random.Range(-HorizontalRecoil, HorizontalRecoil);
 
+        transform.localPosition -= Vector3.forward * 0.1f;
+
+        transform.localRotation = Quaternion.Euler(-VerticleRecoil, randomHorizontalRecoil, 0);
+
+        float camRotX = PlayerCamera.transform.localRotation.x;
+
         camera.ModifyCameraPitch(VerticleRecoil);
         camera.ModifyCameraYaw(randomHorizontalRecoil);
     }
@@ -182,20 +191,20 @@ public class GunController : MonoBehaviour, IWeapon
     //This is also used to reset the weapons rotation
     void DetermineAim()
     {
-        Vector3 target = normalLocalPosition;
+        Vector3 target = basePosition;
 
         if (Input.GetMouseButton(1))
         {
             target = aimLocation;
         }
 
-        Vector3 desiredPosition = Vector3.Lerp(transform.localPosition, target, AimSmoothing * Time.deltaTime);
+        activePosition = Vector3.Lerp(transform.localPosition, target, AimSmoothing * Time.deltaTime);
 
-        Quaternion desiredRotaion = Quaternion.Lerp(transform.localRotation, normalRotaion, AimSmoothing * Time.deltaTime);
+        activeRotation = Quaternion.Lerp(transform.localRotation, baseRotation, AimSmoothing * Time.deltaTime);
 
-        transform.localPosition = desiredPosition;
+        transform.localPosition = activePosition;
 
-        transform.localRotation = desiredRotaion;
+        transform.localRotation = activeRotation;
     }
 
     void WeaponSway()
