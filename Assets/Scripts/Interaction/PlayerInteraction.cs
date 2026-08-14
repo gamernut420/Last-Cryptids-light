@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
@@ -15,6 +16,7 @@ public class PlayerInteraction : MonoBehaviour
     Vector3 boxTraceLocation;
 
     IInteract interactable = null;
+    bool isHolding;
 
     private void Start()
     {
@@ -25,7 +27,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         CheckForInteractable();
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKey(KeyCode.E))
         {
             TryInteract();
         }
@@ -59,7 +61,6 @@ public class PlayerInteraction : MonoBehaviour
 
             if(UpdateScreenText != null)
             {
-                Debug.Log(interactable);
                 if (interactable != null)
                 {
                     UpdateScreenText(interactable.ScreenMessage());
@@ -86,7 +87,10 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactable != null)
         {
-            interactable.Interact(player);
+            if (interactable.DoHold())
+            {
+                interactable.Interact(player);
+            }
         }
     }
 }

@@ -535,6 +535,7 @@ GameObject:
   m_Component:
   - component: {fileID: 673559588}
   - component: {fileID: 673559589}
+  - component: {fileID: 673559590}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -567,6 +568,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7f965080b3af5342bfd6fcd5e724303, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::gameManager
+  menuActive: {fileID: 0}
+  menuPause: {fileID: 0}
+  menuWin: {fileID: 0}
+  menuLose: {fileID: 0}
+  hud: {fileID: 0}
+  cameraScript: {fileID: 0}
+  menuExtractionWin: {fileID: 0}
+  gunScript: {fileID: 0}
+  enemiesRemaining: 2
+  playerHPBar: {fileID: 0}
+  player: {fileID: 0}
+  playerScript: {fileID: 0}
+  damageFlashPanel: {fileID: 0}
+  isPaused: 0
+--- !u!114 &673559590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 673559587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ecc52663bf1b3d4095d5b333f7744d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::gameManager
   menuActive: {fileID: 0}
@@ -952,10 +979,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 944948598716401364, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-      propertyPath: ActiveWeapon
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8378294
@@ -1004,10 +1027,7 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 2490500393411024203, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7513145481605942756, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 1420946262}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
 --- !u!1 &1123254205
 GameObject:
@@ -1584,30 +1604,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -120, z: 0}
---- !u!1 &1420946256 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7513145481605942756, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  m_PrefabInstance: {fileID: 1104222865}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1420946262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420946256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9da78a7fe59a1e4bbc93608c98ae36e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
-  InteractionRange: 5
-  InteractionSize: 0.1
-  IngoreLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  DebugInteractionTraces: 1
-  DebugInteractionLogs: 0
 --- !u!1001 &1545864130
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2471,6 +2467,10 @@ PrefabInstance:
     - target: {fileID: 3140393999166929300, guid: 29db09ec86742d041bc1b1e489bce973, type: 3}
       propertyPath: m_Name
       value: AmmoBox
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595603292621440607, guid: 29db09ec86742d041bc1b1e489bce973, type: 3}
+      propertyPath: HoldTimer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
