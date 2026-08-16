@@ -279,6 +279,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d41f6df42b83a054cb570d465a15b4e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_HearOnly
+  model: {fileID: 5421355557582252187}
   hpMax: 40
   hearingSensitivity: 5
   timeToForgetSound: 2
@@ -292,6 +293,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 8
+  leftEarRenderer: {fileID: 3146059935026142217}
+  rightEarRenderer: {fileID: 4159178182268579135}
 --- !u!195 &1096803020203183725
 NavMeshAgent:
   m_ObjectHideFlags: 0
