@@ -27,8 +27,6 @@ public class PlayerInventory : MonoBehaviour
         UpdateUI();
     }
 
-
-
     // Checks for item
     public bool HasItem(string itemName)
     {
@@ -51,8 +49,11 @@ public class PlayerInventory : MonoBehaviour
     // Update inventory UI in GM
     void UpdateUI()
     {
-        inventoryText.text = "Fuel: " + GetAmount("Fuel") + "\n";
-        inventoryText.text += "Tubes: " + GetAmount("Radio Tube") + "\n";
-        inventoryText.text += "Batteries: " + GetAmount("Battery");
+        inventoryText.text = string.Empty;
+
+        foreach (string item in items.Keys)
+        {
+            inventoryText.text += item + ": " + GetAmount(item) + "\n";
+        }
     }
 }
