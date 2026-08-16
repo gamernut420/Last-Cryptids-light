@@ -1,5 +1,6 @@
 using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.InputSystem.Android;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 {
@@ -12,6 +13,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     public float timeToForgetSound = 2f;
 
     [Header("Movement & Combat")]
+    public float attackSpeed = 10f;
     public float patrolSpeed = 2f;
     public float investigationSpeed = 10f;
     public float patrolRadius = 15f;
@@ -20,10 +22,19 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] float attackCooldown = 1.5f;
     [SerializeField] LayerMask playerLayer;
 
+    [SerializeField] Renderer leftEarRenderer;
+    [SerializeField] Renderer rightEarRenderer;
+    private Color leftEarOrig;
+    private Color rightEarOrig;
     private NavMeshAgent agent;
     private float memoryTimer;
     private float attackTimer;
+    private float pathUpdateTimer;
     private Vector3 lastHeardPosition;
+
+    private Vector3 playerLastPosition;
+    private bool isPlayerMoving;
+    private bool isPlayerTouchingMe;
 
     private enum State { Patrol, InvestigateSound, Attack }
     private State currentState = State.Patrol;
@@ -54,7 +65,14 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     {
         agent = GetComponent<NavMeshAgent>();
         hpCurrent = hpMax;
+
+        SetupEarMaterials();
         MoveToRandomPoint();
+        
+        if (PlayerTransform != null)
+        {
+            playerLastPosition = PlayerTransform.position;
+        }
     }
 
     // Update is called once per frame
@@ -62,12 +80,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
-        float absoluteDistanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
-        if (absoluteDistanceToPlayer <= 3f)
-        {
-            currentState = State.Attack;
-        }
-
+        TrackPlayerMovement();
         attackTimer += Time.deltaTime;
 
         switch (currentState)
@@ -84,6 +97,70 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
     }
 
+    //Ear goes red when alert of sound and back to original color when it loses aggro
+    void SetupEarMaterials()
+    {
+        // Cache original colors using universal property keys
+        if (leftEarRenderer != null && leftEarRenderer.gameObject.activeInHierarchy)
+        {
+            // Checks for URP standard properties first, falls back to legacy color properties
+            leftEarOrig = leftEarRenderer.material.HasProperty("_BaseColor") ?
+                leftEarRenderer.material.GetColor("_BaseColor") : leftEarRenderer.material.color;
+        }
+        else
+        {
+            Debug.LogError($"[Ear Setup Failed] Left Ear Renderer reference missing on {gameObject.name}!", this);
+        }
+
+        if (rightEarRenderer != null && rightEarRenderer.gameObject.activeInHierarchy)
+        {
+            rightEarOrig = rightEarRenderer.material.HasProperty("_BaseColor") ?
+                rightEarRenderer.material.GetColor("_BaseColor") : rightEarRenderer.material.color;
+        }
+        else
+        {
+            Debug.LogError($"[Ear Setup Failed] Right Ear Renderer reference missing on {gameObject.name}!", this);
+        }
+    }
+
+    void SetEarsAlert(bool isAlert)
+    {
+        Color targetLeftColor = isAlert ? Color.red : leftEarOrig;
+        Color targetRightColor = isAlert ? Color.red : rightEarOrig;
+
+        if (leftEarRenderer != null)
+        {
+            if (leftEarRenderer.material.HasProperty("_BaseColor"))
+                leftEarRenderer.material.SetColor("_BaseColor", targetLeftColor); // URP Layout
+            else
+                leftEarRenderer.material.color = targetLeftColor; // Standard Layout
+        }
+
+        if (rightEarRenderer != null)
+        {
+            if (rightEarRenderer.material.HasProperty("_BaseColor"))
+                rightEarRenderer.material.SetColor("_BaseColor", targetRightColor); // URP Layout
+            else
+                rightEarRenderer.material.color = targetRightColor; // Standard Layout
+        }
+    }
+
+    void TrackPlayerMovement()
+    {
+        if (Vector3.Distance(PlayerTransform.position, playerLastPosition) > 0.01f)
+        {
+            isPlayerMoving = true;
+        }
+        else
+        {
+            isPlayerMoving = false;
+        }
+        playerLastPosition = PlayerTransform.position;
+
+        float enemyRadius = agent.radius + 0.2f;
+        isPlayerTouchingMe = Physics.CheckSphere(transform.position, enemyRadius, playerLayer);
+    }
+
     void HearNoise(Vector3 noisePosition, float loudnessRange)
     {
         float distanceToNoise = Vector3.Distance(transform.position, noisePosition);
@@ -93,10 +170,14 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         {
             lastHeardPosition = noisePosition;
             memoryTimer = timeToForgetSound;
-            
-            if (currentState != State.InvestigateSound)
+
+            SetEarsAlert(true);
+
+            if (currentState != State.Attack)
             {
                 currentState = State.InvestigateSound;
+                agent.speed = investigationSpeed;
+                agent.SetDestination(lastHeardPosition);
             }
         }
     }
@@ -104,8 +185,15 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void PatrolLogic()
     {
         agent.speed = patrolSpeed;
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        if (distanceToPlayer <= attackRadius && (isPlayerMoving || isPlayerTouchingMe))
+        {
+            currentState = State.Attack;
+            return;
+        }
+
+        if (!agent.pathPending && agent.remainingDistance < 2f)
         {
             MoveToRandomPoint();
         }
@@ -113,21 +201,21 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void InvestigationLogic()
     {
-        agent.speed = investigationSpeed;
-        agent.SetDestination(lastHeardPosition);
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
-        if (distanceToPlayer <= attackRadius)
+        if (distanceToPlayer <= attackRadius && (isPlayerMoving || isPlayerTouchingMe))
         {
             currentState = State.Attack;
             return;
         }
-        if (!agent.pathPending && agent.remainingDistance < .5f)
+
+        if (!agent.pathPending && agent.remainingDistance < 2f)
         {
             memoryTimer -= Time.deltaTime;
         }
 
         if (memoryTimer <= 0f)
         {
+            SetEarsAlert(false);
             currentState = State.Patrol;
             MoveToRandomPoint();
         }
@@ -135,12 +223,28 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void AttackLogic()
     {
+        agent.speed = attackSpeed;
         Vector3 targetDirection = new Vector3(PlayerTransform.position.x, transform.position.y, PlayerTransform.position.z);
         transform.LookAt(targetDirection);
 
-        agent.SetDestination(PlayerTransform.position);
+        pathUpdateTimer += Time.deltaTime;
+        if (pathUpdateTimer >= 0.2f)
+        {
+            pathUpdateTimer = 0f;
+            agent.SetDestination(PlayerTransform.position);
+        }
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (!isPlayerMoving && !isPlayerTouchingMe)
+        {
+            lastHeardPosition = PlayerTransform.position;
+            memoryTimer = timeToForgetSound;
+            currentState = State.InvestigateSound;
+            agent.speed = investigationSpeed;
+            agent.SetDestination(lastHeardPosition);
+            return;
+        }
 
         if (attackTimer >= attackCooldown)
         {
@@ -166,17 +270,23 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (distanceToPlayer > attackRadius)
         {
             lastHeardPosition = PlayerTransform.position;
+            memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
+            agent.speed = investigationSpeed;
+            agent.SetDestination(lastHeardPosition);
         }
     }
 
     public void takeDamage(int amount)
     {
         hpCurrent -= amount;
-        
+
+        SetEarsAlert(true);
+
         if (currentState != State.Attack && PlayerTransform != null)
         {
             lastHeardPosition = PlayerTransform.position;
+            memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
         }    
 
@@ -209,5 +319,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * attackRadius);
     }
 }
