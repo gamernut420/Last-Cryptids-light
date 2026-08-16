@@ -1,9 +1,12 @@
 using UnityEngine.AI;
 using UnityEngine;
-using UnityEngine.InputSystem.Android;
+using System.Collections;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 {
+    [SerializeField] Renderer model;
+    private Material modelMat;
+
     [Header("Enemy Health")]
     [SerializeField] int hpMax = 40;
     private int hpCurrent;
@@ -22,10 +25,15 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] float attackCooldown = 1.5f;
     [SerializeField] LayerMask playerLayer;
 
+    Color colorOrig;
+
     [SerializeField] Renderer leftEarRenderer;
     [SerializeField] Renderer rightEarRenderer;
+    private Material leftEarMat;
+    private Material rightEarMat;
     private Color leftEarOrig;
     private Color rightEarOrig;
+
     private NavMeshAgent agent;
     private float memoryTimer;
     private float attackTimer;
@@ -66,7 +74,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         agent = GetComponent<NavMeshAgent>();
         hpCurrent = hpMax;
 
-        SetupEarMaterials();
+        CheckEnemyMaterial();
         MoveToRandomPoint();
         
         if (PlayerTransform != null)
@@ -97,51 +105,51 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
     }
 
-    //Ear goes red when alert of sound and back to original color when it loses aggro
-    void SetupEarMaterials()
+    void CheckEnemyMaterial()
     {
-        // Cache original colors using universal property keys
-        if (leftEarRenderer != null && leftEarRenderer.gameObject.activeInHierarchy)
+        if (model != null)
         {
-            // Checks for URP standard properties first, falls back to legacy color properties
-            leftEarOrig = leftEarRenderer.material.HasProperty("_BaseColor") ?
-                leftEarRenderer.material.GetColor("_BaseColor") : leftEarRenderer.material.color;
+            modelMat = model.material;
+            colorOrig = modelMat.color;
+            modelMat.EnableKeyword("_EMISSION");
         }
-        else
+        
+        if (leftEarRenderer != null)
         {
-            Debug.LogError($"[Ear Setup Failed] Left Ear Renderer reference missing on {gameObject.name}!", this);
+            leftEarMat = leftEarRenderer.material;
+            leftEarOrig = leftEarMat.GetColor("_BaseColor");
+            leftEarMat.EnableKeyword("_EMISSION");
         }
-
-        if (rightEarRenderer != null && rightEarRenderer.gameObject.activeInHierarchy)
+        if (rightEarRenderer)
         {
-            rightEarOrig = rightEarRenderer.material.HasProperty("_BaseColor") ?
-                rightEarRenderer.material.GetColor("_BaseColor") : rightEarRenderer.material.color;
-        }
-        else
-        {
-            Debug.LogError($"[Ear Setup Failed] Right Ear Renderer reference missing on {gameObject.name}!", this);
+            rightEarMat = rightEarRenderer.material;
+            rightEarOrig = rightEarMat.GetColor("_BaseColor");
+            rightEarMat.EnableKeyword("_EMISSION");
         }
     }
 
+    //Ear goes red when alert of sound and back to original color when it loses aggro
     void SetEarsAlert(bool isAlert)
     {
+        // Configure your normal colors vs alert colors
         Color targetLeftColor = isAlert ? Color.red : leftEarOrig;
         Color targetRightColor = isAlert ? Color.red : rightEarOrig;
 
-        if (leftEarRenderer != null)
+        // Apply an HDR intensity multiplier (e.g., 3f) to the alert color to make it glow brightly
+        Color emissionLeftColor = isAlert ? (Color.red * 3f) : Color.black;
+        Color emissionRightColor = isAlert ? (Color.red * 3f) : Color.black;
+
+
+        if (leftEarMat != null)
         {
-            if (leftEarRenderer.material.HasProperty("_BaseColor"))
-                leftEarRenderer.material.SetColor("_BaseColor", targetLeftColor); // URP Layout
-            else
-                leftEarRenderer.material.color = targetLeftColor; // Standard Layout
+            leftEarMat.SetColor("_BaseColor", targetLeftColor);
+            leftEarMat.SetColor("_EmissionColor", emissionLeftColor);
         }
 
-        if (rightEarRenderer != null)
+        if (rightEarMat != null)
         {
-            if (rightEarRenderer.material.HasProperty("_BaseColor"))
-                rightEarRenderer.material.SetColor("_BaseColor", targetRightColor); // URP Layout
-            else
-                rightEarRenderer.material.color = targetRightColor; // Standard Layout
+            rightEarMat.SetColor("_BaseColor", targetRightColor);
+            rightEarMat.SetColor("_EmissionColor", emissionRightColor);
         }
     }
 
@@ -280,20 +288,32 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     public void takeDamage(int amount)
     {
         hpCurrent -= amount;
-
-        SetEarsAlert(true);
+        Debug.Log("Enemy has taken " + amount + " damage. HP: " + hpCurrent);
+        StartCoroutine(flashRed());
+        if (hpCurrent <= 0)
+        {
+            Destroy (gameObject);
+            if (leftEarMat != null) Destroy(leftEarMat);
+            if (rightEarMat != null) Destroy(rightEarMat);
+        }
 
         if (currentState != State.Attack && PlayerTransform != null)
         {
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
+            SetEarsAlert(true);
+            
         }    
+    }
 
-        if (hpCurrent <= 0)
-        {
-            Destroy (gameObject);
-        }
+    IEnumerator flashRed()
+    {
+        modelMat.color = Color.red;
+        modelMat.SetColor("_EmissionColor", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        modelMat.color = colorOrig;
+        modelMat.SetColor("_EmissionColor", Color.black);
     }
 
     void MoveToRandomPoint()
