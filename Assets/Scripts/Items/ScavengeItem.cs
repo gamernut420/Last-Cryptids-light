@@ -10,8 +10,6 @@ public class ScavengeItem : MonoBehaviour, IInteract
     [SerializeField] string itemName = "Item Name";
     [Range(1, 10)][SerializeField] int quantity;
     [SerializeField][Min(0)] float HoldTimer;
-    [Range(1f, 10f)][SerializeField] float interactRange;
-    [SerializeField] float minimumLookAlignment = 0.8f;
 
     [Header("References")]
     [SerializeField] string PromptMessage = "Press E to pick up";

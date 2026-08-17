@@ -365,16 +365,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: PromptMessage
+      value: Hold E to repair beacon
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: interactRange
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[0].itemName
+      value: Radio Tube
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[1].itemName
+      value: Fuel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[2].itemName
+      value: Battery
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[0].itemPrefab
+      value: 
+      objectReference: {fileID: 1853132550}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[1].itemPrefab
+      value: 
+      objectReference: {fileID: 1420829870}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[2].itemPrefab
+      value: 
+      objectReference: {fileID: 2042555501}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
       propertyPath: requiredParts.Array.data[0].requiredAmount
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
       propertyPath: requiredParts.Array.data[1].requiredAmount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
       propertyPath: requiredParts.Array.data[2].requiredAmount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -995,6 +1031,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -120, z: 0}
+--- !u!1 &1420829870 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
+  m_PrefabInstance: {fileID: 162881227}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1545864130
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1291,6 +1332,16 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1853132550 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
+  m_PrefabInstance: {fileID: 343133560}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2042555501 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
+  m_PrefabInstance: {fileID: 1545864130}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2133965768
 PrefabInstance:
   m_ObjectHideFlags: 0

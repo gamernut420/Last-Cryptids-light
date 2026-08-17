@@ -4,10 +4,10 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] float InteractionRange = 5f;
+    [Tooltip("Size of the box that traces for items")]
     [SerializeField] float InteractionSize = 0.1f;
     [SerializeField] LayerMask IgnoreLayer = 8;
     [SerializeField] bool DebugInteractionTraces = false;
-    [SerializeField] bool DebugInteractionLogs = false;
 
     public static System.Action<string> UpdateScreenText;
 

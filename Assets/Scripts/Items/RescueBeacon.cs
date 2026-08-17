@@ -8,9 +8,8 @@ using UnityEngine.InputSystem;
 public class RescueBeacon : MonoBehaviour, IInteract
 {
     [Header("Interaction Settings")]
-    [Range(1f, 10f)][SerializeField] float interactRange = 4.0f;
     [SerializeField] float holdDuration = 3f;
-    [SerializeField] string PromptMessage = "Hold E to repair beacon!";
+    [SerializeField] string PromptMessage = "Hold E to repair beacon";
     string currentPrompt;
 
     [System.Serializable]
