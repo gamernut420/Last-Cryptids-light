@@ -48,15 +48,13 @@ MonoBehaviour:
   menuPause: {fileID: 871133043131415204}
   menuWin: {fileID: 6322863649508935232}
   menuLose: {fileID: 715840588160792749}
-  hud: {fileID: 6636216825321088011}
-  cameraScript: {fileID: 0}
   menuExtractionWin: {fileID: 0}
-  gunScript: {fileID: 0}
-  enemiesRemaining: 2
-  playerHPBar: {fileID: 0}
+  hud: {fileID: 6636216825321088011}
+  playerHPBar: {fileID: 4214719113515134353}
+  damageFlashPanel: {fileID: 5872003117020856513}
   player: {fileID: 0}
   playerScript: {fileID: 0}
-  damageFlashPanel: {fileID: 5872003117020856513}
+  cameraScript: {fileID: 0}
   isPaused: 0
 --- !u!1 &1970268247954007156
 GameObject:
@@ -142,6 +140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 463829271496945540}
+  - component: {fileID: 1540244145764440422}
   - component: {fileID: 4342880517136923883}
   - component: {fileID: 7290273192030240569}
   m_Layer: 5
@@ -170,6 +169,19 @@ RectTransform:
   m_AnchoredPosition: {x: 191, y: 23}
   m_SizeDelta: {x: 200, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1540244145764440422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2412023449702472709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f12ca8f7a0172540b06cccf5e462645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryText
+  inventory: {fileID: 0}
 --- !u!222 &4342880517136923883
 CanvasRenderer:
   m_ObjectHideFlags: 0

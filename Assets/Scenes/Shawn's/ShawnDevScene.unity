@@ -131,10 +131,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fuel
       objectReference: {fileID: 0}
-    - target: {fileID: 1384267523778104293, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
-      propertyPath: PromptMessage
-      value: Pick Up
-      objectReference: {fileID: 0}
     - target: {fileID: 5465401022836513516, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.378002
@@ -259,24 +255,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &335118583 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2412023449702472709, guid: e65246918bff51042a211786b1266831, type: 3}
-  m_PrefabInstance: {fileID: 803577676}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &335118587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 335118583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f12ca8f7a0172540b06cccf5e462645, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryText
-  inventory: {fileID: 0}
 --- !u!1001 &343133560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -385,6 +363,18 @@ PrefabInstance:
     - target: {fileID: 6774183218358104665, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[0].requiredAmount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[1].requiredAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7081015731866389269, guid: fbe170c2d5358814ea3bbb58a8cd787a, type: 3}
+      propertyPath: requiredParts.Array.data[2].requiredAmount
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -511,6 +501,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 760585347592416204, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: PreText
+      value: ' '
+      objectReference: {fileID: 0}
     - target: {fileID: 3955772981761916171, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_Name
       value: UI
@@ -595,17 +589,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
-      propertyPath: playerHPBar
-      value: 
-      objectReference: {fileID: 1761082378}
+    - target: {fileID: 5504849867161888144, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: timeRemaining
+      value: 62
+      objectReference: {fileID: 0}
+    - target: {fileID: 6636216825321088011, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_Name
+      value: SidePanel
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2412023449702472709, guid: e65246918bff51042a211786b1266831, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 335118587}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e65246918bff51042a211786b1266831, type: 3}
 --- !u!1 &884843030
 GameObject:
@@ -727,10 +722,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 944948598716401364, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-      propertyPath: Inventory
-      value: 
-      objectReference: {fileID: 1974320290}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8378294
@@ -1173,17 +1164,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
---- !u!114 &1761082378 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4214719113515134353, guid: e65246918bff51042a211786b1266831, type: 3}
-  m_PrefabInstance: {fileID: 803577676}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &1765111041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,17 +1291,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &1974320290 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4824105635487887755, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
-  m_PrefabInstance: {fileID: 1104222865}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b66b14de1484684dae68a9e46579336, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
 --- !u!1001 &2133965768
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1373,10 +1342,6 @@ PrefabInstance:
     - target: {fileID: 3140393999166929300, guid: 29db09ec86742d041bc1b1e489bce973, type: 3}
       propertyPath: m_Name
       value: AmmoBox
-      objectReference: {fileID: 0}
-    - target: {fileID: 5595603292621440607, guid: 29db09ec86742d041bc1b1e489bce973, type: 3}
-      propertyPath: HoldTimer
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

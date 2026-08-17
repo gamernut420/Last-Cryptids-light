@@ -49,12 +49,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
   itemName: Fuel
   quantity: 3
+  HoldTimer: 0
   interactRange: 3.01
   minimumLookAlignment: 0.8
-  playerCamera: {fileID: 0}
-  interactionPromptText: {fileID: 0}
-  PromptMessage: Press E
-  playerInventory: {fileID: 0}
+  PromptMessage: Pick Up Fuel
 --- !u!33 &1132549844006811253
 MeshFilter:
   m_ObjectHideFlags: 0

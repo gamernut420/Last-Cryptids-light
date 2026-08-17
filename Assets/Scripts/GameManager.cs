@@ -21,13 +21,17 @@ public class gameManager : MonoBehaviour
 
     [Header("Auto Set Variables")]
     public GameObject player;
+    public PlayerInventory playerInventory;
     public playerController playerScript;
     public cameraController cameraScript;
+
+    public bool isPaused;
+    public bool isExtracting;
 
     int enemiesRemaining = 0;
 
     float timeScaleOrig;
-    public bool isPaused;
+    
 
     int waveCounter;
 
@@ -41,6 +45,7 @@ public class gameManager : MonoBehaviour
 
         if (player != null)
         {
+            playerInventory = player.GetComponent<PlayerInventory>();
             playerScript = player.GetComponent<playerController>();
             cameraScript = player.GetComponentInChildren<cameraController>();
         }
