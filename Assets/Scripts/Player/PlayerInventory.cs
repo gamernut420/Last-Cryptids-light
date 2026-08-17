@@ -8,8 +8,7 @@ public class PlayerInventory : MonoBehaviour
     // Stores item amounts
     Dictionary<string, int> items = new Dictionary<string, int>();
 
-    [SerializeField] TextMeshProUGUI inventoryText;
-
+    public static System.Action<string> UpdateInventoryText;
 
     // Adds items
     public void AddItem(string itemName, int amount)
@@ -49,11 +48,16 @@ public class PlayerInventory : MonoBehaviour
     // Update inventory UI in GM
     void UpdateUI()
     {
-        inventoryText.text = string.Empty;
+        string tempText = string.Empty;
 
         foreach (string item in items.Keys)
         {
-            inventoryText.text += item + ": " + GetAmount(item) + "\n";
+            tempText += item + ": " + GetAmount(item) + "\n";
+        }
+
+        if(UpdateInventoryText != null)
+        {
+            UpdateInventoryText(tempText);
         }
     }
 }

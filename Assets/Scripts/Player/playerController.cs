@@ -5,23 +5,22 @@ using UnityEngine.SceneManagement;
 public class playerController : MonoBehaviour, IPlayer, IDamage
 {
     [SerializeField] CharacterController controller;
-    [SerializeField] LayerMask ignoreLayer;
+
     [Header("Player Stats:")]
     [Range(1, 10)][SerializeField] int Hp;
     [Range(1f, 10f)][SerializeField] float speed;
     [Range(2f, 5f)][SerializeField] float sprintMod;
     [Range(8, 15)][SerializeField] int jumpSpeed;
     [Range(1, 3)][SerializeField] int jumpMax;
-    [Header("Other:")]
     [Range(15, 45)][SerializeField] int gravity;
+
+    [Header("Inventory")]
+    [SerializeField] PlayerInventory Inventory;
 
     [Header("Audio")]
     public float walkHearingRadius = 5f;
     public float sprintHearingRadius = 10f;
     public KeyCode sprintKey = KeyCode.LeftShift;
-
-    [Header("UI & Game Over")]
-    public GameObject gameOverPanel;
 
     [Header("Weapon")]
     [SerializeField] GameObject ActiveWeapon;
@@ -51,7 +50,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Update is called once per frame
     void Update()
     {
-
         if (gameManager.instance.isPaused) return;
 
         if (isDead) return;
@@ -89,7 +87,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         controller.Move(moveDir * speed * Time.deltaTime);
 
         jump();
-        controller.Move(playerVel * speed * Time.deltaTime);
+        controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
     }
 
@@ -112,19 +110,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             jumpCount++;
             playerVel.y = jumpSpeed;
         }
-    }
-
-    void Die()
-    {
-        isDead = true;
-        Debug.Log("Player has died.");
-        // Add game over UI or scene reload logic here
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
-
-        // Unlock and show the mouse
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
     }
 
     public bool PlayerRefillAmmo(int amount)
@@ -161,5 +146,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
+    }
+
+    public void PlayerAddItem(string itemName, int amount)
+    {
+        Inventory.AddItem(itemName, amount);
     }
 }

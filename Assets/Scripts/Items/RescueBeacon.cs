@@ -1,40 +1,39 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
-public class RescueBeacon : MonoBehaviour
+public class RescueBeacon : MonoBehaviour, IInteract
 {
     [Header("Interaction Settings")]
-    [Range(1f, 10f)][SerializeField] float interactRange = 4.0f;
     [SerializeField] float holdDuration = 3f;
-    [SerializeField] Transform playerCamera;
-    [SerializeField] TextMeshProUGUI interactionPromptText;
-    [SerializeField] string PromptMessage = "Hold E to repair beacon!";
-
-    [SerializeField] PlayerInventory playerInventory;
-    [SerializeField] ExtractionCountdown extractionCountdown;
+    [SerializeField] string PromptMessage = "Hold E to repair beacon";
+    string currentPrompt;
 
     [System.Serializable]
-
-
     public class RequiredItem
     {
         [Tooltip("Drag the item prefab here")]
         public GameObject itemPrefab;
+
+        [Tooltip("Set ammount needed here")]
+        public int requiredAmount = 1;
+
         [Tooltip("Auto-populated from the prefab name")]
         public string itemName;
-        public int requiredAmount = 1;
     }
+
     [Header("Required Parts List")]
-    [SerializeField] RequiredItem[] requiredParts = new RequiredItem[0];
+    [SerializeField] public RequiredItem[] requiredParts = new RequiredItem[0];
     float currentHoldTime = 0f;
     bool isRepaired = false;
 
     private void OnValidate()
     {
         holdDuration = Mathf.Max(0.1f, holdDuration);
+
         foreach (RequiredItem part in requiredParts)
         {
             if (part == null) continue;
@@ -46,128 +45,85 @@ public class RescueBeacon : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (playerInventory == null) playerInventory = FindAnyObjectByType<PlayerInventory>();
-        if (extractionCountdown == null) extractionCountdown = FindAnyObjectByType<ExtractionCountdown>();
-
-        ResolvePlayerCamera();
+        currentPrompt = PromptMessage;
+        currentHoldTime = holdDuration;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isRepaired || playerCamera == null)
-        { ResetHold(); return;  }
-        if (!IsPlayerLookingAtBeacon()) { ResetHold(); return; }
-        if (!HasAllRequiredParts(out string missingPartsMessage))
-        {
-            currentHoldTime = 0f;
-            InteractionPromptUI.Show(interactionPromptText, this, missingPartsMessage);
-            return;
-        }
-       if (IsInteractHeld())
-        {
-            currentHoldTime += Time.deltaTime;
-            float progress = Mathf.Clamp01(currentHoldTime / holdDuration);
-            int percent = Mathf.RoundToInt(progress * 100f);
-            InteractionPromptUI.Show(interactionPromptText, this, $"Repairing... {percent}%");
-            if (currentHoldTime >= holdDuration) CompleteRepair();
-        }
-
-        else
-        {
-            currentHoldTime = 0f;
-            InteractionPromptUI.Show(interactionPromptText, this, PromptMessage);
-        }
-
     }
 
-
-
-
-    private bool IsPlayerLookingAtBeacon()
+    private bool HasAllRequiredParts()
     {
-        float distance = Vector3.Distance(transform.position, playerCamera.position);
-        if (distance > interactRange) return false;
-        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
-        if (!Physics.Raycast(ray, out RaycastHit hit, interactRange))
-            return false;
-        return hit.transform == transform || hit.transform.IsChildOf(transform);
-    }
-    private bool IsInteractHeld()
-    {
-#if ENABLE_INPUT_SYSTEM
-        return Keyboard.current != null && Keyboard.current.eKey.isPressed;
-#else
-        return Input.GetKey(KeyCode.E);
-#endif
-    }
+        PlayerInventory inventory = gameManager.instance.playerInventory;
 
-    private bool HasAllRequiredParts(out string message)
-    {
-       if (playerInventory == null)
-        {
-            message = "Player inventory was not found"; return false;
-        }
-       foreach (RequiredItem requirement in requiredParts)
+        bool hasEnough = true;
+
+        currentPrompt = string.Empty;
+
+        foreach (RequiredItem requirement in requiredParts)
         {
             if (requirement == null || string.IsNullOrWhiteSpace(requirement.itemName)) continue;
-            int playerAmount = playerInventory.GetAmount(requirement.itemName);
+
+            int playerAmount = inventory.GetAmount(requirement.itemName);
+
             if (playerAmount < requirement.requiredAmount)
             {
                 int stillNeeded = requirement.requiredAmount - playerAmount;
-                message = $"Missing {stillNeeded} x {requirement.itemName}";
-                return false;
+                currentPrompt += $"Missing {stillNeeded} x {requirement.itemName}\n";
+
+                hasEnough = false;
             }
         }
-        message = string.Empty;
-        return true;
+
+        return hasEnough;
     }
-
-
-   
 
     public void CompleteRepair()
     {
-        if (isRepaired) return;
-
         isRepaired = true;
-        currentHoldTime = holdDuration;
         Debug.Log("Beacon repaired successfully! Starting countdown timer.", this);
-        InteractionPromptUI.Show(interactionPromptText, this, "Beacon Repaired! Defend it!");
 
-        if (extractionCountdown != null)
-        {
-            extractionCountdown.StartExtractionTimer();
-        }
-        else
-        {
-            Debug.LogWarning("Beacon repaired but no countdown", this);
-        }
+        PromptMessage = string.Empty;
+        currentPrompt = PromptMessage;
 
-    
-       
+        gameManager.instance.isExtracting = true;
     }
 
-   private void ResetHold()
+    public bool DoHold()
     {
-        currentHoldTime = 0f;
-        InteractionPromptUI.Hide(interactionPromptText, this);
-    }
-
-    private void ResolvePlayerCamera()
-    {
-        if (playerCamera != null && playerCamera.GetComponent<Camera>() == null)
+        if (HasAllRequiredParts() && !isRepaired)
         {
-            Camera childCamera = playerCamera.GetComponentInChildren<Camera>();
-            if (childCamera != null) playerCamera = childCamera.transform;
-            else if (Camera.main != null) playerCamera = Camera.main.transform;
+            currentHoldTime -= Time.deltaTime;
+
+            currentHoldTime = Mathf.Clamp(currentHoldTime, 0, holdDuration);
+
+            currentPrompt = currentHoldTime.ToString("F1");
+
+            if (currentHoldTime == 0)
+            {
+                return true;
+            }
         }
 
-        if (playerCamera == null && Camera.main != null) playerCamera = Camera.main.transform;
+        return false;
     }
 
-    private void OnDisable()
+    public void StopHold()
     {
-        InteractionPromptUI.Hide(interactionPromptText, this);
+        currentPrompt = PromptMessage;
+    }
+
+    public bool Interact(GameObject interactor)
+    {
+        CompleteRepair();
+
+        return true;
+    }
+
+    public string ScreenMessage()
+    {
+        return currentPrompt;
     }
 }

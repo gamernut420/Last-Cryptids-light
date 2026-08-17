@@ -1,23 +1,29 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] float InteractionRange = 5f;
+    [Tooltip("Size of the box that traces for items")]
     [SerializeField] float InteractionSize = 0.1f;
-    [SerializeField] LayerMask IngoreLayer = 8;
+    [SerializeField] LayerMask IgnoreLayer = 8;
     [SerializeField] bool DebugInteractionTraces = false;
-    [SerializeField] bool DebugInteractionLogs = false;
 
     public static System.Action<string> UpdateScreenText;
+
+    Vector3 boxSize;
 
     GameObject player;
 
     Vector3 boxTraceLocation;
 
     IInteract interactable = null;
+    bool isHolding;
 
     private void Start()
     {
+        boxSize = new Vector3(InteractionSize, InteractionSize, InteractionSize);
+
         player = gameObject;
     }
 
@@ -25,68 +31,94 @@ public class PlayerInteraction : MonoBehaviour
     {
         CheckForInteractable();
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKey(KeyCode.E))
         {
             TryInteract();
+        }
+        else
+        {
+            if (isHolding)
+            {
+                isHolding = false;
+                interactable.StopHold();
+            }
+
+            interactable = null;
         }
     }
 
     void CheckForInteractable()
     {
         Vector3 startPoint = Camera.main.transform.position;
-        Vector3 rayDirection = Camera.main.transform.forward;
+        Vector3 rayEnd = Camera.main.transform.position + (Camera.main.transform.forward * InteractionRange);
 
         RaycastHit lineHit;
 
-
-        if(Physics.Raycast(startPoint, rayDirection, out lineHit, InteractionRange, ~IngoreLayer))
+        if(Physics.Linecast(startPoint, rayEnd, out lineHit, ~IgnoreLayer))
         {
             boxTraceLocation = lineHit.point;
+        }
+        else
+        {
+            boxTraceLocation = rayEnd;
+        }
 
-            Vector3 boxSize = new Vector3(InteractionSize, InteractionSize, InteractionSize);
+        IInteract tempInteract = null;
 
-            interactable = null;
 
-            foreach (Collider hit in Physics.OverlapBox(boxTraceLocation, boxSize, Quaternion.identity))
+        foreach (Collider hit in Physics.OverlapBox(boxTraceLocation, boxSize, Quaternion.identity))
+        {
+            tempInteract = hit.GetComponent<IInteract>();
+
+            if (tempInteract != null)
             {
-                interactable = hit.GetComponent<IInteract>();
-
-                if(interactable != null)
-                {
-                    break;
-                }
+                break;
             }
+        }
 
-            if(UpdateScreenText != null)
+        if(tempInteract == null && isHolding && interactable != null)
+        {
+            isHolding = false;
+            interactable.StopHold();
+        }
+
+        interactable = tempInteract;
+
+        if (UpdateScreenText != null)
+        {
+            if (interactable != null)
             {
-                Debug.Log(interactable);
-                if (interactable != null)
-                {
-                    UpdateScreenText(interactable.ScreenMessage());
-                }
-                else
-                {
-                    UpdateScreenText(null);
-                }
+                UpdateScreenText(interactable.ScreenMessage());
+            }
+            else
+            {
+                UpdateScreenText(null);
             }
         }
 
         if (DebugInteractionTraces)
         {
-            Debug.DrawRay(startPoint, rayDirection * InteractionRange, Color.red);
+            Debug.DrawLine(startPoint, rayEnd, Color.red);
         }
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(boxTraceLocation, new Vector3(InteractionSize, InteractionSize, InteractionSize));
+        if (DebugInteractionTraces)
+        {
+            Gizmos.DrawWireCube(boxTraceLocation, new Vector3(InteractionSize, InteractionSize, InteractionSize));
+        }
     }
 
     void TryInteract()
     {
         if (interactable != null)
         {
-            interactable.Interact(player);
+            isHolding = true;
+            if (interactable.DoHold())
+            {
+                interactable.Interact(player);
+            }
         }
     }
 }

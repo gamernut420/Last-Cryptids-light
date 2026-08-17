@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5806700083020198350}
   - component: {fileID: 8082676373853588106}
   m_Layer: 7
-  m_Name: AmmoBox
+  m_Name: SmallAmmoBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11dbe0ec876ee144d9c349f76846b57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmmoBox
+  RefillAmmount: 10
+  HoldTimer: 0.5
 --- !u!33 &4669296581594066260
 MeshFilter:
   m_ObjectHideFlags: 0

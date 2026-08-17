@@ -39,6 +39,7 @@ public class GunController : MonoBehaviour, IWeapon
     ProjectileManager projectileManager;
     bool canShoot;
     bool tryingShoot;
+    bool isShooting;
     int currentAmmo;
     int currentReserveAmmo;
 
@@ -57,6 +58,7 @@ public class GunController : MonoBehaviour, IWeapon
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
         tryingShoot = false;
+        isShooting = false;
 
         camera = PlayerCamera.GetComponent<ICamera>();
 
@@ -78,27 +80,30 @@ public class GunController : MonoBehaviour, IWeapon
 
     private void Update()
     {
-        DetermineAim();
-
-        WeaponSway();
-
-        if (Input.GetMouseButtonDown(0))
+        if (!gameManager.instance.isPaused)
         {
-            tryingShoot = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            tryingShoot = false;
-        }
+            DetermineAim();
 
-        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
-        {
-            Reload();
-        }
+            WeaponSway();
 
-        if (tryingShoot && canShoot)
-        {
-            StartCoroutine(ShootGun());
+            if (Input.GetMouseButtonDown(0))
+            {
+                tryingShoot = true;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                tryingShoot = false;
+            }
+
+            if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
+            {
+                Reload();
+            }
+
+            if (tryingShoot && canShoot)
+            {
+                StartCoroutine(ShootGun());
+            }
         }
     }
 
@@ -122,6 +127,8 @@ public class GunController : MonoBehaviour, IWeapon
 
         canShoot = false;
 
+        isShooting = true;
+
         currentAmmo--;
 
         if (CurrentAmmoChanged != null)
@@ -131,9 +138,20 @@ public class GunController : MonoBehaviour, IWeapon
 
         yield return new WaitForSeconds(FireRate);
 
-        if (currentAmmo > 0)
+        isShooting = false;
+
+        CheckAmmo();
+    }
+
+    void CheckAmmo()
+    {
+        if(currentAmmo > 0 && !isShooting)
         {
             canShoot = true;
+        }
+        else
+        {
+            canShoot = false;
         }
     }
 
@@ -164,7 +182,7 @@ public class GunController : MonoBehaviour, IWeapon
             ReserveAmmoChanged(currentReserveAmmo);
         }
 
-        canShoot = true;
+        CheckAmmo();
     }
 
     void DetermainRecoil()

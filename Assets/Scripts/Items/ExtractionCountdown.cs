@@ -4,33 +4,35 @@ using TMPro;
 public class ExtractionCountdown : MonoBehaviour
 {
     [Header("Timer Settings")]
+    [Tooltip("This is in seconds")]
     [SerializeField] float timeRemaining = 10f;
-    private bool timerIsRunning = false;
 
     [Header("UI References")]
     [SerializeField] TextMeshProUGUI timerText;
 
+    float currentTime;
 
+    private void Start()
+    {
+        currentTime = timeRemaining;
+
+        timerText = GetComponent<TextMeshProUGUI>();
+    }
 
     void Update()
     {
-        if (timerIsRunning)
+        if (gameManager.instance.isExtracting && timeRemaining >= 0)
         {
-            if (timeRemaining > 0)
-            {
-                timeRemaining -= Time.deltaTime;
+            currentTime -= Time.deltaTime;
 
-                if (timeRemaining <= 0)
-                {
-                    timeRemaining = 0;
-                    timerIsRunning = false;
-                    UpdateTimerDisplay(timeRemaining);
-                    gameManager.instance.extractionWin();
-                }
-                else
-                {
-                    UpdateTimerDisplay(timeRemaining);
-                }
+            currentTime = Mathf.Clamp(currentTime, 0, timeRemaining);
+
+            UpdateTimerDisplay(currentTime);
+
+            if (currentTime == 0)
+            {
+                gameManager.instance.isExtracting = false;
+                gameManager.instance.extractionWin();
             }
         }
     }
@@ -44,10 +46,5 @@ public class ExtractionCountdown : MonoBehaviour
         {
             timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
         }
-    }
-
-    public void StartExtractionTimer()
-    {
-        timerIsRunning = true;
     }
 }
