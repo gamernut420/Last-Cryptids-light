@@ -50,7 +50,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Update is called once per frame
     void Update()
     {
-
         if (gameManager.instance.isPaused) return;
 
         if (isDead) return;

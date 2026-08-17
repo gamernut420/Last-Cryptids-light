@@ -22,11 +22,14 @@ public class cameraController : MonoBehaviour, ICamera
     // Update is called once per frame
     void Update()
     {
-        float mouseX = Input.GetAxisRaw("Mouse X") * sens;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * sens;
+        if (!gameManager.instance.isPaused)
+        {
+            float mouseX = Input.GetAxisRaw("Mouse X") * sens;
+            float mouseY = Input.GetAxisRaw("Mouse Y") * sens;
 
-        camInterface.ModifyCameraPitch(mouseY);
-        camInterface.ModifyCameraYaw(mouseX);
+            camInterface.ModifyCameraPitch(mouseY);
+            camInterface.ModifyCameraYaw(mouseX);
+        }
     }
     
     //Left Right

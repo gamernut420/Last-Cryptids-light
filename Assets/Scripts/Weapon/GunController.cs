@@ -78,27 +78,30 @@ public class GunController : MonoBehaviour, IWeapon
 
     private void Update()
     {
-        DetermineAim();
-
-        WeaponSway();
-
-        if (Input.GetMouseButtonDown(0))
+        if (!gameManager.instance.isPaused)
         {
-            tryingShoot = true;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            tryingShoot = false;
-        }
+            DetermineAim();
 
-        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
-        {
-            Reload();
-        }
+            WeaponSway();
 
-        if (tryingShoot && canShoot)
-        {
-            StartCoroutine(ShootGun());
+            if (Input.GetMouseButtonDown(0))
+            {
+                tryingShoot = true;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                tryingShoot = false;
+            }
+
+            if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
+            {
+                Reload();
+            }
+
+            if (tryingShoot && canShoot)
+            {
+                StartCoroutine(ShootGun());
+            }
         }
     }
 

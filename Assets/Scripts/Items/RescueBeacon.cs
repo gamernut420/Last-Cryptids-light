@@ -82,17 +82,18 @@ public class RescueBeacon : MonoBehaviour, IInteract
 
     public void CompleteRepair()
     {
-        if (isRepaired) return;
-
         isRepaired = true;
         Debug.Log("Beacon repaired successfully! Starting countdown timer.", this);
+
+        PromptMessage = string.Empty;
+        currentPrompt = PromptMessage;
 
         gameManager.instance.isExtracting = true;
     }
 
     public bool DoHold()
     {
-        if (HasAllRequiredParts())
+        if (HasAllRequiredParts() && !isRepaired)
         {
             currentHoldTime -= Time.deltaTime;
 

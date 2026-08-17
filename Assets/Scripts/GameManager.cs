@@ -19,7 +19,7 @@ public class gameManager : MonoBehaviour
     public Image playerHPBar;
     public GameObject damageFlashPanel;
 
-    [Header("Auto Set Variables")]
+    [Header("Auto Set Variables (No need to touch)")]
     public GameObject player;
     public PlayerInventory playerInventory;
     public playerController playerScript;
