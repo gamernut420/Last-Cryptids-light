@@ -50,6 +50,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManager.instance.ModifyEnemyCount(1);
         agent = GetComponent<NavMeshAgent>();
         hpCurrent = hpMax;
         MoveToRandomPoint();
@@ -221,7 +222,7 @@ public class EnemyAI_EyesOnly : MonoBehaviour, IDamage
 
 
             // gameManager death tracking 
-            gameManager.instance.AllEnemysKilled();
+            gameManager.instance.ModifyEnemyCount(-1);
         }
     }
 

@@ -7,28 +7,24 @@ public class gameManager : MonoBehaviour
     public static gameManager instance;
 
 
-    // Menu references
+    [Header("Menu references")]
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
+    [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GameObject hud;
 
-
-    // Player camera and gun
-    [SerializeField] cameraController cameraScript;
-    [SerializeField] GameObject menuExtractionWin;
-    [SerializeField] GunController gunScript;
-
-
-    // death tracking for ai placed or spawned to trigger win
-    [SerializeField] int enemiesRemaining = 2;
-
+    [Header("Player")]
     public Image playerHPBar;
-    public GameObject player;
-    public playerController playerScript;
     public GameObject damageFlashPanel;
 
+    [Header("Auto Set Variables")]
+    public GameObject player;
+    public playerController playerScript;
+    public cameraController cameraScript;
+
+    int enemiesRemaining = 0;
 
     float timeScaleOrig;
     public bool isPaused;
@@ -47,7 +43,6 @@ public class gameManager : MonoBehaviour
         {
             playerScript = player.GetComponent<playerController>();
             cameraScript = player.GetComponentInChildren<cameraController>();
-            gunScript = player.GetComponentInChildren<GunController>();
         }
         else
         {
@@ -83,7 +78,6 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 0;
         cameraScript.enabled = false;
         hud.SetActive(false);
-        gunScript.enabled = false;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -96,7 +90,6 @@ public class gameManager : MonoBehaviour
         Time.timeScale = timeScaleOrig;
         cameraScript.enabled = true;
         hud.SetActive(true);
-        gunScript.enabled = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
@@ -125,7 +118,6 @@ public class gameManager : MonoBehaviour
     {
         statePause();
         hud.SetActive(false);
-        gunScript.enabled = false;
         menuActive = menuExtractionWin;
         menuActive.SetActive(true);
     }
@@ -141,9 +133,9 @@ public class gameManager : MonoBehaviour
 
 
     // killed all ai to win
-    public void AllEnemysKilled()
+    public void ModifyEnemyCount(int ammount)
     {
-        enemiesRemaining--;
+        enemiesRemaining += ammount;
 
         if (enemiesRemaining <= 0)
         {
