@@ -27,7 +27,6 @@ public class EnemyAI : MonoBehaviour, IDamage
     public bool investigatingSound = false;
     private Vector3 soundTargetPosition;
 
-    bool hit = false;
     public bool attack = false;
     public float attackTimer;
     public float afterAttack;
