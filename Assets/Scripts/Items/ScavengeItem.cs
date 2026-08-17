@@ -9,8 +9,10 @@ public class ScavengeItem : MonoBehaviour, IInteract
     [Header("Item Settings")]
     [SerializeField] string itemName = "Item Name";
     [Range(1, 10)][SerializeField] int quantity;
+    [SerializeField][Min(0)] float HoldTimer;
     [Range(1f, 10f)][SerializeField] float interactRange;
     [SerializeField] float minimumLookAlignment = 0.8f;
+
     [Header("References")]
     [SerializeField] Transform playerCamera;
     [SerializeField] TextMeshProUGUI interactionPromptText;
@@ -27,17 +29,17 @@ public class ScavengeItem : MonoBehaviour, IInteract
 
     private void Update()
     {
-        if (collected || playerCamera == null) return;
+        //if (collected || playerCamera == null) return;
         
-        if (IsPlayerLookingAtItem())
-        {
-            InteractionPromptUI.Show(interactionPromptText, this, $"{PromptMessage} {itemName}");
+        //if (IsPlayerLookingAtItem())
+        //{
+        //    InteractionPromptUI.Show(interactionPromptText, this, $"{PromptMessage} {itemName}");
 
-            if (WasInteractPressed())
-                CollectItem();
-        }
-        else {InteractionPromptUI.Hide(interactionPromptText, this);
-        }
+        //    if (WasInteractPressed())
+        //        CollectItem();
+        //}
+        //else {InteractionPromptUI.Hide(interactionPromptText, this);
+        //}
     }
 
     private bool IsPlayerLookingAtItem()
@@ -99,5 +101,10 @@ return Input.GetKeyDown(KeyCode.E);
     public string ScreenMessage()
     {
         return $"{PromptMessage} {itemName}";
+    }
+
+    public void StopHold()
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -89,7 +89,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         controller.Move(moveDir * speed * Time.deltaTime);
 
         jump();
-        controller.Move(playerVel * speed * Time.deltaTime);
+        controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
     }
 
