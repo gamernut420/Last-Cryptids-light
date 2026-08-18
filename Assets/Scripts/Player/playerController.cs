@@ -20,7 +20,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Header("Audio")]
     public float walkHearingRadius = 5f;
     public float sprintHearingRadius = 10f;
-    public KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("Weapon")]
     [SerializeField] GameObject ActiveWeapon;
@@ -28,8 +27,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     int jumpCount;
     int HPOrig;
     float speedOrig;
-
-    private int sprintCount = 0;
 
     float shootTimer;
 
@@ -56,7 +53,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
  
         movement();
         sprint();
-        if (sprintCount == 1)
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             NoiseManager.MakeNoise(transform.position, sprintHearingRadius);
         }
@@ -72,15 +69,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         {
             jumpCount = 0;
             playerVel.y = 0;
-        }
-
-        if (speed > speedOrig)
-        {
-            sprintCount = 1;
-        }
-        else
-        {
-            sprintCount = 0;
         }
 
         moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;

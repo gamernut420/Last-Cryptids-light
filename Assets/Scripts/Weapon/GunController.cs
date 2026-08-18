@@ -29,6 +29,7 @@ public class GunController : MonoBehaviour, IWeapon
     [Header("Audio")]
     [SerializeField] AudioSource gunAudio;
     [SerializeField] AudioClip gunShootSound;
+    public float gunshotHearingRadius = 20f;
 
     //Event speakers
     public static System.Action<float> SendReticleSpread;
@@ -103,6 +104,10 @@ public class GunController : MonoBehaviour, IWeapon
             if (tryingShoot && canShoot)
             {
                 StartCoroutine(ShootGun());
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    NoiseManager.MakeNoise(transform.position, gunshotHearingRadius);
+                }
             }
         }
     }

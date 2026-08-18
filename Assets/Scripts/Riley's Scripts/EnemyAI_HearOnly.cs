@@ -303,7 +303,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
             SetEarsAlert(true);
-            
         }    
     }
 
