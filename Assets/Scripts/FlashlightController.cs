@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using JetBrains.Annotations;
 
 public class FlashlightController : MonoBehaviour
 {
@@ -13,6 +12,10 @@ public class FlashlightController : MonoBehaviour
     [Range(1f, 100f)][SerializeField] float currentBattery;
     [Range(1f, 10f)][SerializeField] float drainRate;
     [SerializeField] float raycastRange;
+    public float stunTime;
+    public float requiredColliderTime = 1.0f;
+    private float hitTimer = 0.0f;
+    private Transform currentEnemy = null;
     [SerializeField] LayerMask enemyLayer;
 
     [Header("UI Reference")]
@@ -126,30 +129,42 @@ public class FlashlightController : MonoBehaviour
 
         if (Physics.Raycast(transform.position, forward, out hit, raycastRange, enemyLayer))
         {
-            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-            EnemyAI_EyesOnly eyesEnemy = hit.collider.GetComponent<EnemyAI_EyesOnly>();
+            EnemyAI_WaveType waveEnemy = hit.collider.GetComponent<EnemyAI_WaveType>();
             
-            if (enemy != null)
+            if (waveEnemy != null)
             {
-                enemy.stun = 0;
-                enemy.afterAttack = 0;
-                enemy.attackTimer = 0;
-                enemy.attack = false;
-                enemy.stalk = false;
-                enemy.flee = false;
-                return;
-            }
-
-            if (eyesEnemy != null)
-            {
-                if (eyesEnemy.isWaiting)
+                Transform hitEnemy = hit.transform;
+                
+                if (hitEnemy == currentEnemy)
                 {
-                    eyesEnemy.ApplyFlashlightStun(5f);
+                    hitTimer += Time.deltaTime;
                 }
-                return;
-            }
+                else
+                {
+                    currentEnemy = hitEnemy;
+                    hitTimer = 0.0f;
+                }
 
+                if (hitTimer >= requiredColliderTime)
+                {
+                    waveEnemy.ApplyFlashLightStun(stunTime);
+                }
+            }
+            else
+            {
+                ResetTimer();
+            }
         }
+        else
+        {
+            ResetTimer();
+        }
+    }
+
+    void ResetTimer()
+    {
+        hitTimer = 0.0f;
+        currentEnemy = null;
     }
 
     void OnDrawGizmos()

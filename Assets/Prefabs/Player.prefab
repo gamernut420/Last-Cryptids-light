@@ -226,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
   Hp: 10
-  speed: 2
+  speed: 3.71
   sprintMod: 3
   jumpSpeed: 9
   jumpMax: 2
@@ -234,7 +234,6 @@ MonoBehaviour:
   Inventory: {fileID: 4824105635487887755}
   walkHearingRadius: 10
   sprintHearingRadius: 25
-  sprintKey: 304
   ActiveWeapon: {fileID: 8438027191228880571}
 --- !u!114 &4824105635487887755
 MonoBehaviour:
@@ -479,6 +478,14 @@ PrefabInstance:
     - target: {fileID: 3871325869762327357, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
       propertyPath: m_Name
       value: Flashlight
+      objectReference: {fileID: 0}
+    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
+      propertyPath: stunTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8708194106421823414, guid: 54f4774b9d84bed4994fefd690ccce7c, type: 3}
+      propertyPath: raycastRange
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
