@@ -61,13 +61,13 @@ public class gameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (isPaused)
+            if (menuActive == null)
             {
                 stateUnpause();
-            }
-            else
-            {
+                // pause the game
                 statePause();
+                menuActive = menuPause;
+                menuActive.SetActive(true);
             }
         }
     }
@@ -80,9 +80,6 @@ public class gameManager : MonoBehaviour
 
         cameraScript.enabled = false;
         hud.SetActive(false);
-
-        menuActive = menuPause;
-        menuActive.SetActive(true);
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;

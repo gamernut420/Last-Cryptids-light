@@ -47,23 +47,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
-  interactRange: 3
   holdDuration: 3
-  playerCamera: {fileID: 0}
-  interactionPromptText: {fileID: 0}
   PromptMessage: Press E to repair
-  playerInventory: {fileID: 0}
-  extractionCountdown: {fileID: 0}
   requiredParts:
   - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
+    requiredAmount: 1
     itemName: Battery
-    requiredAmount: 1
   - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
+    requiredAmount: 1
     itemName: Fuel
-    requiredAmount: 1
   - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
-    itemName: Radio Tube
     requiredAmount: 1
+    itemName: Radio Tube
 --- !u!33 &6471054444810374049
 MeshFilter:
   m_ObjectHideFlags: 0

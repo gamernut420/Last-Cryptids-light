@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1b7305a1a8f994f899d8636a24d5b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_EyesOnly
-  hpMax: 20
+  hpMax: 1
   playerLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -62,6 +62,7 @@ MonoBehaviour:
   patrolRadius: 50
   minWaitTime: 1
   maxWaitTime: 2
+  isWaiting: 0
 --- !u!195 &1096803020203183725
 NavMeshAgent:
   m_ObjectHideFlags: 0
