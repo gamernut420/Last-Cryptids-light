@@ -7,10 +7,11 @@ public class buttonFunctions : MonoBehaviour
     {
         gameManager.instance.stateUnpause();
     }
+
     public void restart()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        gameManager.instance.stateUnpause();
     }
 
     public void quit()

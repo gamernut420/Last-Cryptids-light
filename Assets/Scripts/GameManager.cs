@@ -56,32 +56,34 @@ public class gameManager : MonoBehaviour
     }
 
 
-    
+
     void Update()
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (menuActive == null)
-            {
-                statePause();
-                menuActive = menuPause;
-                menuActive.SetActive(true);
-            }
-            else if (menuActive == menuPause)
+            if (isPaused)
             {
                 stateUnpause();
             }
+            else
+            {
+                statePause();
+            }
         }
     }
-
 
     // Pauses the game
     public void statePause()
     {
         isPaused = true;
         Time.timeScale = 0;
+
         cameraScript.enabled = false;
         hud.SetActive(false);
+
+        menuActive = menuPause;
+        menuActive.SetActive(true);
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -92,16 +94,22 @@ public class gameManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = timeScaleOrig;
+
         cameraScript.enabled = true;
         hud.SetActive(true);
+
+        if (menuActive != null)
+        {
+            menuActive.SetActive(false);
+            menuActive = null;
+        }
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        menuActive.SetActive(false);
-        menuActive = null;
     }
 
 
-    
+
     public void updateGameGoal(int amount)
     {
         // Update number of waver till you win
