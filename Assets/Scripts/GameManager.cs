@@ -13,6 +13,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuLose;
     [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GameObject hud;
+    [SerializeField] GameObject countdownText;
 
     [Header("Player")]
     public Image playerHPBar;
@@ -52,7 +53,8 @@ public class gameManager : MonoBehaviour
         {
             Debug.LogError("GameManager: No GameObject found with the tag 'Player'!");
         }
-        
+
+        countdownText.SetActive(false);
     }
 
 
@@ -122,6 +124,17 @@ public class gameManager : MonoBehaviour
             menuActive = menuWin;
             menuActive.SetActive(true);
         }
+    }
+
+    public void StartExtraction(float time)
+    {
+        countdownText.SetActive(true);
+
+        ExtractionCountdown Timer = countdownText.GetComponent<ExtractionCountdown>();
+
+        Timer.SetTimer(time);
+
+        isExtracting = true;
     }
 
 
