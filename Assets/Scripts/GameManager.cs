@@ -40,8 +40,32 @@ public class gameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-        player = GameObject.FindWithTag("Player");
         timeScaleOrig = Time.timeScale;
+
+        Transform ui = transform.parent;
+
+        menuPause = ui.Find("PauseMenu")?.gameObject;
+        menuWin = ui.Find("Win Menu")?.gameObject;
+        menuLose = ui.Find("GameOverPanel")?.gameObject;
+        menuExtractionWin = ui.Find("Win Menu EX")?.gameObject;
+
+        hud = ui.Find("Hud")?.gameObject;
+
+        if (hud != null)
+        {
+            Transform hpBar = hud.transform.Find("Player HP Bar");
+
+            if (hpBar != null)
+            {
+                playerHPBar = hpBar.GetComponent<Image>();
+                playerHPBar.fillAmount = 1f;
+            }
+        }
+
+        countdownText = ui.Find("Countdown")?.gameObject;
+        damageFlashPanel = ui.Find("FlashDamage")?.gameObject;
+
+        player = GameObject.FindWithTag("Player");
 
         if (player != null)
         {
@@ -54,7 +78,22 @@ public class gameManager : MonoBehaviour
             Debug.LogError("GameManager: No GameObject found with the tag 'Player'!");
         }
 
-        countdownText.SetActive(false);
+        if (countdownText != null)
+        {
+            countdownText.SetActive(false);
+        }
+    }
+
+
+    void Start()
+    {
+        Debug.Log("HUD: " + hud);
+        Debug.Log("HP BAR: " + playerHPBar);
+
+        if (playerHPBar != null)
+        {
+            playerHPBar.fillAmount = 1f;
+        }
     }
 
 
