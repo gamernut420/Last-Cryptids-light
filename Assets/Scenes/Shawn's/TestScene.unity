@@ -354,7 +354,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
---- !u!1001 &840683107
+--- !u!1001 &1051388217
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -362,6 +362,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2825206295355309957, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 2825206295355309957, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3955772981761916171, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_Name
       value: UI
@@ -446,6 +454,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: Timer
+      value: 
+      objectReference: {fileID: 1373428366}
+    - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: countdownText
+      value: 
+      objectReference: {fileID: 1373428362}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -565,6 +581,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba2de8a215cb4bb48b24768a8c9830f2, type: 3}
+--- !u!1 &1373428362 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6757767462520673443, guid: e65246918bff51042a211786b1266831, type: 3}
+  m_PrefabInstance: {fileID: 1051388217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1373428366 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5504849867161888144, guid: e65246918bff51042a211786b1266831, type: 3}
+  m_PrefabInstance: {fileID: 1051388217}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373428362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63c1b97062955e44b9510f369e6beca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExtractionCountdown
 --- !u!1 &1424429360
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,7 +1073,6 @@ SceneRoots:
   - {fileID: 1424429364}
   - {fileID: 137570186}
   - {fileID: 1700169569}
-  - {fileID: 840683107}
   - {fileID: 802648742}
   - {fileID: 1618022148}
   - {fileID: 1085469972}
@@ -1050,3 +1081,4 @@ SceneRoots:
   - {fileID: 1793748839}
   - {fileID: 1193417612}
   - {fileID: 1500935791}
+  - {fileID: 1051388217}

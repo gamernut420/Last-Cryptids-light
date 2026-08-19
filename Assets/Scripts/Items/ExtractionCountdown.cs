@@ -3,29 +3,30 @@ using TMPro;
 
 public class ExtractionCountdown : MonoBehaviour
 {
-    [Header("Timer Settings")]
-    [Tooltip("This is in seconds")]
-    [SerializeField] float timeRemaining = 10f;
-
     [Header("UI References")]
     [SerializeField] TextMeshProUGUI timerText;
 
+    float totalTime;
     float currentTime;
 
     private void Start()
     {
-        currentTime = timeRemaining;
-
         timerText = GetComponent<TextMeshProUGUI>();
+    }
+
+    public void SetTimer(float time)
+    {
+        totalTime = time;
+        currentTime = totalTime;
     }
 
     void Update()
     {
-        if (gameManager.instance.isExtracting && timeRemaining >= 0)
+        if (gameManager.instance.isExtracting && totalTime >= 0 && !gameManager.instance.isPaused)
         {
             currentTime -= Time.deltaTime;
 
-            currentTime = Mathf.Clamp(currentTime, 0, timeRemaining);
+            currentTime = Mathf.Clamp(currentTime, 0, totalTime);
 
             UpdateTimerDisplay(currentTime);
 

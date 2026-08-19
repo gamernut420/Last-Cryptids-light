@@ -10,6 +10,7 @@ public class RescueBeacon : MonoBehaviour, IInteract
     [Header("Interaction Settings")]
     [SerializeField] float holdDuration = 3f;
     [SerializeField] string PromptMessage = "Hold E to repair beacon";
+    [SerializeField] float ExtractionTime = 10f;
     string currentPrompt;
 
     [System.Serializable]
@@ -88,7 +89,7 @@ public class RescueBeacon : MonoBehaviour, IInteract
         PromptMessage = string.Empty;
         currentPrompt = PromptMessage;
 
-        gameManager.instance.isExtracting = true;
+        gameManager.instance.StartExtraction(ExtractionTime);
     }
 
     public bool DoHold()

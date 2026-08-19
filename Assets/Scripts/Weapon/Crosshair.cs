@@ -11,10 +11,25 @@ public class Crosshair : MonoBehaviour
     float spreadScale;
     float returnDelayTimer;
 
+    private void OnValidate()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject child = transform.GetChild(i).gameObject;
+            child.transform.GetChild(0).GetComponent<RectTransform>().localPosition = Vector3.up * baseScale;
+        }
+    }
+
+    void ToggleVisibility(bool state)
+    {
+        gameObject.SetActive(!state);
+    }
+
     private void OnEnable()
     {
         returnDelayTimer = ReturnDelay;
         GunController.SendReticleSpread += ReciveSpread;
+        GunController.ChangedAim += ToggleVisibility;
     }
 
     private void OnDisable()

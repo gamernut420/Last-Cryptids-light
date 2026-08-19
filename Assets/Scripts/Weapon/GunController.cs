@@ -33,16 +33,21 @@ public class GunController : MonoBehaviour, IWeapon
 
     //Event speakers
     public static System.Action<float> SendReticleSpread;
+    public static System.Action<bool> ChangedAim;
     public static System.Action<int> CurrentAmmoChanged;
     public static System.Action<int> ReserveAmmoChanged;
 
     //Shooting Variables
     ProjectileManager projectileManager;
+
     bool canShoot;
     bool tryingShoot;
     bool isShooting;
+
     int currentAmmo;
     int currentReserveAmmo;
+
+    bool isAiming;
 
     //Position variables
     Vector3 basePosition;
@@ -60,6 +65,8 @@ public class GunController : MonoBehaviour, IWeapon
         canShoot = true;
         tryingShoot = false;
         isShooting = false;
+
+        isAiming = false;
 
         camera = PlayerCamera.GetComponent<ICamera>();
 
@@ -94,6 +101,25 @@ public class GunController : MonoBehaviour, IWeapon
             else if (Input.GetMouseButtonUp(0))
             {
                 tryingShoot = false;
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                isAiming = true;
+
+                if (ChangedAim != null)
+                {
+                    ChangedAim(true);
+                }
+            }
+            else if (Input.GetMouseButtonUp(1))
+            {
+                isAiming = false;
+
+                if (ChangedAim != null)
+                {
+                    ChangedAim(false);
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
@@ -216,7 +242,7 @@ public class GunController : MonoBehaviour, IWeapon
     {
         Vector3 target = basePosition;
 
-        if (Input.GetMouseButton(1))
+        if (isAiming)
         {
             target = aimLocation;
         }

@@ -162,7 +162,7 @@ MonoBehaviour:
   SpreadAmmount: 0
   BulletData:
     Damage: 2
-    Speed: 50
+    Speed: 250
     GravityScale: 1
     LifeTime: 10
   AimingObject: {fileID: 3452829412589016295}
@@ -178,6 +178,7 @@ MonoBehaviour:
   SwayAmmount: 10
   gunAudio: {fileID: 4622103214485993178}
   gunShootSound: {fileID: 8300000, guid: 30114844b380b88418785402b1e582c0, type: 3}
+  gunshotHearingRadius: 20
 --- !u!114 &7810514726079534014
 MonoBehaviour:
   m_ObjectHideFlags: 0
