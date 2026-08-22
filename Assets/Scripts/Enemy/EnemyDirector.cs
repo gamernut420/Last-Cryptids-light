@@ -5,7 +5,8 @@ using System.Collections;
 public class EnemyDirector : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    [SerializeField] GameObject enemyPrefab;
+    [SerializeField] GameObject enemyWavePrefab;
+    [SerializeField] GameObject enemyBlindPrefab;
     [SerializeField] float spawnDistance = 30f;
     [SerializeField] int spawnCount = 5;
     [SerializeField] private float navMeshSearchRadius = 5f;
@@ -15,8 +16,9 @@ public class EnemyDirector : MonoBehaviour
     private float spawnRate = .5f;
     private float waveTimer;
     private float totalElapsedTime;
-    private float spawnTimer;
 
+    private bool wave = false;
+    private bool blind = false;
     private bool isSpawningActive = false;
 
     private Transform BeaconTransform
@@ -36,8 +38,11 @@ public class EnemyDirector : MonoBehaviour
         if (gameManager.instance != null && gameManager.instance.beacon != null)
         {
             RescueBeacon beaconScript = gameManager.instance.beacon.GetComponent<RescueBeacon>();
+
             if (beaconScript != null && beaconScript.isRepaired)
             {
+                wave = true;
+                blind = false;
                 totalElapsedTime += Time.deltaTime;
                 if (!isSpawningActive)
                 {
@@ -48,7 +53,6 @@ public class EnemyDirector : MonoBehaviour
                     }
                 }
             }
-            
         }
     }
 
@@ -70,7 +74,7 @@ public class EnemyDirector : MonoBehaviour
 
     public void SpawnEnemyAtDistance()
     {
-        if (enemyPrefab == null || BeaconTransform == null)
+        if (enemyWavePrefab == null || BeaconTransform == null || enemyBlindPrefab == null)
         {
             Debug.LogWarning("Spawner missing Prefab or Center Target reference.");
             return;
@@ -88,7 +92,9 @@ public class EnemyDirector : MonoBehaviour
             directionToTarget.y = 0;
 
             Quaternion spawnRotation = Quaternion.LookRotation(directionToTarget);
-            Instantiate(enemyPrefab, finalSpawnPoint, spawnRotation);
+
+            if (wave) Instantiate(enemyWavePrefab, finalSpawnPoint, spawnRotation);
+            if (blind) Instantiate(enemyBlindPrefab, finalSpawnPoint, spawnRotation);
         }
         else
         {

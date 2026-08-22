@@ -42,7 +42,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         HPOrig = Hp;
         speedOrig = speed;
-        
     }
 
     // Update is called once per frame
