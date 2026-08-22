@@ -83,7 +83,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   IgnoreLayer:
     serializedVersion: 2
     m_Bits: 8
-  DebugInteractionTraces: 0
+  DebugInteractionTraces: 1
 --- !u!114 &944948598716401364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +235,6 @@ MonoBehaviour:
   walkHearingRadius: 10
   sprintHearingRadius: 25
   WeaponGrip: {fileID: 8334678730768581162}
-  ActiveWeapon: {fileID: 0}
 --- !u!114 &4824105635487887755
 MonoBehaviour:
   m_ObjectHideFlags: 0
