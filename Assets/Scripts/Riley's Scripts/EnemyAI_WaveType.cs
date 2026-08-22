@@ -7,6 +7,8 @@ public class EnemyAI_WaveType : MonoBehaviour
     public enum AIType { Tanky, Fast, Strafer}
     [Tooltip("Leave as is; it will randomize with weights automatically on spawn.")]
     [SerializeField] private AIType currentType;
+    [SerializeField] LayerMask playerLayer;
+    [SerializeField] float attackCooldown = 1.5f;
 
     [Header("Spawn Chance Weights")]
     [Tooltip("Higher numbers increase the chance of this type spawning.")]
@@ -35,10 +37,13 @@ public class EnemyAI_WaveType : MonoBehaviour
     [Header("Runtime Stats (Read Only)")]
     [SerializeField] private float currentHealth;
     [SerializeField] private float currentSpeed;
+
     private NavMeshAgent agent;
     private float strafeTimer;
     private bool isStunned;
     private float stunTimer;
+
+    private float attackTimer;
 
     private Transform PlayerTransform
     {
@@ -47,6 +52,18 @@ public class EnemyAI_WaveType : MonoBehaviour
             if (gameManager.instance != null && gameManager.instance.player != null)
             {
                 return gameManager.instance.player.transform;
+            }
+            return null;
+        }
+    }
+
+    private Transform BeaconTransform
+    {
+        get
+        {
+            if (gameManager.instance != null && gameManager.instance.player != null)
+            {
+                return gameManager.instance.beacon.transform;
             }
             return null;
         }
@@ -143,7 +160,7 @@ public class EnemyAI_WaveType : MonoBehaviour
         strafeTimer += Time.deltaTime;
 
         float strafeDirection = Mathf.Sin(strafeTimer * 1f) > 0 ? 1f : -1f;
-        Vector3 strafeOffset = transform.right * strafeDirection * 8f;
+        Vector3 strafeOffset = transform.right * strafeDirection * 15f;
 
         Vector3 targetPosition = PlayerTransform.position + strafeOffset;
         agent.SetDestination(targetPosition);

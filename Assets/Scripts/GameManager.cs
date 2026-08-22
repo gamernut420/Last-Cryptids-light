@@ -20,6 +20,7 @@ public class gameManager : MonoBehaviour
     public GameObject damageFlashPanel;
 
     [Header("Auto Set Variables (No need to touch)")]
+    public GameObject beacon;
     public GameObject player;
     public PlayerInventory playerInventory;
     public playerController playerScript;
@@ -64,7 +65,8 @@ public class gameManager : MonoBehaviour
 
         countdownText = ui.Find("Countdown")?.gameObject;
         damageFlashPanel = ui.Find("FlashDamage")?.gameObject;
-
+        
+        beacon = GameObject.FindWithTag("Beacon");
         player = GameObject.FindWithTag("Player");
 
         if (player != null)
