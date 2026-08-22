@@ -763,7 +763,7 @@ GameObject:
   - component: {fileID: 899226793}
   - component: {fileID: 899226798}
   m_Layer: 7
-  m_Name: Gun
+  m_Name: 1911
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -859,7 +859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  DebugProjectiles: 0
+  DebugProjectiles: 1
 --- !u!114 &899226797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,22 +873,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
   WeaponModel: {fileID: 919132149155446097, guid: 33e4c4a2e3962f94b8175f9e1bce86d2, type: 3}
-  FireRate: 0.5
-  MagSize: 30
-  MaxReserveAmmo: 120
+  FireRate: 0.15
+  MagSize: 8
+  MaxReserveAmmo: 80
   SpreadAmmount: 0
   BulletData:
-    Damage: 0
-    Speed: 0
-    GravityScale: 0
-    LifeTime: 0
+    Damage: 20
+    Speed: 200
+    Gauge: 1
+    GravityScale: 1
+    LifeTime: 10
   AimObject: {fileID: 1400082106}
   AimSmoothing: 10
-  VerticleRecoil: 0
-  HorizontalRecoil: 0
+  VerticleRecoil: 2
+  HorizontalRecoil: 2
   Muzzle: {fileID: 1643292879}
   Flashes:
   - {fileID: 100004, guid: b7d03fb0762c75449af69d624547e358, type: 3}
+  - {fileID: 100004, guid: 510e0a736e5e66243b242a076c59611a, type: 3}
+  - {fileID: 100004, guid: ce94000a78298f447b82a7e25b9ab359, type: 3}
   SwayAmmount: 10
   gunAudio: {fileID: 899226799}
   gunShootSound: {fileID: 8300000, guid: 30114844b380b88418785402b1e582c0, type: 3}

@@ -9,7 +9,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [SerializeField][Min(0f)] float FireRate = 0.5f;
     [SerializeField][Min(1)] int MagSize = 30;
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
-    [SerializeField][Min(0)] float SpreadAmmount = 0;
+    [SerializeField][Range(0, 90)] float SpreadAmmount = 0;
     [SerializeField] ProjectileData BulletData;
 
     [Header("Aim")]
@@ -137,8 +137,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         aimPoint = AimObject.transform.localPosition * -1;
 
-        Debug.Log(aimPoint);
-
         if (CurrentAmmoChanged != null)
         {
             CurrentAmmoChanged(currentAmmo);
@@ -156,6 +154,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         playerCamera = camera;
 
         basePosition = gripLocation;
+
+        transform.localPosition = basePosition;
     }
 
     public void SetWeaponUse(bool inUse)
@@ -217,7 +217,24 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     IEnumerator ShootGun()
     {
-        projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
+        for(int i = 0; i < BulletData.Gauge; i++)
+        {
+            Quaternion bulletRotation = Muzzle.transform.rotation;
+
+            float spreadMod = SpreadAmmount;
+
+            if (isAiming)
+            {
+                spreadMod -= spreadMod * BulletData.SpreadReduction;
+            }
+
+            float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.x;
+            float pitch = Random.Range(-spreadMod, spreadMod) + bulletRotation.y;
+
+            bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.z);
+
+            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, BulletData);
+        }
 
         if (gunAudio != null && gunShootSound != null)
         {
