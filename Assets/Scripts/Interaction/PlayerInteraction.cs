@@ -13,8 +13,6 @@ public class PlayerInteraction : MonoBehaviour
 
     Vector3 boxSize;
 
-    GameObject player;
-
     Vector3 boxTraceLocation;
 
     IInteract interactable = null;
@@ -23,19 +21,17 @@ public class PlayerInteraction : MonoBehaviour
     private void Start()
     {
         boxSize = new Vector3(InteractionSize, InteractionSize, InteractionSize);
-
-        player = gameObject;
     }
 
     private void Update()
     {
         CheckForInteractable();
 
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
         }
-        else
+        else if (Input.GetKeyUp(KeyCode.E))
         {
             if (isHolding)
             {
@@ -44,6 +40,11 @@ public class PlayerInteraction : MonoBehaviour
             }
 
             interactable = null;
+        }
+
+        if (isHolding)
+        {
+            TryInteract();
         }
     }
 
@@ -117,7 +118,8 @@ public class PlayerInteraction : MonoBehaviour
             isHolding = true;
             if (interactable.DoHold())
             {
-                interactable.Interact(player);
+                isHolding = false;
+                interactable.Interact(gameObject);
             }
         }
     }

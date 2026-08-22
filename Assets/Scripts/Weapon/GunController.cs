@@ -1,25 +1,29 @@
 using System.Collections;
 using UnityEngine;
 
-public class GunController : MonoBehaviour, IWeapon
+public class GunController : MonoBehaviour, IWeapon, IInteract
 {
-    [Header("Gun Settings")]
-    [SerializeField][Min(0f)] float FireRate = 0.5f;
+    [SerializeField] GameObject WeaponModel;
+
+    [Header("Gun Stats")]
+    [Tooltip("This is in Rounds per Minute")]
+    [SerializeField][Min(0f)] float FireRate = 500;
+    [SerializeField] bool IsAuto = false;
     [SerializeField][Min(1)] int MagSize = 30;
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
-    [SerializeField][Min(0)] float SpreadAmmount = 0;
+    [SerializeField][Range(0, 90)] float SpreadAmmount = 0;
     [SerializeField] ProjectileData BulletData;
 
     [Header("Aim")]
-    [SerializeField] GameObject AimingObject;
+    [SerializeField] GameObject AimObject;
     [SerializeField] float AimSmoothing = 10;
-    
+
+    Vector3 aimPoint;
+    bool isAiming;
+
     [Header("Recoil")]
-    [SerializeField] Camera PlayerCamera;
     [SerializeField] float VerticleRecoil;
     [SerializeField] float HorizontalRecoil;
-
-    ICamera camera;
 
     [Header("VFX")]
     [SerializeField] GameObject Muzzle;
@@ -37,43 +41,115 @@ public class GunController : MonoBehaviour, IWeapon
     public static System.Action<int> CurrentAmmoChanged;
     public static System.Action<int> ReserveAmmoChanged;
 
-    //Shooting Variables
+    //Object Variables
     ProjectileManager projectileManager;
+    IPlayer owningPlayer;
+    ICamera playerCamera;
 
+    //Checks
+    bool isInUse;
+
+    //Shooting Variables
     bool canShoot;
     bool tryingShoot;
     bool isShooting;
 
+    //Ammo Variables
     int currentAmmo;
     int currentReserveAmmo;
-
-    bool isAiming;
 
     //Position variables
     Vector3 basePosition;
     Quaternion baseRotation;
     Vector3 activePosition;
     Quaternion activeRotation;
-    Vector3 aimLocation;
 
+    private void OnValidate()
+    {
+        CheckComponents();
+
+        if(WeaponModel != null)
+        {
+            GetComponent<MeshFilter>().sharedMesh = WeaponModel.GetComponent<MeshFilter>().sharedMesh;
+
+            GetComponent<MeshRenderer>().sharedMaterials = WeaponModel.GetComponent<MeshRenderer>().sharedMaterials;
+
+            GetComponent<MeshCollider>().sharedMesh = WeaponModel.GetComponent<MeshFilter>().sharedMesh;
+        }
+    }
+
+    void CheckComponents()
+    {
+        if (GetComponent<ProjectileManager>() == null)
+        {
+            projectileManager = gameObject.AddComponent<ProjectileManager>();
+        }
+        else
+        {
+            projectileManager = GetComponent<ProjectileManager>();
+        }
+
+        if (GetComponent<AudioSource>() == null)
+        {
+            gunAudio = gameObject.AddComponent<AudioSource>();
+        }
+        else
+        {
+            gunAudio = GetComponent<AudioSource>();
+        }
+
+        if (GetComponent<MeshFilter>() == null)
+        {
+            gameObject.AddComponent<MeshFilter>();
+        }
+
+        if(GetComponent<MeshRenderer>() == null)
+        {
+            gameObject.AddComponent<MeshRenderer>();
+        }
+
+        if(GetComponent<MeshCollider>() == null)
+        {
+            gameObject.AddComponent<MeshCollider>();
+        }
+
+        if (gameObject.transform.Find("Muzzle") == null && Muzzle == null)
+        {
+            Muzzle = new GameObject("Muzzle");
+
+            Muzzle.transform.SetParent(transform);
+
+            Muzzle.transform.localPosition = Vector3.zero;
+        }
+
+        if (gameObject.transform.Find("AimPoint") == null && AimObject == null)
+        {
+            AimObject = new GameObject("AimPoint");
+
+            AimObject.transform.SetParent(transform);
+
+            AimObject.transform.localPosition = Vector3.zero;
+        }
+    }
 
     private void Start()
     {
-        projectileManager = gameObject.GetComponent<ProjectileManager>();
+        isInUse = false;
+
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
         tryingShoot = false;
         isShooting = false;
 
+        FireRate = 1 / (FireRate / 60);
+
         isAiming = false;
 
-        camera = PlayerCamera.GetComponent<ICamera>();
+        basePosition = Vector3.zero;
+        baseRotation = Quaternion.identity;
 
-        basePosition = transform.localPosition;
-        baseRotation = transform.localRotation;
-
-        aimLocation = AimingObject.transform.localPosition * -1;
+        aimPoint = AimObject.transform.localPosition * -1;
 
         if (CurrentAmmoChanged != null)
         {
@@ -86,9 +162,33 @@ public class GunController : MonoBehaviour, IWeapon
         }
     }
 
+    private void OnEnable()
+    {
+        isShooting = false;
+        tryingShoot = false;
+        CheckAmmo();
+    }
+
+    public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default)
+    {
+        owningPlayer = player;
+        playerCamera = camera;
+
+        basePosition = gripLocation;
+
+        transform.localPosition = basePosition;
+    }
+
+    public void SetWeaponUse(bool inUse)
+    {
+        isInUse = inUse;
+
+        GetComponent<MeshCollider>().enabled = !isInUse;
+    }
+
     private void Update()
     {
-        if (!gameManager.instance.isPaused)
+        if (!gameManager.instance.isPaused && isInUse)
         {
             DetermineAim();
 
@@ -140,7 +240,24 @@ public class GunController : MonoBehaviour, IWeapon
 
     IEnumerator ShootGun()
     {
-        projectileManager.ShootProjectile(Muzzle.transform.position, Muzzle.transform.rotation, BulletData);
+        for(int i = 0; i < BulletData.Gauge; i++)
+        {
+            Quaternion bulletRotation = Camera.main.transform.rotation;
+
+            float spreadMod = SpreadAmmount;
+
+            if (isAiming)
+            {
+                spreadMod -= spreadMod * BulletData.SpreadReduction;
+            }
+
+            float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.x;
+            float pitch = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.y;
+
+            bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
+
+            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, BulletData);
+        }
 
         if (gunAudio != null && gunShootSound != null)
         {
@@ -161,6 +278,8 @@ public class GunController : MonoBehaviour, IWeapon
         isShooting = true;
 
         currentAmmo--;
+
+        tryingShoot = IsAuto;
 
         if (CurrentAmmoChanged != null)
         {
@@ -220,21 +339,25 @@ public class GunController : MonoBehaviour, IWeapon
     {
         float randomHorizontalRecoil = Random.Range(-HorizontalRecoil, HorizontalRecoil);
 
-        transform.localPosition -= Vector3.forward * 0.1f;
+        transform.localPosition -= Vector3.forward * (isAiming ? 0.01f : 0.1f);
 
         transform.localRotation = Quaternion.Euler(-VerticleRecoil, randomHorizontalRecoil, 0);
 
-        float camRotX = PlayerCamera.transform.localRotation.x;
-
-        camera.ModifyCameraPitch(VerticleRecoil);
-        camera.ModifyCameraYaw(randomHorizontalRecoil);
+        if(playerCamera != null)
+        {
+            playerCamera.ModifyCameraPitch(VerticleRecoil);
+            playerCamera.ModifyCameraYaw(randomHorizontalRecoil);
+        }
     }
 
     void MuzzleFlash()
     {
-        GameObject flash = Instantiate(Flashes[Random.Range(0, Flashes.Length)], Muzzle.transform.position, Muzzle.transform.rotation, Muzzle.transform);
+        if(Flashes.Length > 0)
+        {
+            GameObject flash = Instantiate(Flashes[Random.Range(0, Flashes.Length)], Muzzle.transform.position, Muzzle.transform.rotation, Muzzle.transform);
 
-        Destroy(flash, 0.1f);
+            Destroy(flash, 0.1f);
+        }
     }
 
     //This is also used to reset the weapons rotation
@@ -244,7 +367,7 @@ public class GunController : MonoBehaviour, IWeapon
 
         if (isAiming)
         {
-            target = aimLocation;
+            target = aimPoint;
         }
 
         activePosition = Vector3.Lerp(transform.localPosition, target, AimSmoothing * Time.deltaTime);
@@ -280,5 +403,24 @@ public class GunController : MonoBehaviour, IWeapon
 
             return true;
         }
+    }
+
+    public bool Interact(GameObject interactor)
+    {
+        IPlayer player = interactor.GetComponent<IPlayer>();
+
+        if (player != null)
+        {
+            player.PlayerAddWeapon(gameObject);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public string ScreenMessage()
+    {
+        return "Pickup Weapon";
     }
 }

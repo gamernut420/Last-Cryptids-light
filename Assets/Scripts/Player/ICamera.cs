@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface ICamera
 {
     void ModifyCameraYaw(float yaw);
