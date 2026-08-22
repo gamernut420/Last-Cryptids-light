@@ -22,7 +22,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public float sprintHearingRadius = 10f;
 
     [Header("Weapon")]
-    [SerializeField] GameObject ActiveWeapon;
+    [SerializeField] GameObject WeaponGrip;
+    GameObject ActiveWeapon;
+    GameObject[] weapons = new GameObject[3];
 
     int jumpCount;
     int HPOrig;
@@ -100,20 +102,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-    public bool PlayerRefillAmmo(int amount)
-    {
-        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
-
-        if(wep != null)
-        {
-            return wep.WeaponRefillAmmo(amount);
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public void takeDamage(int amount)
     {
         Hp -= amount;
@@ -131,6 +119,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         yield return new WaitForSeconds(0.1f);
         gameManager.instance.damageFlashPanel.SetActive(false);
     }
+
     public void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
@@ -139,5 +128,75 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void PlayerAddItem(string itemName, int amount)
     {
         Inventory.AddItem(itemName, amount);
+    }
+
+    public bool PlayerRefillAmmo(int amount)
+    {
+        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+        if (wep != null)
+        {
+            return wep.WeaponRefillAmmo(amount);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void PlayerAddWeapon(GameObject Weapon)
+    {
+        IWeapon wep = Weapon.GetComponent<IWeapon>();
+
+        if (wep != null)
+        {
+            wep.SetPlayerVariables(GetComponent<IPlayer>(), Camera.main.GetComponent<ICamera>(), WeaponGrip.transform.localPosition);
+            wep.SetWeaponUse(true);
+
+            Weapon.transform.SetParent(Camera.main.transform);
+
+            Weapon.transform.localPosition = Vector3.zero;
+        }
+    }
+
+    void DropWeapon()
+    {
+        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+        if(wep != null)
+        {
+            wep.SetWeaponUse(false);
+            wep.SetPlayerVariables();
+
+            
+        }
+    }
+
+    void SwapWeapon()
+    {
+        if (Input.GetButtonDown("1") && weapons[0] != null)
+        {
+            ActiveWeapon.SetActive(false);
+
+            ActiveWeapon = weapons[0];
+
+            ActiveWeapon.SetActive(true);
+        }
+        else if (Input.GetButtonDown("2") && weapons[1] != null)
+        {
+            ActiveWeapon.SetActive(false);
+
+            ActiveWeapon = weapons[1];
+
+            ActiveWeapon.SetActive(true);
+        }
+        else if (Input.GetButtonDown("3") && weapons[2] != null)
+        {
+            ActiveWeapon.SetActive(false);
+
+            ActiveWeapon = weapons[2];
+
+            ActiveWeapon.SetActive(true);
+        }
     }
 }
