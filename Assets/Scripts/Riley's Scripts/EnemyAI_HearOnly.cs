@@ -192,6 +192,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void PatrolLogic()
     {
+        agent.stoppingDistance = 0;
         agent.speed = patrolSpeed;
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
@@ -209,6 +210,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void InvestigationLogic()
     {
+        agent.stoppingDistance = 0;
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
         if (distanceToPlayer <= attackRadius && (isPlayerMoving || isPlayerTouchingMe))
         {
@@ -231,6 +233,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void AttackLogic()
     {
+        agent.stoppingDistance = 2;
         agent.speed = attackSpeed;
         Vector3 targetDirection = new Vector3(PlayerTransform.position.x, transform.position.y, PlayerTransform.position.z);
         transform.LookAt(targetDirection);

@@ -94,7 +94,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null || BeaconTransform == null) return;
 
         if (isStunned)
         {
@@ -218,6 +218,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     private void MoveDirect()
     {
         agent.SetDestination(currentTarget.position);
+        agent.stoppingDistance = 2;
     }
 
     private void MoveStrafer()
@@ -228,6 +229,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         if (currentTarget == BeaconTransform && distanceToBeacon <= playerAggroRadius && distanceToBeacon < distanceToPlayer)
         {
             agent.SetDestination(BeaconTransform.position);
+            agent.stoppingDistance = 2;
         }
 
         else
@@ -236,6 +238,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
 
             if (distanceToPlayer > playerAggroRadius)
             {
+                agent.stoppingDistance = 0;
                 float strafeDirection = Mathf.Sin(strafeTimer * 1f) > 0 ? 1f : -1f;
                 Vector3 strafeOffset = transform.right * strafeDirection * 8f;
 
@@ -245,6 +248,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             else
             {
                 agent.SetDestination(PlayerTransform.position);
+                agent.stoppingDistance = 2;
             }
         }
     }

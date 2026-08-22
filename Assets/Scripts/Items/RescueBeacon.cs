@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
 #endif
 
 public class RescueBeacon : MonoBehaviour, IInteract
@@ -29,7 +26,7 @@ public class RescueBeacon : MonoBehaviour, IInteract
     [Header("Required Parts List")]
     [SerializeField] public RequiredItem[] requiredParts = new RequiredItem[0];
     float currentHoldTime = 0f;
-    bool isRepaired = false;
+    public bool isRepaired = false;
 
     private void OnValidate()
     {
@@ -55,7 +52,7 @@ public class RescueBeacon : MonoBehaviour, IInteract
     {
     }
 
-    private bool HasAllRequiredParts()
+    public bool HasAllRequiredParts()
     {
         PlayerInventory inventory = gameManager.instance.playerInventory;
 
