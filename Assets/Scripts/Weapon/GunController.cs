@@ -101,6 +101,11 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
             gameObject.AddComponent<MeshRenderer>();
         }
 
+        if(GetComponent<MeshCollider>() == null)
+        {
+            gameObject.AddComponent<MeshCollider>();
+        }
+
         if (gameObject.transform.Find("Muzzle") == null && Muzzle == null)
         {
             Muzzle = new GameObject("Muzzle");
@@ -161,6 +166,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     public void SetWeaponUse(bool inUse)
     {
         isInUse = inUse;
+
+        GetComponent<MeshCollider>().enabled = !isInUse;
     }
 
     private void Update()
@@ -219,7 +226,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     {
         for(int i = 0; i < BulletData.Gauge; i++)
         {
-            Quaternion bulletRotation = Muzzle.transform.rotation;
+            Quaternion bulletRotation = Camera.main.transform.rotation;
 
             float spreadMod = SpreadAmmount;
 
@@ -228,10 +235,10 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
                 spreadMod -= spreadMod * BulletData.SpreadReduction;
             }
 
-            float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.x;
-            float pitch = Random.Range(-spreadMod, spreadMod) + bulletRotation.y;
+            float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.x;
+            float pitch = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.y;
 
-            bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.z);
+            bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
 
             projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, BulletData);
         }

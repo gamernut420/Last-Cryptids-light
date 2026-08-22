@@ -25,12 +25,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField] GameObject WeaponGrip;
     GameObject ActiveWeapon;
     GameObject[] weapons = new GameObject[3];
+    int activeWeaponSlot;
 
     int jumpCount;
     int HPOrig;
     float speedOrig;
-
-    float shootTimer;
 
     Vector3 moveDir;
     Vector3 playerVel;
@@ -52,6 +51,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         if (gameManager.instance.isPaused) return;
 
         if (isDead) return;
+
+
+        SwapWeapon();
  
         movement();
         sprint();
@@ -150,53 +152,137 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         if (wep != null)
         {
+            bool hadEmpty = false;
+
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                if (weapons[i] == null)
+                {
+                    hadEmpty = true;
+
+                    Debug.Log("Found Slot");
+
+                    if(ActiveWeapon != null)
+                    {
+                        ActiveWeapon.SetActive(false);
+                    }
+
+                    weapons[i] = Weapon;
+
+                    ActiveWeapon = weapons[i];
+
+                    activeWeaponSlot = i;
+
+                    break;
+                }
+            }
+
+            if (hadEmpty == false)
+            {
+                DropWeapon();
+
+                weapons[activeWeaponSlot] = Weapon;
+
+                ActiveWeapon = weapons[activeWeaponSlot];
+            }
+
             wep.SetPlayerVariables(GetComponent<IPlayer>(), Camera.main.GetComponent<ICamera>(), WeaponGrip.transform.localPosition);
             wep.SetWeaponUse(true);
 
             Weapon.transform.SetParent(Camera.main.transform);
 
-            Weapon.transform.localPosition = Vector3.zero;
+            Weapon.transform.localPosition = WeaponGrip.transform.localPosition;
+
+            Weapon.transform.localRotation = Quaternion.identity;
         }
     }
 
     void DropWeapon()
     {
-        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
-
-        if(wep != null)
+        if (ActiveWeapon != null)
         {
-            wep.SetWeaponUse(false);
-            wep.SetPlayerVariables();
+            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
 
-            
+            if (wep != null)
+            {
+                wep.SetWeaponUse(false);
+                wep.SetPlayerVariables();
+
+                RaycastHit frontRay;
+                RaycastHit downRay;
+
+                Vector3 traceStart = transform.position;
+                Vector3 traceEnd = traceStart + (transform.forward * 3);
+
+                Vector3 dropLocation;
+
+                if (Physics.Linecast(traceStart, traceEnd, out frontRay))
+                {
+                    traceStart = frontRay.point;
+                }
+                else
+                {
+                    traceStart = traceEnd;
+                    
+                }
+
+                traceEnd = traceStart + (Vector3.down * 100);
+
+                if (Physics.Linecast(traceStart, traceEnd, out downRay))
+                {
+                    dropLocation = downRay.point;
+                }
+                else
+                {
+                    dropLocation = traceEnd;
+                }
+
+                ActiveWeapon.transform.SetParent(null);
+                ActiveWeapon.transform.position = dropLocation;
+                ActiveWeapon.transform.localRotation = Quaternion.identity;
+
+                ActiveWeapon = null;
+                weapons[activeWeaponSlot] = null;
+            }
         }
     }
 
     void SwapWeapon()
     {
-        if (Input.GetButtonDown("1") && weapons[0] != null)
+
+        if (Input.GetKeyDown(KeyCode.Alpha1) && weapons[0] != null)
         {
             ActiveWeapon.SetActive(false);
 
             ActiveWeapon = weapons[0];
 
+            activeWeaponSlot = 0;
+
             ActiveWeapon.SetActive(true);
         }
-        else if (Input.GetButtonDown("2") && weapons[1] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null)
         {
             ActiveWeapon.SetActive(false);
 
             ActiveWeapon = weapons[1];
 
+            activeWeaponSlot = 1;
+
             ActiveWeapon.SetActive(true);
         }
-        else if (Input.GetButtonDown("3") && weapons[2] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null)
         {
             ActiveWeapon.SetActive(false);
 
             ActiveWeapon = weapons[2];
 
+            activeWeaponSlot = 2;
+
             ActiveWeapon.SetActive(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            DropWeapon();
         }
     }
 }
