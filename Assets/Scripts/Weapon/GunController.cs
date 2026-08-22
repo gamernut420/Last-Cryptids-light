@@ -162,6 +162,13 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         }
     }
 
+    private void OnEnable()
+    {
+        isShooting = false;
+        tryingShoot = false;
+        CheckAmmo();
+    }
+
     public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default)
     {
         owningPlayer = player;

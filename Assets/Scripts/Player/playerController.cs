@@ -250,7 +250,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     void SwapWeapon()
     {
 
-        if (Input.GetKeyDown(KeyCode.Alpha1) && weapons[0] != null)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && weapons[0] != null && activeWeaponSlot != 0)
         {
             ActiveWeapon.SetActive(false);
 
@@ -260,7 +260,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
             ActiveWeapon.SetActive(true);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null && activeWeaponSlot != 1)
         {
             ActiveWeapon.SetActive(false);
 
@@ -270,7 +270,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
             ActiveWeapon.SetActive(true);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null && activeWeaponSlot != 2)
         {
             ActiveWeapon.SetActive(false);
 

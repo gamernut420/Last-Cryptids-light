@@ -118,6 +118,7 @@ public class PlayerInteraction : MonoBehaviour
             isHolding = true;
             if (interactable.DoHold())
             {
+                isHolding = false;
                 interactable.Interact(gameObject);
             }
         }
