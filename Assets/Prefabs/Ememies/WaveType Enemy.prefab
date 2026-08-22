@@ -283,23 +283,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_WaveType
   currentType: 0
+  model: {fileID: 5647786696481377497}
+  playerTag: Player
+  beaconTag: Beacon
+  attackCooldown: 1.5
+  attackRange: 2
+  attackDamage: 2
+  playerAggroRadius: 8
   tankyWeight: 25
   fastWeight: 45
   straferWeight: 30
   tankMaxSpeed: 2
   tankMinSpeed: 1
-  tankMaxHP: 60
-  tankMinHP: 40
+  tankMaxHP: 10
+  tankMinHP: 8
   fastMaxSpeed: 7
   fastMinSpeed: 5
-  fastMaxHP: 30
-  fastMinHP: 15
+  fastMaxHP: 5
+  fastMinHP: 3
   straferMaxSpeed: 4
   straferMinSpeed: 3
-  straferMaxHP: 40
-  straferMinHP: 30
-  currentHealth: 0
+  straferMaxHP: 8
+  straferMinHP: 5
+  maxHP: 0
+  currentHP: 0
   currentSpeed: 0
+  currentTarget: {fileID: 0}
 --- !u!195 &6254754168934463905
 NavMeshAgent:
   m_ObjectHideFlags: 0
