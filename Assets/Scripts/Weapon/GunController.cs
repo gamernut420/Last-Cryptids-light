@@ -6,7 +6,9 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [SerializeField] GameObject WeaponModel;
 
     [Header("Gun Stats")]
-    [SerializeField][Min(0f)] float FireRate = 0.5f;
+    [Tooltip("This is in Rounds per Minute")]
+    [SerializeField][Min(0f)] float FireRate = 500;
+    [SerializeField] bool IsAuto = false;
     [SerializeField][Min(1)] int MagSize = 30;
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
     [SerializeField][Range(0, 90)] float SpreadAmmount = 0;
@@ -66,9 +68,14 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     {
         CheckComponents();
 
-        GetComponent<MeshFilter>().sharedMesh = WeaponModel.GetComponent<MeshFilter>().sharedMesh;
+        if(WeaponModel != null)
+        {
+            GetComponent<MeshFilter>().sharedMesh = WeaponModel.GetComponent<MeshFilter>().sharedMesh;
 
-        GetComponent<MeshRenderer>().sharedMaterials = WeaponModel.GetComponent<MeshRenderer>().sharedMaterials;
+            GetComponent<MeshRenderer>().sharedMaterials = WeaponModel.GetComponent<MeshRenderer>().sharedMaterials;
+
+            GetComponent<MeshCollider>().sharedMesh = WeaponModel.GetComponent<MeshFilter>().sharedMesh;
+        }
     }
 
     void CheckComponents()
@@ -134,6 +141,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         canShoot = true;
         tryingShoot = false;
         isShooting = false;
+
+        FireRate = 1 / (FireRate / 60);
 
         isAiming = false;
 
@@ -263,6 +272,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         currentAmmo--;
 
+        tryingShoot = IsAuto;
+
         if (CurrentAmmoChanged != null)
         {
             CurrentAmmoChanged(currentAmmo);
@@ -321,7 +332,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     {
         float randomHorizontalRecoil = Random.Range(-HorizontalRecoil, HorizontalRecoil);
 
-        transform.localPosition -= Vector3.forward * 0.1f;
+        transform.localPosition -= Vector3.forward * (isAiming ? 0.01f : 0.1f);
 
         transform.localRotation = Quaternion.Euler(-VerticleRecoil, randomHorizontalRecoil, 0);
 
