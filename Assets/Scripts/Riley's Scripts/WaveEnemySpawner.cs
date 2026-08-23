@@ -29,6 +29,11 @@ public class WaveEnemySpawner : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        waveTimer = timeBetweenWaves;
+    }
+
     void Update()
     {
         if (gameManager.instance != null && gameManager.instance.beacon != null)
@@ -40,8 +45,8 @@ public class WaveEnemySpawner : MonoBehaviour
                 totalElapsedTime += Time.deltaTime;
                 if (!isSpawningActive)
                 {
-                    waveTimer -= Time.deltaTime;
-                    if (waveTimer <= 0f)
+                    waveTimer += Time.deltaTime;
+                    if (waveTimer >= 60f)
                     {
                         StartCoroutine(SpawnWaveRoutine());
                     }
@@ -62,7 +67,7 @@ public class WaveEnemySpawner : MonoBehaviour
             yield return new WaitForSeconds(spawnRate);
         }
 
-        waveTimer = timeBetweenWaves;
+        waveTimer = 0f;
         isSpawningActive = false;
     }
 
@@ -70,7 +75,7 @@ public class WaveEnemySpawner : MonoBehaviour
     {
         if (enemyWavePrefab == null || BeaconTransform == null)
         {
-            Debug.LogWarning("Spawner missing Prefab or Center Target reference.");
+            Debug.LogWarning("Spawner missing Prefab");
             return;
         }
 
@@ -86,6 +91,7 @@ public class WaveEnemySpawner : MonoBehaviour
             directionToTarget.y = 0;
 
             Quaternion spawnRotation = Quaternion.LookRotation(directionToTarget);
+            Instantiate(enemyWavePrefab, finalSpawnPoint, spawnRotation);
         }
         else
         {
