@@ -10,6 +10,8 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] bool DebugInteractionTraces = false;
 
     public static System.Action<string> UpdateScreenText;
+    public static System.Action<bool> ShowHold;
+    public static System.Action<float> UpdateHold;
 
     Vector3 boxSize;
 
@@ -37,6 +39,8 @@ public class PlayerInteraction : MonoBehaviour
             {
                 isHolding = false;
                 interactable.StopHold();
+
+                ShowHold?.Invoke(isHolding);
             }
 
             interactable = null;
@@ -81,6 +85,8 @@ public class PlayerInteraction : MonoBehaviour
         {
             isHolding = false;
             interactable.StopHold();
+
+            ShowHold?.Invoke(isHolding);
         }
 
         interactable = tempInteract;
@@ -116,9 +122,19 @@ public class PlayerInteraction : MonoBehaviour
         if (interactable != null)
         {
             isHolding = true;
-            if (interactable.DoHold())
+
+            ShowHold?.Invoke(isHolding);
+
+            float holdAmmount = interactable.DoHold();
+
+            UpdateHold?.Invoke(holdAmmount);
+
+            if (holdAmmount >= 1)
             {
                 isHolding = false;
+
+                ShowHold?.Invoke(isHolding);
+
                 interactable.Interact(gameObject);
             }
         }

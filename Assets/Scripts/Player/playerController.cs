@@ -136,16 +136,21 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public bool PlayerRefillAmmo(int amount)
     {
-        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+        if(ActiveWeapon != null)
+        {
+            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
 
-        if (wep != null)
-        {
-            return wep.WeaponRefillAmmo(amount);
+            if (wep != null)
+            {
+                return wep.WeaponRefillAmmo(amount);
+            }
+            else
+            {
+                return false;
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     public void PlayerAddWeapon(GameObject Weapon)

@@ -19,7 +19,7 @@ public class ScavengeItem : MonoBehaviour, IInteract
     
     private void Start()
     {
-        currentHoldTimer = HoldTimer;
+        currentHoldTimer = 0;
         currentPropmt = PromptMessage;
     }
 
@@ -44,26 +44,24 @@ public class ScavengeItem : MonoBehaviour, IInteract
         return currentPropmt;
     }
 
-    bool DoHold()
+    public float DoHold()
     {
-        currentHoldTimer -= Time.deltaTime;
+        currentHoldTimer += Time.deltaTime;
 
         currentHoldTimer = Mathf.Clamp(currentHoldTimer, 0, HoldTimer);
 
-        currentPropmt = currentHoldTimer.ToString("F1");
-
-        if (currentHoldTimer == 0)
+        if (HoldTimer == 0)
         {
-            return true;
+            return 1;
         }
 
-        return false;
+        return currentHoldTimer / HoldTimer;
     }
 
     public void StopHold()
     {
         currentPropmt = PromptMessage;
 
-        currentHoldTimer = HoldTimer;
+        currentHoldTimer = 0;
     }
 }

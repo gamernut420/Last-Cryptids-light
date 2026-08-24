@@ -133,6 +133,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     private void Start()
     {
+        CheckComponents();
+
         isInUse = false;
 
         currentAmmo = MagSize;

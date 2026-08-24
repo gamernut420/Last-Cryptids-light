@@ -44,7 +44,7 @@ public class RescueBeacon : MonoBehaviour, IInteract
     void Start()
     {
         currentPrompt = PromptMessage;
-        currentHoldTime = holdDuration;
+        currentHoldTime = 0;
     }
 
     // Update is called once per frame
@@ -89,23 +89,23 @@ public class RescueBeacon : MonoBehaviour, IInteract
         gameManager.instance.StartExtraction(ExtractionTime);
     }
 
-    public bool DoHold()
+    public float DoHold()
     {
         if (HasAllRequiredParts() && !isRepaired)
         {
-            currentHoldTime -= Time.deltaTime;
+            currentHoldTime += Time.deltaTime;
 
             currentHoldTime = Mathf.Clamp(currentHoldTime, 0, holdDuration);
 
-            currentPrompt = currentHoldTime.ToString("F1");
-
-            if (currentHoldTime == 0)
+            if(holdDuration == 0)
             {
-                return true;
+                return 1;
             }
+
+            return currentHoldTime / holdDuration;
         }
 
-        return false;
+        return 0;
     }
 
     public void StopHold()
@@ -122,6 +122,14 @@ public class RescueBeacon : MonoBehaviour, IInteract
 
     public string ScreenMessage()
     {
-        return currentPrompt;
+        if (HasAllRequiredParts())
+        {
+            return PromptMessage;
+        }
+        else
+        {
+            
+            return currentPrompt;
+        }
     }
 }
