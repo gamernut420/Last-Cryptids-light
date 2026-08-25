@@ -1,47 +1,31 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class ItemSpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class SpawnableItem
-    {
-        public GameObject itemPrefab;
-        public int minQuantity = 1;
-        public int maxQuantity = 3;
-    }
+    [SerializeField] GameObject itemToSpawn;
+    [SerializeField] int amountToSpawn;
+    [SerializeField] int spawnDist;
 
-    [Header("Spawn Settings")]
-    [SerializeField] List<SpawnableItem> itemsToSpawn = new List<SpawnableItem>();
-    [SerializeField] Transform[] spawnLocations;
-    [SerializeField] int totalItemsToSpawn = 10;
+    int spawnCount;
 
-    void Start()
+    private void Start()
     {
-        SpawnRandomItems();
-    }
-
-    void SpawnRandomItems()
-    {
-        if (spawnLocations.Length == 0 || itemsToSpawn.Count == 0)
+        for(int i= 0; i < amountToSpawn; ++i)
         {
-            Debug.LogWarning("ItemSpawner is missing spawn locations or items!");
-            return;
-        }
-
-        for (int i = 0; i < totalItemsToSpawn; i++)
-        {
-            Transform randomSpot = spawnLocations[Random.Range(0, spawnLocations.Length)];
-            SpawnableItem randomSpawnData = itemsToSpawn[Random.Range(0, itemsToSpawn.Count)];
-
-            if (randomSpawnData.itemPrefab != null)
-            {
-                GameObject spawnedItem = Instantiate(
-                    randomSpawnData.itemPrefab,
-                    randomSpot.position,
-                    randomSpot.rotation
-                );
-            }
+            spawn();
         }
     }
+
+    void spawn()
+    {
+        spawnCount++;
+
+        Vector3 ranPos = Random.insideUnitSphere * spawnDist;
+        ranPos += transform.position;
+        ranPos.y = 6;
+
+        Instantiate(itemToSpawn, ranPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+    }
+
 }
