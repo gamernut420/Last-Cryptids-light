@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class gameManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class gameManager : MonoBehaviour
     [Header("Player")]
     public Image playerHPBar;
     public GameObject damageFlashPanel;
+
 
     [Header("Auto Set Variables (No need to touch)")]
     public GameObject beacon;
