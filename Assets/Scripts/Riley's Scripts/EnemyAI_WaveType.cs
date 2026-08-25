@@ -50,13 +50,23 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     [SerializeField] private float currentSpeed;
     [SerializeField] private Transform currentTarget;
 
+    [Header("Audio and Material")]
+    [Range(0f, 1f)][SerializeField] float audStepsVol;
+    [SerializeField] Renderer leftEyeRenderer;
+    [SerializeField] Renderer rightEyeRenderer;
     Color colorOrig;
+    private Material leftEyeMat;
+    private Material rightEyeMat;
+    private Color leftEyeOrig;
+    private Color rightEyeOrig;
 
     private NavMeshAgent agent;
     private float strafeTimer;
     private bool isStunned;
     private float stunTimer;
     private float attackTimer;
+    private bool isPlayingStep;
+    private FootstepAudio footstepAudio;
 
     private Transform PlayerTransform
     {
@@ -89,12 +99,15 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         RandomizeEnemyType();
         InitializeStats();
         SetEnemyColor();
+        SetEyeColor();
+        footstepAudio = GetComponent<FootstepAudio>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (PlayerTransform == null || BeaconTransform == null) return;
+        SetEyesStun(isStunned);
 
         if (isStunned)
         {
@@ -119,6 +132,14 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             case AIType.Strafer:
                 MoveStrafer();
                 break;
+        }
+
+        if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
+        {
+            if (footstepAudio != null)
+            {
+                StartCoroutine(PlayStep());
+            }
         }
 
         Attack();
@@ -148,6 +169,42 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             }
 
             colorOrig = modelMat.color;
+        }
+    }
+    
+    void SetEyeColor()
+    {
+        if (leftEyeRenderer != null)
+        {
+            leftEyeMat = leftEyeRenderer.material;
+            leftEyeOrig = leftEyeMat.GetColor("_BaseColor");
+            leftEyeMat.EnableKeyword("_EMISSION");
+        }
+        if (rightEyeRenderer != null)
+        {
+            rightEyeMat = rightEyeRenderer.material;
+            rightEyeOrig = rightEyeMat.GetColor("_BaseColor");
+            rightEyeMat.EnableKeyword("_EMISSION");
+        }
+    }
+
+    void SetEyesStun(bool stun)
+    {
+        Color targetLeftColor = stun ? Color.white : leftEyeOrig;
+        Color targetRightColor = stun ? Color.white : rightEyeOrig;
+
+        Color emissionLeftColor = stun ? (Color.white * 1.5f) : leftEyeOrig;
+        Color emissionRightColor = stun ? (Color.white * 1.5f) : rightEyeOrig;
+
+        if (leftEyeMat != null)
+        {
+            leftEyeMat.SetColor("_BaseColor", targetLeftColor);
+            leftEyeMat.SetColor("_EmissionColor", emissionLeftColor);
+        }
+        if (rightEyeMat != null)
+        {
+            rightEyeMat.SetColor("_BaseColor", targetRightColor);
+            rightEyeMat.SetColor("_EmissionColor", emissionRightColor);
         }
     }
 
@@ -307,6 +364,27 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         yield return new WaitForSeconds(0.1f);
         modelMat.color = colorOrig;
         modelMat.SetColor("_EmissionColor", colorOrig);
+    }
+
+    IEnumerator PlayStep()
+    {
+        isPlayingStep = true;
+        footstepAudio.PlayFootstepSound(audStepsVol);
+
+        switch (currentType)
+        {
+            case AIType.Tanky:
+                yield return new WaitForSeconds(0.7f);
+                break;
+            case AIType.Fast:
+                yield return new WaitForSeconds(0.3f);
+                break;
+            case AIType.Strafer:
+                yield return new WaitForSeconds(0.5f);
+                break;
+        }
+
+        isPlayingStep = false;
     }
 
     public void ApplyFlashLightStun(float duration)

@@ -1,16 +1,24 @@
-using JetBrains.Annotations;
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class FootstepAudio : MonoBehaviour
 {
     public AudioSource audioSource;
     public AudioClip[] footstepClips;
 
-    public void PlayFootstepSound()
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource ==  null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
+
+    public void PlayFootstepSound(float stepVol)
     {
         if (footstepClips.Length == 0) return;
 
         int index = Random.Range(0, footstepClips.Length);
-        audioSource.PlayOneShot(footstepClips[index]);
+        audioSource.PlayOneShot(footstepClips[index], stepVol);
     }
 }
