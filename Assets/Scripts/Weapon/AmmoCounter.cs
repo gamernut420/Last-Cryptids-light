@@ -4,39 +4,28 @@ using UnityEngine;
 public class AmmoCounter : MonoBehaviour
 {
     TextMeshProUGUI ammoCounter;
-    int currentAmmo;
-    int reserveAmmo;
 
     private void OnEnable()
     {
         ammoCounter = GetComponent<TextMeshProUGUI>();
 
-        GunController.CurrentAmmoChanged += UpdateCurrentAmmo;
-        GunController.ReserveAmmoChanged += UpdateReserveAmmo;
+        GunController.UpdateAmmoText += UpdateAmmoText;
+
+        playerController.ShowAmmoUI += ToggleAmmoText;
     }
 
     private void OnDisable()
     {
-        GunController.CurrentAmmoChanged -= UpdateCurrentAmmo;
-        GunController.ReserveAmmoChanged -= UpdateReserveAmmo;
+        GunController.UpdateAmmoText -= UpdateAmmoText;
     }
 
-    void UpdateAmmoText()
+    void UpdateAmmoText(int current, int reserve)
     {
-        ammoCounter.text = string.Format("{0} / {1}", currentAmmo, reserveAmmo);
+        ammoCounter.text = $"{current} / {reserve}";
     }
 
-    void UpdateCurrentAmmo(int ammount)
+    void ToggleAmmoText(bool show)
     {
-        currentAmmo = ammount;
-
-        UpdateAmmoText();
-    }
-
-    void UpdateReserveAmmo(int ammount)
-    {
-        reserveAmmo = ammount;
-
-        UpdateAmmoText();
+        ammoCounter.enabled = show;
     }
 }

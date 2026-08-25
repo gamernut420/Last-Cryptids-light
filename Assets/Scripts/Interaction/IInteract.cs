@@ -4,10 +4,10 @@ public interface IInteract
 {
     bool Interact(GameObject interactor);
 
-    bool DoHold()
+    //Return >= 1 to interact. Do CurrectHold / HoldTimer
+    float DoHold()
     {
-        //Return true to interact
-        return true;
+        return 1;
     }
 
     void StopHold()

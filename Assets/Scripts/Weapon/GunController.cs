@@ -38,8 +38,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     //Event speakers
     public static System.Action<float> SendReticleSpread;
     public static System.Action<bool> ChangedAim;
-    public static System.Action<int> CurrentAmmoChanged;
-    public static System.Action<int> ReserveAmmoChanged;
+    public static System.Action<int, int> UpdateAmmoText;
 
     //Object Variables
     ProjectileManager projectileManager;
@@ -134,13 +133,13 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     private void Start()
     {
+        CheckComponents();
+
         isInUse = false;
 
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
-        tryingShoot = false;
-        isShooting = false;
 
         FireRate = 1 / (FireRate / 60);
 
@@ -150,16 +149,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         baseRotation = Quaternion.identity;
 
         aimPoint = AimObject.transform.localPosition * -1;
-
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
-
-        if (ReserveAmmoChanged != null)
-        {
-            ReserveAmmoChanged(currentReserveAmmo);
-        }
     }
 
     private void OnEnable()
@@ -167,6 +156,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         isShooting = false;
         tryingShoot = false;
         CheckAmmo();
+
+        UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
     }
 
     public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default)
@@ -207,19 +198,13 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
             {
                 isAiming = true;
 
-                if (ChangedAim != null)
-                {
-                    ChangedAim(true);
-                }
+                ChangedAim?.Invoke(true);
             }
             else if (Input.GetMouseButtonUp(1))
             {
                 isAiming = false;
-
-                if (ChangedAim != null)
-                {
-                    ChangedAim(false);
-                }
+                
+                ChangedAim?.Invoke(false);
             }
 
             if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagSize && currentReserveAmmo > 0)
@@ -264,10 +249,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
             gunAudio.PlayOneShot(gunShootSound);
         }
 
-        if (SendReticleSpread != null)
-        {
-            SendReticleSpread(SpreadAmmount);
-        }
+        SendReticleSpread?.Invoke(SpreadAmmount);
 
         MuzzleFlash();
 
@@ -281,10 +263,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         tryingShoot = IsAuto;
 
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
+        UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
 
         yield return new WaitForSeconds(FireRate);
 
@@ -322,15 +301,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
             currentReserveAmmo = 0;
         }
 
-        if (CurrentAmmoChanged != null)
-        {
-            CurrentAmmoChanged(currentAmmo);
-        }
-
-        if (ReserveAmmoChanged != null)
-        {
-            ReserveAmmoChanged(currentReserveAmmo);
-        }
+        UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
 
         CheckAmmo();
     }
@@ -396,10 +367,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         {
             currentReserveAmmo = Mathf.Clamp(currentReserveAmmo + amount, 0, MaxReserveAmmo);
 
-            if(ReserveAmmoChanged != null)
-            {
-                ReserveAmmoChanged(currentReserveAmmo);
-            }
+            UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
 
             return true;
         }

@@ -26,6 +26,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     GameObject ActiveWeapon;
     GameObject[] weapons = new GameObject[3];
     int activeWeaponSlot;
+    public static System.Action<bool> ShowAmmoUI;
 
     int jumpCount;
     int HPOrig;
@@ -42,6 +43,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         HPOrig = Hp;
         speedOrig = speed;
+
+        ShowAmmoUI?.Invoke(false);
     }
 
     // Update is called once per frame
@@ -133,16 +136,21 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public bool PlayerRefillAmmo(int amount)
     {
-        IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+        if(ActiveWeapon != null)
+        {
+            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
 
-        if (wep != null)
-        {
-            return wep.WeaponRefillAmmo(amount);
+            if (wep != null)
+            {
+                return wep.WeaponRefillAmmo(amount);
+            }
+            else
+            {
+                return false;
+            }
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     public void PlayerAddWeapon(GameObject Weapon)
@@ -193,6 +201,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             Weapon.transform.localPosition = WeaponGrip.transform.localPosition;
 
             Weapon.transform.localRotation = Quaternion.identity;
+
+            ActiveWeapon.SetActive(false);
+            ActiveWeapon.SetActive(true);
+
+            ShowAmmoUI?.Invoke(ActiveWeapon != null);
         }
     }
 
@@ -242,13 +255,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
                 ActiveWeapon = null;
                 weapons[activeWeaponSlot] = null;
+
+                ShowAmmoUI?.Invoke(false);
             }
         }
     }
 
     void SwapWeapon()
     {
-
         if (Input.GetKeyDown(KeyCode.Alpha1) && weapons[0] != null && activeWeaponSlot != 0)
         {
             ActiveWeapon.SetActive(false);
@@ -258,6 +272,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             activeWeaponSlot = 0;
 
             ActiveWeapon.SetActive(true);
+
+            ShowAmmoUI?.Invoke(ActiveWeapon != null);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null && activeWeaponSlot != 1)
         {
@@ -268,6 +284,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             activeWeaponSlot = 1;
 
             ActiveWeapon.SetActive(true);
+
+            ShowAmmoUI?.Invoke(ActiveWeapon != null);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null && activeWeaponSlot != 2)
         {
@@ -278,6 +296,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             activeWeaponSlot = 2;
 
             ActiveWeapon.SetActive(true);
+
+            ShowAmmoUI?.Invoke(ActiveWeapon != null);
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {

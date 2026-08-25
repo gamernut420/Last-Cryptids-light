@@ -10,7 +10,7 @@ public class AmmoBox : MonoBehaviour, IInteract
 
     private void Start()
     {
-        currentHoldTimer = HoldTimer;
+        currentHoldTimer = 0;
     }
 
     public bool Interact(GameObject interactor)
@@ -27,11 +27,15 @@ public class AmmoBox : MonoBehaviour, IInteract
             }
             else
             {
+                currentHoldTimer = 0;
+
                 return false;
             }
         }
         else
         {
+            currentHoldTimer = 0;
+
             return false;
         }
     }
@@ -45,22 +49,20 @@ public class AmmoBox : MonoBehaviour, IInteract
     {
         interactionText = "Pickup Ammo";
 
-        currentHoldTimer = HoldTimer;
+        currentHoldTimer = 0;
     }
 
-    public bool DoHold()
+    public float DoHold()
     {
-        currentHoldTimer -= Time.deltaTime;
+        currentHoldTimer += Time.deltaTime;
 
         currentHoldTimer = Mathf.Clamp(currentHoldTimer, 0, HoldTimer);
 
-        interactionText = currentHoldTimer.ToString("F1");
-
-        if (currentHoldTimer == 0)
+        if (HoldTimer == 0)
         {
-            return true;
+            return 1;
         }
 
-        return false;
+        return currentHoldTimer / HoldTimer;
     }
 }

@@ -61,8 +61,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071703257116349694}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.66, y: 0.22, z: 4.623}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -83,10 +83,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunController
   WeaponModel: {fileID: 919132149155446097, guid: a5471859e7545624c8bd4afea3bcebc8, type: 3}
-  FireRate: 45
+  FireRate: 120
   IsAuto: 0
   MagSize: 8
-  MaxReserveAmmo: 80
+  MaxReserveAmmo: 40
   SpreadAmmount: 12
   BulletData:
     Damage: 20
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  DebugProjectiles: 1
+  DebugProjectiles: 0
 --- !u!82 &5029347106843251140
 AudioSource:
   m_ObjectHideFlags: 0
