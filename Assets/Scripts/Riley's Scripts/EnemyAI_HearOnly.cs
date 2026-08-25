@@ -15,6 +15,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
 
+    [Header("Audio")]
+    [Range(0, 1)][SerializeField] float audStepsVol;
+
     [Header("Movement & Combat")]
     public float attackSpeed = 10f;
     public float patrolSpeed = 2f;
@@ -43,6 +46,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private Vector3 playerLastPosition;
     private bool isPlayerMoving;
     private bool isPlayerTouchingMe;
+    bool isPlayingStep;
+    private FootstepAudio footstepAudio;
 
     private enum State { Patrol, InvestigateSound, Attack }
     private State currentState = State.Patrol;
@@ -76,6 +81,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         CheckEnemyMaterial();
         MoveToRandomPoint();
+        footstepAudio = GetComponent<FootstepAudio>();
         
         if (PlayerTransform != null)
         {
@@ -102,6 +108,14 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             case State.Attack:
                 AttackLogic();
                 break;
+        }
+
+        if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
+        {
+            if (footstepAudio != null)
+            {
+                StartCoroutine(PlayStep());
+            }
         }
     }
 
@@ -136,8 +150,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         Color targetRightColor = isAlert ? Color.red : rightEarOrig;
 
         // Apply an HDR intensity multiplier (e.g., 3f) to the alert color to make it glow brightly
-        Color emissionLeftColor = isAlert ? (Color.red * 3f) : Color.black;
-        Color emissionRightColor = isAlert ? (Color.red * 3f) : Color.black;
+        Color emissionLeftColor = isAlert ? (Color.red * 3f) : leftEarOrig;
+        Color emissionRightColor = isAlert ? (Color.red * 3f) : rightEarOrig;
 
 
         if (leftEarMat != null)
@@ -165,7 +179,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
         playerLastPosition = PlayerTransform.position;
 
-        float enemyRadius = agent.radius + 0.2f;
+        float enemyRadius = agent.radius + 1f;
         isPlayerTouchingMe = Physics.CheckSphere(transform.position, enemyRadius, playerLayer);
     }
 
@@ -316,6 +330,26 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         yield return new WaitForSeconds(0.1f);
         modelMat.color = colorOrig;
         modelMat.SetColor("_EmissionColor", Color.black);
+    }
+
+    IEnumerator PlayStep()
+    {
+        isPlayingStep = true;
+        footstepAudio.PlayFootstepSound(audStepsVol);
+        
+        switch (currentState)
+        {
+            case State.Patrol:
+                yield return new WaitForSeconds(0.5f);
+                break;
+            case State.InvestigateSound:
+                yield return new WaitForSeconds(0.3f);
+                break;
+            case State.Attack:
+                yield return new WaitForSeconds(0.3f);
+                break;
+        }
+        isPlayingStep = false;
     }
 
     void MoveToRandomPoint()

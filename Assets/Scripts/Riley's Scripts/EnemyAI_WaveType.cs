@@ -50,10 +50,11 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     [SerializeField] private float currentSpeed;
     [SerializeField] private Transform currentTarget;
 
-    Color colorOrig;
+    [Header("Audio and Material")]
+    [Range(0f, 1f)][SerializeField] float audStepsVol;
     [SerializeField] Renderer leftEyeRenderer;
     [SerializeField] Renderer rightEyeRenderer;
-    
+    Color colorOrig;
     private Material leftEyeMat;
     private Material rightEyeMat;
     private Color leftEyeOrig;
@@ -64,6 +65,8 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     private bool isStunned;
     private float stunTimer;
     private float attackTimer;
+    private bool isPlayingStep;
+    private FootstepAudio footstepAudio;
 
     private Transform PlayerTransform
     {
@@ -97,6 +100,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         InitializeStats();
         SetEnemyColor();
         SetEyeColor();
+        footstepAudio = GetComponent<FootstepAudio>();
     }
 
     // Update is called once per frame
@@ -128,6 +132,14 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             case AIType.Strafer:
                 MoveStrafer();
                 break;
+        }
+
+        if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
+        {
+            if (footstepAudio != null)
+            {
+                StartCoroutine(PlayStep());
+            }
         }
 
         Attack();
@@ -352,6 +364,27 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         yield return new WaitForSeconds(0.1f);
         modelMat.color = colorOrig;
         modelMat.SetColor("_EmissionColor", colorOrig);
+    }
+
+    IEnumerator PlayStep()
+    {
+        isPlayingStep = true;
+        footstepAudio.PlayFootstepSound(audStepsVol);
+
+        switch (currentType)
+        {
+            case AIType.Tanky:
+                yield return new WaitForSeconds(0.7f);
+                break;
+            case AIType.Fast:
+                yield return new WaitForSeconds(0.3f);
+                break;
+            case AIType.Strafer:
+                yield return new WaitForSeconds(0.5f);
+                break;
+        }
+
+        isPlayingStep = false;
     }
 
     public void ApplyFlashLightStun(float duration)
