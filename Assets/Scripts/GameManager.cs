@@ -25,6 +25,8 @@ public class gameManager : MonoBehaviour
     public PlayerInventory playerInventory;
     public playerController playerScript;
     public cameraController cameraScript;
+    [Header("Audio")]
+    [SerializeField] private AmbiencePlaylist ambiencePlaylist;
 
     public bool isPaused;
     public bool isExtracting;
@@ -84,6 +86,11 @@ public class gameManager : MonoBehaviour
         {
             countdownText.SetActive(false);
         }
+
+        if (ambiencePlaylist == null)
+        {
+            ambiencePlaylist = GetComponent<AmbiencePlaylist>();
+        }
     }
 
 
@@ -96,6 +103,11 @@ public class gameManager : MonoBehaviour
         {
             playerHPBar.fillAmount = 1f;
         }
+
+        if (ambiencePlaylist != null)
+        {
+            ambiencePlaylist.StartPlaylist();
+        }
     }
 
 
@@ -106,11 +118,15 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
             {
-                stateUnpause();
+                // stateUnpause(); //Removed to move down, trust - Sean
                 // pause the game
                 statePause();
                 menuActive = menuPause;
                 menuActive.SetActive(true);
+            }
+            else if (menuActive == menuPause)
+            {
+                stateUnpause();
             }
         }
     }
@@ -120,6 +136,11 @@ public class gameManager : MonoBehaviour
     {
         isPaused = true;
         Time.timeScale = 0;
+
+        if (ambiencePlaylist != null)
+        {
+            ambiencePlaylist.PausePlaylist();
+        }
 
         cameraScript.enabled = false;
         hud.SetActive(false);
@@ -134,6 +155,11 @@ public class gameManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = timeScaleOrig;
+
+        if (ambiencePlaylist != null)
+        {
+            ambiencePlaylist.ResumePlaylist();
+        }
 
         cameraScript.enabled = true;
         hud.SetActive(true);
