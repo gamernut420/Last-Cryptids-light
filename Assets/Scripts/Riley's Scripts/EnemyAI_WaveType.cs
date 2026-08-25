@@ -51,6 +51,13 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     [SerializeField] private Transform currentTarget;
 
     Color colorOrig;
+    [SerializeField] Renderer leftEyeRenderer;
+    [SerializeField] Renderer rightEyeRenderer;
+    
+    private Material leftEyeMat;
+    private Material rightEyeMat;
+    private Color leftEyeOrig;
+    private Color rightEyeOrig;
 
     private NavMeshAgent agent;
     private float strafeTimer;
@@ -89,12 +96,14 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         RandomizeEnemyType();
         InitializeStats();
         SetEnemyColor();
+        SetEyeColor();
     }
 
     // Update is called once per frame
     void Update()
     {
         if (PlayerTransform == null || BeaconTransform == null) return;
+        SetEyesStun(isStunned);
 
         if (isStunned)
         {
@@ -148,6 +157,42 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             }
 
             colorOrig = modelMat.color;
+        }
+    }
+    
+    void SetEyeColor()
+    {
+        if (leftEyeRenderer != null)
+        {
+            leftEyeMat = leftEyeRenderer.material;
+            leftEyeOrig = leftEyeMat.GetColor("_BaseColor");
+            leftEyeMat.EnableKeyword("_EMISSION");
+        }
+        if (rightEyeRenderer != null)
+        {
+            rightEyeMat = rightEyeRenderer.material;
+            rightEyeOrig = rightEyeMat.GetColor("_BaseColor");
+            rightEyeMat.EnableKeyword("_EMISSION");
+        }
+    }
+
+    void SetEyesStun(bool stun)
+    {
+        Color targetLeftColor = stun ? Color.white : leftEyeOrig;
+        Color targetRightColor = stun ? Color.white : rightEyeOrig;
+
+        Color emissionLeftColor = stun ? (Color.white * 1.5f) : leftEyeOrig;
+        Color emissionRightColor = stun ? (Color.white * 1.5f) : rightEyeOrig;
+
+        if (leftEyeMat != null)
+        {
+            leftEyeMat.SetColor("_BaseColor", targetLeftColor);
+            leftEyeMat.SetColor("_EmissionColor", emissionLeftColor);
+        }
+        if (rightEyeMat != null)
+        {
+            rightEyeMat.SetColor("_BaseColor", targetRightColor);
+            rightEyeMat.SetColor("_EmissionColor", emissionRightColor);
         }
     }
 
