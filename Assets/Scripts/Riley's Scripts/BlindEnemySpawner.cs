@@ -8,9 +8,11 @@ public class BlindEnemySpawner : MonoBehaviour
     [SerializeField] private float spawnDistance = 30f;
     [SerializeField] private float navMeshSearchRadius = 5f;
 
+    private Collider[] colliders;
+
     void Start()
     {
-        Collider[] colliders = GetComponents<Collider>();
+        colliders = GetComponents<Collider>();
 
         if (colliders.Length == 0)
         {
@@ -40,6 +42,9 @@ public class BlindEnemySpawner : MonoBehaviour
             return;
         }
 
+        GameObject existingEnemy = GameObject.FindWithTag("BlindEnemy");
+        if (existingEnemy != null) Destroy(existingEnemy);
+
         Vector2 randomCircle = Random.insideUnitCircle.normalized;
         Vector3 offset = new Vector3(randomCircle.x, 0f, randomCircle.y) * spawnDistance;
         Vector3 rawSpawnPosition = transform.position + offset;
@@ -51,7 +56,9 @@ public class BlindEnemySpawner : MonoBehaviour
 
             Vector3 directionToTarget = transform.position - finalSpawnPoint;
             directionToTarget.y = 0;
-            Quaternion spawnRotation = Quaternion.LookRotation(directionToTarget);
+            Quaternion spawnRotation = directionToTarget != Vector3.zero
+                ? Quaternion.LookRotation(directionToTarget)
+                : Quaternion.identity;
 
             Instantiate(enemyBlindPrefab, finalSpawnPoint, spawnRotation);
             DisableTrigger();
@@ -60,7 +67,6 @@ public class BlindEnemySpawner : MonoBehaviour
 
     private void DisableTrigger()
     {
-        Collider[] colliders = GetComponents<Collider>();
         foreach (Collider col in colliders)
         {
             col.enabled = false;

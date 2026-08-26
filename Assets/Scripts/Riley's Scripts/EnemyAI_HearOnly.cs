@@ -7,10 +7,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] Renderer model;
     private Material modelMat;
 
-    [Header("Enemy Health")]
-    [SerializeField] int hpMax = 40;
-    private int hpCurrent;
-
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
@@ -47,7 +43,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private bool isPlayerMoving;
     private bool isPlayerTouchingMe;
     bool isPlayingStep;
-    private FootstepAudio footstepAudio;
+    private AudioManager footstepAudio;
 
     private enum State { Patrol, InvestigateSound, Attack }
     private State currentState = State.Patrol;
@@ -77,11 +73,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        hpCurrent = hpMax;
 
         CheckEnemyMaterial();
         MoveToRandomPoint();
-        footstepAudio = GetComponent<FootstepAudio>();
+        footstepAudio = GetComponent<AudioManager>();
         
         if (PlayerTransform != null)
         {
@@ -93,6 +88,16 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void Update()
     {
         if (PlayerTransform == null) return;
+
+        if (gameManager.instance != null && gameManager.instance.beacon != null)
+        {
+            RescueBeacon beaconScript = gameManager.instance.beacon.GetComponent<RescueBeacon>();
+            if (beaconScript != null && beaconScript.isRepaired)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
 
         TrackPlayerMovement();
         attackTimer += Time.deltaTime;
@@ -256,7 +261,11 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (pathUpdateTimer >= 0.2f)
         {
             pathUpdateTimer = 0f;
-            agent.SetDestination(PlayerTransform.position);
+
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.SetDestination(PlayerTransform.position);
+            }
         }
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
@@ -267,7 +276,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
             agent.speed = investigationSpeed;
-            agent.SetDestination(lastHeardPosition);
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.SetDestination(lastHeardPosition);
+            }
             return;
         }
 
@@ -304,16 +316,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
-        hpCurrent -= amount;
-        Debug.Log("Enemy has taken " + amount + " damage. HP: " + hpCurrent);
-        StartCoroutine(flashRed());
-        if (hpCurrent <= 0)
-        {
-            Destroy (gameObject);
-            if (leftEarMat != null) Destroy(leftEarMat);
-            if (rightEarMat != null) Destroy(rightEarMat);
-        }
-
         if (currentState != State.Attack && PlayerTransform != null)
         {
             lastHeardPosition = PlayerTransform.position;
@@ -323,19 +325,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }    
     }
 
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", Color.black);
-    }
-
     IEnumerator PlayStep()
     {
         isPlayingStep = true;
-        footstepAudio.PlayFootstepSound(audStepsVol);
+        footstepAudio.PlaySound(audStepsVol);
         
         switch (currentState)
         {
@@ -360,7 +353,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         NavMeshHit hitInfo;
         if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, NavMesh.AllAreas))
         {
-            agent.SetDestination(hitInfo.position);
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.SetDestination(hitInfo.position);
+            }
         }
     }
 

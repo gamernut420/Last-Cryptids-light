@@ -66,7 +66,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     private float stunTimer;
     private float attackTimer;
     private bool isPlayingStep;
-    private FootstepAudio footstepAudio;
+    private AudioManager footstepAudio;
 
     private Transform PlayerTransform
     {
@@ -100,7 +100,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         InitializeStats();
         SetEnemyColor();
         SetEyeColor();
-        footstepAudio = GetComponent<FootstepAudio>();
+        footstepAudio = GetComponent<AudioManager>();
     }
 
     // Update is called once per frame
@@ -369,7 +369,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     IEnumerator PlayStep()
     {
         isPlayingStep = true;
-        footstepAudio.PlayFootstepSound(audStepsVol);
+        footstepAudio.PlaySound(audStepsVol);
 
         switch (currentType)
         {
