@@ -9,6 +9,7 @@ public class BlindEnemySpawner : MonoBehaviour
     [SerializeField] private float navMeshSearchRadius = 5f;
 
     private Collider[] colliders;
+    private static BlindEnemySpawner previousSpawner;
 
     void Start()
     {
@@ -30,6 +31,24 @@ public class BlindEnemySpawner : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            if (gameManager.instance != null && gameManager.instance.beacon != null)
+            {
+                RescueBeacon beaconScript = gameManager.instance.beacon.GetComponent<RescueBeacon>();
+                if (beaconScript != null && beaconScript.isRepaired)
+                {
+                    if (previousSpawner == this)
+                    {
+                        previousSpawner = null;
+                    }
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+
+            if (previousSpawner != null && previousSpawner != this)
+            {
+                previousSpawner.ReEnableSpawner();
+            }
             SpawnBlindEnemy();
         }
     }
@@ -67,11 +86,23 @@ public class BlindEnemySpawner : MonoBehaviour
 
     private void DisableTrigger()
     {
+        previousSpawner = this;
+
         foreach (Collider col in colliders)
         {
             col.enabled = false;
         }
 
-        Destroy(this);
+        this.enabled = false;
+    }
+
+    public void ReEnableSpawner()
+    {
+        foreach (Collider col in colliders)
+        {
+            col.enabled = true;
+        }
+
+        this.enabled = true;
     }
 }

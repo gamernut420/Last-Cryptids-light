@@ -48,7 +48,6 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     [SerializeField] private float maxHP;
     [SerializeField] private float currentHP;
     [SerializeField] private float currentSpeed;
-    [SerializeField] private Transform currentTarget;
 
     [Header("Audio and Material")]
     [Range(0f, 1f)][SerializeField] float audStepsVol;
@@ -80,18 +79,6 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         }
     }
 
-    private Transform BeaconTransform
-    {
-        get
-        {
-            if (gameManager.instance != null && gameManager.instance.player != null)
-            {
-                return gameManager.instance.beacon.transform;
-            }
-            return null;
-        }
-    }
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -106,7 +93,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        if (PlayerTransform == null || BeaconTransform == null) return;
+        if (PlayerTransform == null) return;
         SetEyesStun(isStunned);
 
         if (isStunned)
@@ -119,9 +106,6 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             }
             return;
         }
-
-        SelectTarget();
-        if (currentTarget == null) return;
 
         switch (currentType)
         {
@@ -208,25 +192,6 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         }
     }
 
-    private void SelectTarget()
-    {
-        Transform player = PlayerTransform;
-        Transform beacon = BeaconTransform;
-
-        currentTarget = beacon;
-
-        if (player != null)
-        {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            float distanceToBeacon = Vector3.Distance(transform.position, beacon.position);
-
-            if (distanceToPlayer <= playerAggroRadius && distanceToPlayer < distanceToBeacon)
-            {
-                currentTarget = player;
-            }
-        }
-    }
-
     private void RandomizeEnemyType()
     {
         float totalWeight = tankyWeight + fastWeight + straferWeight;
@@ -274,39 +239,29 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
 
     private void MoveDirect()
     {
-        agent.SetDestination(currentTarget.position);
+        agent.SetDestination(PlayerTransform.position);
         agent.stoppingDistance = 2;
     }
 
     private void MoveStrafer()
     {
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
-        float distanceToBeacon = Vector3.Distance(transform.position, BeaconTransform.position);
 
-        if (currentTarget == BeaconTransform && distanceToBeacon <= playerAggroRadius && distanceToBeacon < distanceToPlayer)
+        strafeTimer += Time.deltaTime;
+
+        if (distanceToPlayer > playerAggroRadius)
         {
-            agent.SetDestination(BeaconTransform.position);
-            agent.stoppingDistance = 2;
-        }
+            agent.stoppingDistance = 0;
+            float strafeDirection = Mathf.Sin(strafeTimer * 1f) > 0 ? 1f : -1f;
+            Vector3 strafeOffset = transform.right * strafeDirection * 6f;
 
+            Vector3 targetPosition = PlayerTransform.position + strafeOffset;
+            agent.SetDestination(targetPosition);
+        }
         else
         {
-            strafeTimer += Time.deltaTime;
-
-            if (distanceToPlayer > playerAggroRadius)
-            {
-                agent.stoppingDistance = 0;
-                float strafeDirection = Mathf.Sin(strafeTimer * 1f) > 0 ? 1f : -1f;
-                Vector3 strafeOffset = transform.right * strafeDirection * 8f;
-
-                Vector3 targetPosition = PlayerTransform.position + strafeOffset;
-                agent.SetDestination(targetPosition);
-            }
-            else
-            {
-                agent.SetDestination(PlayerTransform.position);
-                agent.stoppingDistance = 2;
-            }
+            agent.SetDestination(PlayerTransform.position);
+            agent.stoppingDistance = 2;
         }
     }
 
@@ -318,11 +273,11 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             return;
         }
 
-        float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
+        float distanceToTarget = Vector3.Distance(transform.position, PlayerTransform.position);
         if (distanceToTarget <= attackRange)
         {
             RaycastHit hit;
-            Vector3 directionToTarget = (currentTarget.position - transform.position).normalized;
+            Vector3 directionToTarget = (PlayerTransform.position - transform.position).normalized;
 
             if (Physics.Raycast(transform.position + Vector3.up, directionToTarget, out hit, attackRange))
             {
