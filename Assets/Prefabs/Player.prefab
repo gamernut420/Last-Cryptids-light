@@ -261,10 +261,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDirector
   enemyWavePrefab: {fileID: 7938090647407202942, guid: 7c0b60fef93ba6c4a8e8358eac541076, type: 3}
-  spawnDistance: 30
   spawnCount: 5
-  navMeshSearchRadius: 5
-  extraEnemiesPerMinute: 2
+  extraEnemiesPerWave: 2
+  timeBetweenWaves: 5
+  spawnRate: 0.5
 --- !u!143 &8658993058510956839
 CharacterController:
   m_ObjectHideFlags: 0
@@ -512,9 +512,9 @@ MonoBehaviour:
   maxBattery: 100
   currentBattery: 100
   drainRate: 1
-  raycastRange: 0
-  stunTime: 0
-  requiredColliderTime: 1
+  raycastRange: 8
+  stunTime: 3
+  requiredColliderTime: 0.5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
