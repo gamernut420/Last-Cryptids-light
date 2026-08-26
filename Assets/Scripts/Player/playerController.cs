@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour, IPlayer, IDamage
@@ -23,6 +24,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     [Header("Weapon")]
     [SerializeField] GameObject WeaponGrip;
+
+    TMP_Text weaponSelectedText;
     GameObject ActiveWeapon;
     GameObject[] weapons = new GameObject[3];
     int activeWeaponSlot;
@@ -43,6 +46,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         HPOrig = Hp;
         speedOrig = speed;
+
+        weaponSelectedText = GameObject.Find("WeaponSelected").GetComponent<TMP_Text>();
+        UpdateWeaponUI();
 
         ShowAmmoUI?.Invoke(false);
     }
@@ -206,6 +212,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             ActiveWeapon.SetActive(true);
 
             ShowAmmoUI?.Invoke(ActiveWeapon != null);
+
+
+            // weapon UI
+            UpdateWeaponUI();
         }
     }
 
@@ -274,6 +284,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             ActiveWeapon.SetActive(true);
 
             ShowAmmoUI?.Invoke(ActiveWeapon != null);
+
+            // weapon UI
+            UpdateWeaponUI();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null && activeWeaponSlot != 1)
         {
@@ -286,6 +299,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             ActiveWeapon.SetActive(true);
 
             ShowAmmoUI?.Invoke(ActiveWeapon != null);
+
+            // weapon UI
+            UpdateWeaponUI();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null && activeWeaponSlot != 2)
         {
@@ -298,10 +314,27 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             ActiveWeapon.SetActive(true);
 
             ShowAmmoUI?.Invoke(ActiveWeapon != null);
+
+            // weapon UI
+            UpdateWeaponUI();
         }
         else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             DropWeapon();
+        }
+    }
+
+    void UpdateWeaponUI()
+    {
+        if (weaponSelectedText == null) return;
+
+        if (ActiveWeapon != null)
+        {
+            weaponSelectedText.text = ActiveWeapon.name;
+        }
+        else
+        {
+            weaponSelectedText.text = "None";
         }
     }
 }
