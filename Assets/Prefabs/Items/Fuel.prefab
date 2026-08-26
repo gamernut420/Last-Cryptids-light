@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1132549844006811253}
   - component: {fileID: 1928965015630235560}
   - component: {fileID: 8777821561354152710}
+  - component: {fileID: 3301942263362191370}
   m_Layer: 0
   m_Name: Fuel
   m_TagString: Untagged
@@ -131,6 +132,33 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -384824820402883211, guid: f36175b40f4b9844ea403611edc07a38, type: 3}
+--- !u!54 &3301942263362191370
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106961051365225370}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4208089343734158576
 GameObject:
   m_ObjectHideFlags: 0

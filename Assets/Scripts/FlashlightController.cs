@@ -11,7 +11,7 @@ public class FlashlightController : MonoBehaviour
     [SerializeField] Light flashlightLight;
     [Range(1f, 100f)][SerializeField] float maxBattery;
     [Range(1f, 100f)][SerializeField] float currentBattery;
-    [Range(1f, 10f)][SerializeField] float drainRate;
+    [Range(0f, 10f)][SerializeField] float drainRate;
     [SerializeField] float raycastRange;
     public float stunTime;
     public float requiredColliderTime = 1.0f;
