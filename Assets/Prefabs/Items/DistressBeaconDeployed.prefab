@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5160879480094534318}
+  - component: {fileID: 3956145323802899689}
   - component: {fileID: 8084237439237629195}
   - component: {fileID: 6328696946441376193}
   m_Layer: 0
@@ -34,6 +35,32 @@ Transform:
   - {fileID: 765955989931959943}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3956145323802899689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5536313895210414100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
+  holdDuration: 3
+  PromptMessage: Hold E to repair beacon
+  ExtractionTime: 10
+  requiredParts:
+  - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
+    requiredAmount: 1
+    itemName: Battery
+  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
+    requiredAmount: 1
+    itemName: Fuel
+  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
+    requiredAmount: 1
+    itemName: Fuel
+  isRepaired: 0
 --- !u!33 &8084237439237629195
 MeshFilter:
   m_ObjectHideFlags: 0
