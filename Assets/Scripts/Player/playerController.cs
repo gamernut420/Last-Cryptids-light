@@ -347,6 +347,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
         else
         {
+            gameManager.instance.ShowReloadPrompt(false);
             gameManager.instance.UpdateActiveWep("None");
         }
     }

@@ -158,6 +158,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         tryingShoot = false;
         CheckAmmo();
 
+        gameManager.instance.ShowReloadPrompt(false);
         UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
     }
 

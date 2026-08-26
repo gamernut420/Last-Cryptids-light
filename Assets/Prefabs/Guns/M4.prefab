@@ -119,7 +119,7 @@ MonoBehaviour:
   IsAuto: 1
   MagSize: 30
   MaxReserveAmmo: 1200
-  SpreadAmmount: 12
+  SpreadAmmount: 5
   BulletData:
     Damage: 20
     Speed: 200
@@ -129,8 +129,8 @@ MonoBehaviour:
     LifeTime: 10
   AimObject: {fileID: 5467187995358026964}
   AimSmoothing: 10
-  VerticleRecoil: 2
-  HorizontalRecoil: 2
+  VerticleRecoil: 0.5
+  HorizontalRecoil: 1
   Muzzle: {fileID: 4233037761172860096}
   Flashes:
   - {fileID: 100004, guid: b7d03fb0762c75449af69d624547e358, type: 3}
