@@ -287,11 +287,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         {
             attackTimer = 0f;
 
-            Vector3 rayOrigin = transform.position + Vector3.up * 1f;
             Vector3 rayDirection = transform.forward;
             RaycastHit hitInfo;
 
-            if (Physics.Raycast(rayOrigin, rayDirection, out hitInfo, 3f, playerLayer))
+            if (Physics.Raycast(transform.position, rayDirection, out hitInfo, 4f, playerLayer))
             {
                 if (hitInfo.transform == PlayerTransform)
                 {

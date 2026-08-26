@@ -279,7 +279,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             RaycastHit hit;
             Vector3 directionToTarget = (PlayerTransform.position - transform.position).normalized;
 
-            if (Physics.Raycast(transform.position + Vector3.up, directionToTarget, out hit, attackRange))
+            if (Physics.Raycast(transform.position, directionToTarget, out hit, attackRange))
             {
                 if (hit.collider != null && hit.collider.CompareTag(playerTag) || hit.collider.CompareTag(beaconTag))
                 {
