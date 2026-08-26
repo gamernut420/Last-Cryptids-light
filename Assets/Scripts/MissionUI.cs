@@ -7,17 +7,27 @@ public class MissionUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI missionObjectiveText;
 
     [Header("Target Reference")]
-    [SerializeField] RescueBeacon rescueBeacon;
-    
+    [SerializeField] GameObject beacon;
+    [SerializeField] RescueBeacon rescueBeaconScript;
+
+    private void Awake()
+    {
+        beacon = GameObject.FindWithTag("Beacon");
+
+        if(beacon != null )
+        {
+            rescueBeaconScript = beacon.GetComponent<RescueBeacon>();
+        }
+    }
     void Update()
     {
-        if(rescueBeacon != null && missionObjectiveText != null)
+        if(rescueBeaconScript != null && missionObjectiveText != null)
         {
-            if(!rescueBeacon.isRepaired)
+            if(!rescueBeaconScript.isRepaired)
             {
                 missionObjectiveText.text = "<b>Current Objactive:</b>\n" +
                                              "Collact required parts for the beacon.\n\n" +
-                                             rescueBeacon.ScreenMessage();
+                                             rescueBeaconScript.ScreenMessage();
             }
             else
             {

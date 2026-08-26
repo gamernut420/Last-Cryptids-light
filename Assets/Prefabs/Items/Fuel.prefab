@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1928965015630235560}
   - component: {fileID: 8777821561354152710}
   - component: {fileID: 3301942263362191370}
+  - component: {fileID: 4907300443408959409}
   m_Layer: 0
   m_Name: Fuel
   m_TagString: Untagged
@@ -50,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
   itemName: Fuel
-  quantity: 3
+  quantity: 1
   HoldTimer: 0
   PromptMessage: Pick Up Fuel
 --- !u!33 &1132549844006811253
@@ -159,6 +160,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &4907300443408959409
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106961051365225370}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.13016868, y: 0.38988987, z: 0.2832769}
+  m_Center: {x: -0.0126761645, y: 0.19603188, z: 0}
 --- !u!1 &4208089343734158576
 GameObject:
   m_ObjectHideFlags: 0
