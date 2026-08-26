@@ -396,9 +396,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_HearOnly
   model: {fileID: 5421355557582252187}
-  hearingSensitivity: 5
+  hearingSensitivity: 1.5
   timeToForgetSound: 2
-  audStepsVol: 1
+  audStepsVol: 0.5
   attackSpeed: 7
   patrolSpeed: 2
   investigationSpeed: 7
@@ -411,6 +411,7 @@ MonoBehaviour:
     m_Bits: 8
   leftEarRenderer: {fileID: 3146059935026142217}
   rightEarRenderer: {fileID: 4159178182268579135}
+  currentState: 0
 --- !u!114 &8828479384460365021
 MonoBehaviour:
   m_ObjectHideFlags: 0

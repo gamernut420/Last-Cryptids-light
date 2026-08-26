@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 91ff98c593a4e2f408d59480fec65f30, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -817,6 +817,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 162.62
       objectReference: {fileID: 0}
+    - target: {fileID: 1438864597603133531, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1991628216461999254, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2995567175519258830, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
       propertyPath: m_LocalPosition.x
       value: 147.4
@@ -857,6 +865,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3366139246303697763, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_Name
+      value: Barn Light
+      objectReference: {fileID: 0}
     - target: {fileID: 5695634492853113468, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.21
@@ -889,6 +901,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -31.75
       objectReference: {fileID: 0}
+    - target: {fileID: 7223850092963841398, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7425163857005077606, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
       propertyPath: m_LocalPosition.x
       value: 78.8
@@ -900,6 +916,14 @@ PrefabInstance:
     - target: {fileID: 7425163857005077606, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
       propertyPath: m_LocalPosition.z
       value: 158.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592352041977387135, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_Intensity
+      value: 15.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592352041977387135, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
+      propertyPath: m_Lightmapping
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8001036896827220649, guid: ff3526e2ab49ee24085b978e6a7ccc72, type: 3}
       propertyPath: m_LocalPosition.x
@@ -926,25 +950,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3956145323802899689, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
-      propertyPath: requiredParts.Array.data[1].itemName
-      value: Radio Tube
-      objectReference: {fileID: 0}
-    - target: {fileID: 3956145323802899689, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
-      propertyPath: requiredParts.Array.data[1].itemPrefab
-      value: 
-      objectReference: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
     - target: {fileID: 5160879480094534318, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 223.66907
+      value: 262.5
       objectReference: {fileID: 0}
     - target: {fileID: 5160879480094534318, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.3999996
+      value: 5.84
       objectReference: {fileID: 0}
     - target: {fileID: 5160879480094534318, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 316.14075
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5160879480094534318, guid: 087405db90d37e149afdc2b0e2f92a90, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1916,28 +1932,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 222.91393
+      value: 257.32
       objectReference: {fileID: 0}
     - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.4114146
+      value: 5.8
       objectReference: {fileID: 0}
     - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 322.9504
+      value: 310.7
       objectReference: {fileID: 0}
     - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1966,10 +1970,6 @@ PrefabInstance:
     - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7066738055900061832, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7591319092751514162, guid: caffda144e3c7d34d94adc25d7428e3f, type: 3}
       propertyPath: m_Name
@@ -2167,7 +2167,6 @@ SceneRoots:
   - {fileID: 1964483579}
   - {fileID: 504922119}
   - {fileID: 459606269}
-  - {fileID: 741233871}
   - {fileID: 1392970859}
   - {fileID: 1059544037}
   - {fileID: 315925762}
@@ -2182,3 +2181,4 @@ SceneRoots:
   - {fileID: 783591193}
   - {fileID: 2131329694}
   - {fileID: 1546048417}
+  - {fileID: 741233871}
