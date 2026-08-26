@@ -9,7 +9,7 @@ public class BlindEnemySpawner : MonoBehaviour
     [SerializeField] private float navMeshSearchRadius = 5f;
 
     private Collider[] colliders;
-    private static BlindEnemySpawner previousSpawner;
+    [SerializeField] private BlindEnemySpawner previousSpawner;
 
     void Start()
     {
