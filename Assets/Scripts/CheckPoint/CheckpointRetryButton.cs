@@ -8,6 +8,6 @@ public class CheckpointRetryButton : MonoBehaviour
         {
             Debug.LogError("Try Again: Game Manager wasn't found.", this); return ;
         }
-       // gameManager.instance.LoadCheckpoint();
+       gameManager.instance.LoadCheckpoint();
     }
 }

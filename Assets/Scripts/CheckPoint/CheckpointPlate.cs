@@ -29,7 +29,7 @@ public class CheckpointPlate : MonoBehaviour
         }
 
         hasBeenActivated = true;
-        //gameManager.instance.SaveCheckpoint(respawnPoint);
+        gameManager.instance.SaveCheckpoint(respawnPoint);
         if (activationAudioSource != null && activationSound != null)
         {
             activationAudioSource.PlayOneShot(activationSound);

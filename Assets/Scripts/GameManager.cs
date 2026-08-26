@@ -24,6 +24,8 @@ public class gameManager : MonoBehaviour
 
     [HideInInspector] public int killCount = 0;
 
+    [Header("Checkpoint")]
+    [SerializeField] private CheckpointManager checkpointManager;
 
     [Header("Player")]
     public Image playerHPBar;
@@ -102,6 +104,11 @@ public class gameManager : MonoBehaviour
         {
             ambiencePlaylist = GetComponent<AmbiencePlaylist>();
         }
+
+        if (checkpointManager == null)
+        {
+            checkpointManager = GetComponent<CheckpointManager>();
+        }
     }
 
 
@@ -122,6 +129,12 @@ public class gameManager : MonoBehaviour
         }
 
         ShowReloadPrompt(false);
+
+        if (checkpointManager != null)
+        {
+            checkpointManager.RestoreCheckpointIfNeeded(player, playerInventory);
+        }
+
     }
 
 
@@ -293,4 +306,22 @@ public class gameManager : MonoBehaviour
     {
         ReloadPrompt.SetActive(show);
     }
+
+    public void SaveCheckpoint(Transform respawnPoint)
+    {
+        if (checkpointManager != null)
+        {
+            checkpointManager.SaveCheckpoint(respawnPoint, playerInventory);
+        }
+    }
+
+    public void LoadCheckpoint()
+    {
+        if (checkpointManager != null)
+        {
+            checkpointManager.LoadCheckpoint();
+        }
+    }
+
+
 }
