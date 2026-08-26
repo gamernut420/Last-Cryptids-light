@@ -24,8 +24,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     [Header("Weapon")]
     [SerializeField] GameObject WeaponGrip;
-
-    TMP_Text weaponSelectedText;
     GameObject ActiveWeapon;
     GameObject[] weapons = new GameObject[3];
     int activeWeaponSlot;
@@ -47,7 +45,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         HPOrig = Hp;
         speedOrig = speed;
 
-        weaponSelectedText = GameObject.Find("WeaponSelected").GetComponent<TMP_Text>();
         UpdateWeaponUI();
 
         ShowAmmoUI?.Invoke(false);
@@ -267,6 +264,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 weapons[activeWeaponSlot] = null;
 
                 ShowAmmoUI?.Invoke(false);
+
+                UpdateWeaponUI();
             }
         }
     }
@@ -275,7 +274,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         if (Input.GetKeyDown(KeyCode.Alpha1) && weapons[0] != null && activeWeaponSlot != 0)
         {
-            ActiveWeapon.SetActive(false);
+            if(ActiveWeapon != null)
+            {
+                ActiveWeapon.SetActive(false);
+            }
 
             ActiveWeapon = weapons[0];
 
@@ -290,7 +292,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2) && weapons[1] != null && activeWeaponSlot != 1)
         {
-            ActiveWeapon.SetActive(false);
+            if (ActiveWeapon != null)
+            {
+                ActiveWeapon.SetActive(false);
+            }
 
             ActiveWeapon = weapons[1];
 
@@ -305,7 +310,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3) && weapons[2] != null && activeWeaponSlot != 2)
         {
-            ActiveWeapon.SetActive(false);
+            if (ActiveWeapon != null)
+            {
+                ActiveWeapon.SetActive(false);
+            }
 
             ActiveWeapon = weapons[2];
 
@@ -326,15 +334,20 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void UpdateWeaponUI()
     {
-        if (weaponSelectedText == null) return;
+        gameManager.instance.UpdateWeaponInv(weapons);
 
         if (ActiveWeapon != null)
         {
-            weaponSelectedText.text = ActiveWeapon.name;
+            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+
+            if (wep != null)
+            {
+                gameManager.instance.UpdateActiveWep(wep.GetWeaponName());
+            }
         }
         else
         {
-            weaponSelectedText.text = "None";
+            gameManager.instance.UpdateActiveWep("None");
         }
     }
 }

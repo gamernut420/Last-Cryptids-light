@@ -15,6 +15,9 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
+    [SerializeField] TextMeshProUGUI WeaponInventory;
+    [SerializeField] TextMeshProUGUI ActiveWeaponText;
+    [SerializeField] GameObject ReloadPrompt;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
@@ -117,6 +120,8 @@ public class gameManager : MonoBehaviour
         {
             ambiencePlaylist.StartPlaylist();
         }
+
+        ShowReloadPrompt(false);
     }
 
 
@@ -256,5 +261,36 @@ public class gameManager : MonoBehaviour
             killCounterText.text = $"Kills: {killCount}";
 
         }
+    }
+
+    public void UpdateWeaponInv(GameObject[] inv)
+    {
+        WeaponInventory.text = string.Empty;
+        for (int i = 0; i < inv.Length; i++)
+        {
+            if(inv[i] != null)
+            {
+                IWeapon wep = inv[i].GetComponent<IWeapon>();
+
+                if (wep != null)
+                {
+                    WeaponInventory.text += $"{i + 1}. {wep.GetWeaponName()}\n";
+                }
+            }
+            else
+            {
+                WeaponInventory.text += $"{i + 1}.\n";
+            }
+        }
+    }
+
+    public void UpdateActiveWep(string text)
+    {
+        ActiveWeaponText.text = text;
+    }
+
+    public void ShowReloadPrompt(bool show)
+    {
+        ReloadPrompt.SetActive(show);
     }
 }
