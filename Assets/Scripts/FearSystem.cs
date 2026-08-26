@@ -70,7 +70,7 @@ public class FearSystem : MonoBehaviour
         isInsane = true;
         Debug.Log("Player has reached maximun psycholgical fear/insanity!");
 
-        gameManager GameManager = FindFirstObjectByType<gameManager>();
+        gameManager GameManager = FindAnyObjectByType<gameManager>();
         // Change the game over message text
        // if (gameManager != null) gameManager.TriggerGameOver("You Went Insane!");
 
