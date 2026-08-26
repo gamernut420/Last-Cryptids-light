@@ -309,9 +309,16 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         if (currentHP <= 0)
         {
             Destroy(gameObject);
+            Die();
         }
     }
-
+    void Die()
+    {
+        if(gameManager.instance != null)
+        {
+            gameManager.instance.AddKill();
+        }
+    }
     IEnumerator flashRed()
     {
         modelMat.color = Color.red;

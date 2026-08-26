@@ -16,6 +16,12 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
 
+    [Header("UI Tracking")]
+    [SerializeField] TextMeshProUGUI killCounterText;
+
+    [HideInInspector] public int killCount = 0;
+
+
     [Header("Player")]
     public Image playerHPBar;
     public GameObject damageFlashPanel;
@@ -98,6 +104,7 @@ public class gameManager : MonoBehaviour
 
     void Start()
     {
+        UpateKillUI();
         Debug.Log("HUD: " + hud);
         Debug.Log("HP BAR: " + playerHPBar);
 
@@ -234,6 +241,20 @@ public class gameManager : MonoBehaviour
             menuActive = menuWin;
             hud.SetActive(false);
             menuActive.SetActive(true);
+        }
+    }
+   public void AddKill()
+    {
+        killCount++;
+        UpateKillUI();
+    }
+
+    void UpateKillUI()
+    {
+        if(killCounterText != null)
+        {
+            killCounterText.text = $"Kills: {killCount}";
+
         }
     }
 }
