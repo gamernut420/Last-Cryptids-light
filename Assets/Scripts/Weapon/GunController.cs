@@ -6,6 +6,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [SerializeField] GameObject WeaponModel;
 
     [Header("Gun Stats")]
+    [SerializeField] string WeaponName;
     [Tooltip("This is in Rounds per Minute")]
     [SerializeField][Min(0f)] float FireRate = 500;
     [SerializeField] bool IsAuto = false;
@@ -274,7 +275,9 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void CheckAmmo()
     {
-        if(currentAmmo > 0 && !isShooting)
+        gameManager.instance.ShowReloadPrompt((float)currentAmmo / MagSize <= 0.25f);
+
+        if (currentAmmo > 0 && !isShooting)
         {
             canShoot = true;
         }
@@ -390,5 +393,10 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     public string ScreenMessage()
     {
         return "Pickup Weapon";
+    }
+
+    public string GetWeaponName()
+    {
+        return WeaponName;
     }
 }

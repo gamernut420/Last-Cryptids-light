@@ -7,4 +7,6 @@ public interface IWeapon
     void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default);
 
     void SetWeaponUse(bool inUse);
+
+    string GetWeaponName();
 }
