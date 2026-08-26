@@ -7,6 +7,7 @@ public class FlashlightController : MonoBehaviour
     [SerializeField] AudioSource flashlightAudio;
     [SerializeField] AudioClip soundOn;
     [SerializeField] AudioClip soundOff;
+    public float toggleHearingRadius = 2f;
     [SerializeField] Light flashlightLight;
     [Range(1f, 100f)][SerializeField] float maxBattery;
     [Range(1f, 100f)][SerializeField] float currentBattery;
@@ -73,6 +74,7 @@ public class FlashlightController : MonoBehaviour
     }
     void ToggleFlashlight()
     {
+        NoiseManager.MakeNoise(transform.position, toggleHearingRadius);
         // If it's locked out because battery is dead, prevent turning it back on
         if (isLockedOut && currentBattery <= 0f)
         {
