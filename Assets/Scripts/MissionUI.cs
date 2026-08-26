@@ -32,7 +32,7 @@ public class MissionUI : MonoBehaviour
             else
             {
                 missionObjectiveText.text = "<b>Current Objective:</b>\n" +
-                                            "Beacon active! Survive the enemy waves until extraction arrives.";
+                                            "Beacon active! \nSurvive the enemy waves until extraction arrives.";
             }
         }
         
