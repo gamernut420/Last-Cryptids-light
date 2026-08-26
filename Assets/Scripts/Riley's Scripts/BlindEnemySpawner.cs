@@ -45,6 +45,26 @@ public class BlindEnemySpawner : MonoBehaviour
                 }
             }
 
+            GameObject existingEnemy = GameObject.FindWithTag("BlindEnemy");
+            if (existingEnemy != null)
+            {
+                EnemyAI_HearOnly enemyAI = existingEnemy.GetComponent<EnemyAI_HearOnly>();
+                if (enemyAI != null)
+                {
+                    if (enemyAI.currentState == EnemyAI_HearOnly.State.InvestigateSound || enemyAI.currentState == EnemyAI_HearOnly.State.Attack)
+                    {
+                        if (previousSpawner != null && previousSpawner != this)
+                        {
+                            previousSpawner.ReEnableSpawner();
+                        }
+                        DisableTrigger();
+                        return;
+                    }
+                }
+
+                Destroy(existingEnemy);
+            }
+
             if (previousSpawner != null && previousSpawner != this)
             {
                 previousSpawner.ReEnableSpawner();
@@ -60,9 +80,6 @@ public class BlindEnemySpawner : MonoBehaviour
             Debug.LogWarning($"[TriggerEnemySpawner] ({gameObject.name}) Missing Prefab");
             return;
         }
-
-        GameObject existingEnemy = GameObject.FindWithTag("BlindEnemy");
-        if (existingEnemy != null) Destroy(existingEnemy);
 
         Vector2 randomCircle = Random.insideUnitCircle.normalized;
         Vector3 offset = new Vector3(randomCircle.x, 0f, randomCircle.y) * spawnDistance;

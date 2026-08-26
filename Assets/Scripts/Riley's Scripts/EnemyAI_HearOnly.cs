@@ -45,8 +45,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     bool isPlayingStep;
     private AudioManager footstepAudio;
 
-    private enum State { Patrol, InvestigateSound, Attack }
-    private State currentState = State.Patrol;
+    public enum State { Patrol, InvestigateSound, Attack }
+    public State currentState = State.Patrol;
 
     private Transform PlayerTransform
     {
