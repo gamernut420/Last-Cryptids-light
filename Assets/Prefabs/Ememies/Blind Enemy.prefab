@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 4836309980897257574}
   m_Layer: 6
   m_Name: Blind Enemy
-  m_TagString: Untagged
+  m_TagString: BlindEnemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -396,10 +396,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_HearOnly
   model: {fileID: 5421355557582252187}
-  hpMax: 40
   hearingSensitivity: 5
   timeToForgetSound: 2
-  audStepsVol: 0.7
+  audStepsVol: 1
   attackSpeed: 7
   patrolSpeed: 2
   investigationSpeed: 7
@@ -425,7 +424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FootstepAudio
   audioSource: {fileID: 4836309980897257574}
-  footstepClips:
+  audioClips:
   - {fileID: 8300000, guid: f8c510b47338e104fbf8af2598fb1e76, type: 3}
   - {fileID: 8300000, guid: 6ea24934917d25b4b950a9f80f176d11, type: 3}
   - {fileID: 8300000, guid: 7a67928b9a3fc8e4c962f299a484dc6d, type: 3}
@@ -598,7 +597,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 200
+  MaxDistance: 300
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
