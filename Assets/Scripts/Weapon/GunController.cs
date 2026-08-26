@@ -276,6 +276,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void CheckAmmo()
     {
+        if (!isInUse) return;
+
         gameManager.instance.ShowReloadPrompt((float)currentAmmo / MagSize <= 0.25f);
 
         if (currentAmmo > 0 && !isShooting)

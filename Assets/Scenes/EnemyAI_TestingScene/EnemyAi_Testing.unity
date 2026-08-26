@@ -704,6 +704,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: NavMesh
       objectReference: {fileID: 0}
+    - target: {fileID: 8506069645881996334, guid: 1adfc1920bb4614429fb798751ce142b, type: 3}
+      propertyPath: m_Size.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8506069645881996334, guid: 1adfc1920bb4614429fb798751ce142b, type: 3}
+      propertyPath: m_Size.z
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8506069645881996334, guid: 1adfc1920bb4614429fb798751ce142b, type: 3}
+      propertyPath: m_NavMeshData
+      value: 
+      objectReference: {fileID: 23800000, guid: bb95b35eeebeb4f46b4dd384428da91e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1197,63 +1209,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 425d57ce0110e614082ecaafd59be4f0, type: 3}
---- !u!1001 &26096256175207331
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 95.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 112
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2402797003647212487, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8095121731780502064, guid: 45aef84f48ac61642af114c05d520617, type: 3}
-      propertyPath: m_Name
-      value: Blind Enemy Spawner
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 45aef84f48ac61642af114c05d520617, type: 3}
 --- !u!1001 &2197110628807275441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1546,5 +1501,4 @@ SceneRoots:
   - {fileID: 267317961}
   - {fileID: 554658428}
   - {fileID: 898077137}
-  - {fileID: 26096256175207331}
   - {fileID: 753883706}

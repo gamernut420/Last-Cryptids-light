@@ -48,6 +48,13 @@ public class BlindEnemySpawner : MonoBehaviour
             GameObject existingEnemy = GameObject.FindWithTag("BlindEnemy");
             if (existingEnemy != null)
             {
+                foreach (Collider col in colliders)
+                {
+                    if (col.enabled && col.bounds.Contains(existingEnemy.transform.position))
+                    {
+                        return;
+                    }
+                }
                 EnemyAI_HearOnly enemyAI = existingEnemy.GetComponent<EnemyAI_HearOnly>();
                 if (enemyAI != null)
                 {
@@ -69,6 +76,7 @@ public class BlindEnemySpawner : MonoBehaviour
             {
                 previousSpawner.ReEnableSpawner();
             }
+
             SpawnBlindEnemy();
         }
     }
