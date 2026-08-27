@@ -562,6 +562,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3985259105670768362}
   - component: {fileID: 6527832685153877172}
+  - component: {fileID: 6966736145444322220}
   - component: {fileID: 8141144102509985107}
   - component: {fileID: 1614382011522176205}
   m_Layer: 0
@@ -610,6 +611,7 @@ MonoBehaviour:
   ReloadPrompt: {fileID: 5781434874947206990}
   killCounterText: {fileID: 2275060472359848795}
   killCount: 0
+  checkpointManager: {fileID: 6966736145444322220}
   playerHPBar: {fileID: 4214719113515134353}
   damageFlashPanel: {fileID: 5872003117020856513}
   beacon: {fileID: 0}
@@ -620,6 +622,18 @@ MonoBehaviour:
   ambiencePlaylist: {fileID: 0}
   isPaused: 0
   isExtracting: 0
+--- !u!114 &6966736145444322220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526586775568197404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 870869f0cbae4cb4cab9c4e3839c11f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointManager
 --- !u!114 &8141144102509985107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3074,17 +3088,45 @@ PrefabInstance:
     - target: {fileID: 9086808850024380273, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 8088799345587365447}
+      objectReference: {fileID: 7796174659742334559}
+    - target: {fileID: 9086808850024380273, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadCheckpoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 9086808850024380273, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CheckpointRetryButton, Assembly-CSharp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9083522726919850438, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 7796174659742334559}
   m_SourcePrefab: {fileID: 100100000, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
 --- !u!1 &715840588160792749 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2685964576421774912, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
   m_PrefabInstance: {fileID: 3218204245132476141}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5955584441793951531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9083522726919850438, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}
+  m_PrefabInstance: {fileID: 3218204245132476141}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7796174659742334559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5955584441793951531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37a5d4a47dc4f448aacf2da5809b369, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointRetryButton
 --- !u!224 &7427182130421907043 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5457234092039553166, guid: cbbc912f3d5b09c4f9809e740a6c27b0, type: 3}

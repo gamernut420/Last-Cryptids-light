@@ -403,4 +403,23 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     {
         return WeaponName;
     }
+
+    public int GetCurrentAmmoForCheckpoint()
+    {
+        return currentAmmo;
+    }
+
+    public int GetReserveAmmoForCheckpoint()
+    {
+        return currentReserveAmmo;
+    }
+
+    public void RestoreAmmoForCheckpoint(int magazineAmmo, int reserveAmmo)
+    {
+        currentAmmo = Mathf.Clamp(magazineAmmo, 0, MagSize);
+        currentReserveAmmo = Mathf.Clamp(reserveAmmo, 0, MaxReserveAmmo);
+
+        UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
+        CheckAmmo();
+    }
 }

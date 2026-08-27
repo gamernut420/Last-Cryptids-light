@@ -1,18 +1,28 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class CheckpointManager : MonoBehaviour
 {
-    // Static data survives a scene reload during the current play session.
     private static bool hasCheckpoint;
     private static bool restoreAfterSceneLoad;
     private static string checkpointSceneName;
     private static Vector3 checkpointPosition;
     private static Quaternion checkpointRotation;
-
     private static int savedFuel;
     private static int savedBatteries;
     private static int savedRadios;
+    private const int WeaponSlotCount = 3;
+    private static readonly string[] savedWeaponNames = new string[WeaponSlotCount];
+    private static readonly int[] savedMagazineAmmo = new int[WeaponSlotCount];
+    private static readonly int[] savedReserveAmmo = new int[WeaponSlotCount];
+    private static string savedActiveWeaponName;
+    private static float suppressPlateUntilUnscaledTime;
+
+    public static bool ShouldIgnorePlateActivation()
+    {
+        return Time.unscaledTime < suppressPlateUntilUnscaledTime;
+    }
 
     public void SaveCheckpoint(Transform respawnPoint, PlayerInventory inventory)
     {
@@ -34,8 +44,8 @@ public class CheckpointManager : MonoBehaviour
 
         savedFuel = inventory.GetAmount("Fuel");
         savedBatteries = inventory.GetAmount("Battery");
-        savedRadios = inventory.GetAmount("Radio Tube");
-
+        savedRadios = inventory.GetAmount("Radio");
+        SaveWeapons(inventory.GetComponent<playerController>());
         hasCheckpoint = true;
 
         Debug.Log(
@@ -48,8 +58,6 @@ public class CheckpointManager : MonoBehaviour
     public void LoadCheckpoint()
     {
         restoreAfterSceneLoad = hasCheckpoint;
-
-        // The lose screen pauses with timeScale 0. Restore time before loading.
         Time.timeScale = 1f;
 
         if (hasCheckpoint && !string.IsNullOrEmpty(checkpointSceneName))
@@ -66,10 +74,7 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
-    public void RestoreCheckpointIfNeeded(
-        GameObject player,
-        PlayerInventory inventory
-    )
+    public void RestoreCheckpointIfNeeded(GameObject player, PlayerInventory inventory)
     {
         if (!restoreAfterSceneLoad || !hasCheckpoint) return;
 
@@ -84,16 +89,13 @@ public class CheckpointManager : MonoBehaviour
 
         CharacterController controller = player.GetComponent<CharacterController>();
 
-        // CharacterController can block direct transform movement while enabled.
         if (controller != null)
         {
             controller.enabled = false;
         }
 
-        player.transform.SetPositionAndRotation(
-            checkpointPosition,
-            checkpointRotation
-        );
+        player.transform.SetPositionAndRotation(checkpointPosition, checkpointRotation);
+        suppressPlateUntilUnscaledTime = Time.unscaledTime + 1f;
 
         if (controller != null)
         {
@@ -103,7 +105,10 @@ public class CheckpointManager : MonoBehaviour
         // A freshly reloaded scene begins with an empty runtime inventory.
         AddSavedAmount(inventory, "Fuel", savedFuel);
         AddSavedAmount(inventory, "Battery", savedBatteries);
-        AddSavedAmount(inventory, "Radio Tube", savedRadios);
+        AddSavedAmount(inventory, "Radio", savedRadios);
+
+        playerController weaponController = player.GetComponent<playerController>();
+        StartCoroutine(RestoreWeaponsNextFrame(weaponController));
 
         restoreAfterSceneLoad = false;
         Physics.SyncTransforms();
@@ -121,5 +126,111 @@ public class CheckpointManager : MonoBehaviour
         {
             inventory.AddItem(itemName, amount);
         }
+    }
+
+    private void SaveWeapons(playerController weaponController)
+    {
+      
+        for (int slot = 0; slot < WeaponSlotCount; slot++)
+        {
+            savedWeaponNames[slot] = string.Empty;
+            savedMagazineAmmo[slot] = 0;
+            savedReserveAmmo[slot] = 0;
+        }
+
+        savedActiveWeaponName = string.Empty;
+
+        if (weaponController == null) return;
+
+        GameObject[] carriedWeapons = weaponController.GetWeaponsForCheckpoint();
+        savedActiveWeaponName = weaponController.GetActiveWeaponNameForCheckpoint();
+
+        int slotsToSave = Mathf.Min(carriedWeapons.Length, WeaponSlotCount);
+
+        for (int slot = 0; slot < slotsToSave; slot++)
+        {
+            if (carriedWeapons[slot] == null) continue;
+
+            GunController gun = carriedWeapons[slot].GetComponent<GunController>();
+            if (gun == null) continue;
+
+            savedWeaponNames[slot] = gun.GetWeaponName();
+            savedMagazineAmmo[slot] = gun.GetCurrentAmmoForCheckpoint();
+            savedReserveAmmo[slot] = gun.GetReserveAmmoForCheckpoint();
+
+            Debug.Log($"Checkpoint weapon slot {slot + 1}: " + $"{savedWeaponNames[slot]}, " + $"ammo {savedMagazineAmmo[slot]} / {savedReserveAmmo[slot]}", this);
+        }
+
+        if (string.IsNullOrEmpty(savedActiveWeaponName))
+        {
+            Debug.LogWarning(
+                "CheckpointManager: The player had no registered active weapon " +
+                "when the checkpoint was activated.",
+                this
+            );
+        }
+        else
+        {
+            Debug.Log(
+                $"Checkpoint active weapon: {savedActiveWeaponName}",
+                this
+            );
+        }
+    }
+
+    private IEnumerator RestoreWeaponsNextFrame(playerController weaponController)
+    {
+        yield return null;
+
+        if (weaponController == null) yield break;
+
+        GunController[] sceneGuns = FindObjectsByType<GunController>(FindObjectsInactive.Include);
+
+        bool[] gunAlreadyUsed = new bool[sceneGuns.Length];
+
+        for (int slot = 0; slot < WeaponSlotCount; slot++)
+        {
+            string savedName = savedWeaponNames[slot];
+            if (string.IsNullOrEmpty(savedName)) continue;
+
+            bool foundGun = false;
+
+            for (int gunIndex = 0; gunIndex < sceneGuns.Length; gunIndex++)
+            {
+                if (gunAlreadyUsed[gunIndex]) continue;
+
+                GunController gun = sceneGuns[gunIndex];
+
+                if (gun.GetWeaponName() != savedName) continue;
+
+                gunAlreadyUsed[gunIndex] = true;
+                foundGun = true;
+
+                if (weaponController.RestoreWeaponSlotForCheckpoint(gun.gameObject, slot))
+                {
+                    gun.RestoreAmmoForCheckpoint(
+                        savedMagazineAmmo[slot],
+                        savedReserveAmmo[slot]
+                    );
+                }
+                else
+                {
+                    foundGun = false;
+                }
+
+                break;
+            }
+
+            if (!foundGun)
+            {
+                Debug.LogWarning(
+                    $"CheckpointManager: Could not find a scene gun named {savedName}.",
+                    this
+                );
+            }
+        }
+
+        weaponController.EquipWeaponForCheckpoint(savedActiveWeaponName);
+        weaponController.RefreshWeaponUIForCheckpoint();
     }
 }
