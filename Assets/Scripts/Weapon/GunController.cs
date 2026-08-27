@@ -154,6 +154,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     private void OnEnable()
     {
+        if (!isInUse) return;
         isShooting = false;
         tryingShoot = false;
         CheckAmmo();
