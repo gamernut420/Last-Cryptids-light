@@ -351,4 +351,46 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             gameManager.instance.UpdateActiveWep("None");
         }
     }
+
+    public GameObject[] GetWeaponsForCheckpoint()
+    {
+        return (GameObject[])weapons.Clone();
+    }
+
+    public string GetActiveWeaponNameForCheckpoint()
+    {
+        if (ActiveWeapon == null) return string.Empty;
+
+        IWeapon weapon = ActiveWeapon.GetComponent<IWeapon>();
+        return weapon != null ? weapon.GetWeaponName() : string.Empty;
+    }
+
+    public void EquipWeaponForCheckpoint(string weaponName)
+    {
+        if (string.IsNullOrEmpty(weaponName)) return;
+
+        for (int slot = 0; slot < weapons.Length; slot++)
+        {
+            if (weapons[slot] == null) continue;
+
+            IWeapon weapon = weapons[slot].GetComponent<IWeapon>();
+
+            if (weapon == null || weapon.GetWeaponName() != weaponName)
+                continue;
+
+            if (ActiveWeapon != null)
+            {
+                ActiveWeapon.SetActive(false);
+            }
+
+            ActiveWeapon = weapons[slot];
+            activeWeaponSlot = slot;
+            ActiveWeapon.SetActive(true);
+
+            ShowAmmoUI?.Invoke(true);
+            UpdateWeaponUI();
+            return;
+        }
+    }
+
 }
