@@ -17,6 +17,12 @@ public class CheckpointManager : MonoBehaviour
     private static readonly int[] savedMagazineAmmo = new int[WeaponSlotCount];
     private static readonly int[] savedReserveAmmo = new int[WeaponSlotCount];
     private static string savedActiveWeaponName;
+    private static float suppressPlateUntilUnscaledTime;
+
+    public static bool ShouldIgnorePlateActivation()
+    {
+        return Time.unscaledTime < suppressPlateUntilUnscaledTime;
+    }
 
     public void SaveCheckpoint(Transform respawnPoint, PlayerInventory inventory)
     {
@@ -38,7 +44,7 @@ public class CheckpointManager : MonoBehaviour
 
         savedFuel = inventory.GetAmount("Fuel");
         savedBatteries = inventory.GetAmount("Battery");
-        savedRadios = inventory.GetAmount("Radio Tube");
+        savedRadios = inventory.GetAmount("Radio");
         SaveWeapons(inventory.GetComponent<playerController>());
         hasCheckpoint = true;
 
@@ -68,10 +74,7 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
-    public void RestoreCheckpointIfNeeded(
-        GameObject player,
-        PlayerInventory inventory
-    )
+    public void RestoreCheckpointIfNeeded(GameObject player, PlayerInventory inventory)
     {
         if (!restoreAfterSceneLoad || !hasCheckpoint) return;
 
@@ -91,10 +94,8 @@ public class CheckpointManager : MonoBehaviour
             controller.enabled = false;
         }
 
-        player.transform.SetPositionAndRotation(
-            checkpointPosition,
-            checkpointRotation
-        );
+        player.transform.SetPositionAndRotation(checkpointPosition, checkpointRotation);
+        suppressPlateUntilUnscaledTime = Time.unscaledTime + 1f;
 
         if (controller != null)
         {
@@ -104,7 +105,7 @@ public class CheckpointManager : MonoBehaviour
         // A freshly reloaded scene begins with an empty runtime inventory.
         AddSavedAmount(inventory, "Fuel", savedFuel);
         AddSavedAmount(inventory, "Battery", savedBatteries);
-        AddSavedAmount(inventory, "Radio Tube", savedRadios);
+        AddSavedAmount(inventory, "Radio", savedRadios);
 
         playerController weaponController = player.GetComponent<playerController>();
         StartCoroutine(RestoreWeaponsNextFrame(weaponController));
@@ -156,6 +157,24 @@ public class CheckpointManager : MonoBehaviour
             savedWeaponNames[slot] = gun.GetWeaponName();
             savedMagazineAmmo[slot] = gun.GetCurrentAmmoForCheckpoint();
             savedReserveAmmo[slot] = gun.GetReserveAmmoForCheckpoint();
+
+            Debug.Log($"Checkpoint weapon slot {slot + 1}: " + $"{savedWeaponNames[slot]}, " + $"ammo {savedMagazineAmmo[slot]} / {savedReserveAmmo[slot]}", this);
+        }
+
+        if (string.IsNullOrEmpty(savedActiveWeaponName))
+        {
+            Debug.LogWarning(
+                "CheckpointManager: The player had no registered active weapon " +
+                "when the checkpoint was activated.",
+                this
+            );
+        }
+        else
+        {
+            Debug.Log(
+                $"Checkpoint active weapon: {savedActiveWeaponName}",
+                this
+            );
         }
     }
 
@@ -165,7 +184,7 @@ public class CheckpointManager : MonoBehaviour
 
         if (weaponController == null) yield break;
 
-        GunController[] sceneGuns = FindObjectsByType<GunController>();
+        GunController[] sceneGuns = FindObjectsByType<GunController>(FindObjectsInactive.Include);
 
         bool[] gunAlreadyUsed = new bool[sceneGuns.Length];
 
@@ -187,11 +206,17 @@ public class CheckpointManager : MonoBehaviour
                 gunAlreadyUsed[gunIndex] = true;
                 foundGun = true;
 
-                weaponController.PlayerAddWeapon(gun.gameObject);
-                gun.RestoreAmmoForCheckpoint(
-                    savedMagazineAmmo[slot],
-                    savedReserveAmmo[slot]
-                );
+                if (weaponController.RestoreWeaponSlotForCheckpoint(gun.gameObject, slot))
+                {
+                    gun.RestoreAmmoForCheckpoint(
+                        savedMagazineAmmo[slot],
+                        savedReserveAmmo[slot]
+                    );
+                }
+                else
+                {
+                    foundGun = false;
+                }
 
                 break;
             }
@@ -206,5 +231,6 @@ public class CheckpointManager : MonoBehaviour
         }
 
         weaponController.EquipWeaponForCheckpoint(savedActiveWeaponName);
+        weaponController.RefreshWeaponUIForCheckpoint();
     }
 }

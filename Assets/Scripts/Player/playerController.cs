@@ -365,14 +365,45 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         return weapon != null ? weapon.GetWeaponName() : string.Empty;
     }
 
+    public bool RestoreWeaponSlotForCheckpoint(GameObject weaponObject, int slot)
+    {
+        if (weaponObject == null || slot < 0 || slot >= weapons.Length)
+            return false;
+        IWeapon weapon = weaponObject.GetComponent<IWeapon>();
+        Camera playerCamera = Camera.main;
+        if (weapon == null || playerCamera == null || WeaponGrip == null)
+            return false;
+        weapons[slot] = weaponObject;
+
+        weapon.SetPlayerVariables(
+            GetComponent<IPlayer>(),
+            playerCamera.GetComponent<ICamera>(),
+            WeaponGrip.transform.localPosition
+        );
+
+        weapon.SetWeaponUse(true);
+        weaponObject.transform.SetParent(playerCamera.transform);
+        weaponObject.transform.localPosition = WeaponGrip.transform.localPosition;
+        weaponObject.transform.localRotation = Quaternion.identity;
+        weaponObject.SetActive(false);
+        return true;
+    }
+
+
     public void EquipWeaponForCheckpoint(string weaponName)
     {
         if (string.IsNullOrEmpty(weaponName)) return;
 
         for (int slot = 0; slot < weapons.Length; slot++)
         {
+            if (weapons[slot] != null) 
+            {
+                weapons[slot].SetActive(false);
+            }
+        }
+        for (int slot = 0; slot < weapons.Length; slot++ ) 
+        {
             if (weapons[slot] == null) continue;
-
             IWeapon weapon = weapons[slot].GetComponent<IWeapon>();
 
             if (weapon == null || weapon.GetWeaponName() != weaponName)
@@ -391,6 +422,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             UpdateWeaponUI();
             return;
         }
+    }
+
+    public void RefreshWeaponUIForCheckpoint()
+    {
+        ShowAmmoUI?.Invoke(ActiveWeapon != null);
+        UpdateWeaponUI();
     }
 
 }

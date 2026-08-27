@@ -14,7 +14,7 @@ public class CheckpointPlate : MonoBehaviour
         {
             respawnPoint = transform;
         } 
-            if (activationAudioSource == null)
+        if (activationAudioSource == null)
         {
             activationAudioSource = GetComponent<AudioSource>();
         }
@@ -22,6 +22,10 @@ public class CheckpointPlate : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (hasBeenActivated || !other.CompareTag("Player")) return;
+        if (CheckpointManager.ShouldIgnorePlateActivation())
+        {
+            Debug.Log("Checkpoint Plate: Ignored the activation when respawning", this); return;
+        }
         if (gameManager.instance == null)
         {
             Debug.LogWarning("CheckpointPlate: game manager wasn't found", this);
