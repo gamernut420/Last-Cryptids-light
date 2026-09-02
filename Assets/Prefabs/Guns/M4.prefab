@@ -120,13 +120,9 @@ MonoBehaviour:
   MagSize: 30
   MaxReserveAmmo: 1200
   SpreadAmmount: 5
-  BulletData:
-    Damage: 20
-    Speed: 200
-    Gauge: 1
-    SpreadReduction: 1
-    GravityScale: 1
-    LifeTime: 10
+  Damage: 25
+  BulletSpeed: 1000
+  Bullet: {fileID: 11400000, guid: 08c2cd4c0a706b7429b2a0c352087017, type: 2}
   AimObject: {fileID: 5467187995358026964}
   AimSmoothing: 10
   VerticleRecoil: 0.5
@@ -152,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  DebugProjectiles: 0
+  DebugProjectiles: 1
 --- !u!82 &436236581649053109
 AudioSource:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileManager : MonoBehaviour
@@ -10,6 +11,12 @@ public class ProjectileManager : MonoBehaviour
     {
         public ProjectileData projData;
 
+        public float damage;
+
+        public float speed;
+
+        public GameObject tracer;
+
         public Vector3 velocity;
 
         public Vector3 startPos;
@@ -17,15 +24,21 @@ public class ProjectileManager : MonoBehaviour
 
     private List<Projectile> projectiles = new List<Projectile>();
 
-    public void ShootProjectile(Vector3 _location, Quaternion _rotation, ProjectileData _projData)
+    public void ShootProjectile(Vector3 _location, Quaternion _rotation, ProjectileData _projData, float _damage, float _speed)
     {
         Projectile tempProjectile = new Projectile();
 
         tempProjectile.projData = _projData;
 
+        tempProjectile.damage = _damage;
+
+        tempProjectile.speed = _speed;
+
+        tempProjectile.tracer = Instantiate(_projData.TracerPrefab, _location, _rotation);
+
         Vector3 foward = _rotation * Vector3.forward;
 
-        tempProjectile.velocity = foward * _projData.Speed;
+        tempProjectile.velocity = foward * _speed;
 
         tempProjectile.startPos = _location;
 
@@ -40,6 +53,8 @@ public class ProjectileManager : MonoBehaviour
 
             Vector3 endPos = proj.startPos + (proj.velocity * Time.deltaTime);
 
+            proj.tracer.transform.position = proj.startPos;
+
             RaycastHit hit;
 
             if (DebugProjectiles)
@@ -50,6 +65,8 @@ public class ProjectileManager : MonoBehaviour
             //projectile collided
             if (Physics.Linecast(proj.startPos, endPos, out hit)) 
             {
+                proj.tracer.transform.position = endPos;
+
                 if (DebugProjectiles)
                 {
                     Debug.Log(hit.collider.gameObject.name);
@@ -59,15 +76,20 @@ public class ProjectileManager : MonoBehaviour
 
                 if(idmg != null)
                 {
-                    idmg.takeDamage((int)proj.projData.Damage);
+                    idmg.takeDamage((int)proj.damage);
                 }
 
-                projectiles.RemoveAt(i);
+                RemoveProjectile(i);
             }
             //projectiles life ran out
             else if(proj.projData.LifeTime <= 0)
             {
-                projectiles.RemoveAt(i);
+                RemoveProjectile(i);
+
+                if (DebugProjectiles)
+                {
+                    Debug.Log("Lifetime ran");
+                }
             }
             //projectile should continue
             else
@@ -86,5 +108,12 @@ public class ProjectileManager : MonoBehaviour
     private void Update()
     {
         UpdateProjectiles();
+    }
+
+    private void RemoveProjectile(int index)
+    {
+        //Destroy(projectiles[index].tracer);
+
+        projectiles.RemoveAt(index);
     }
 }

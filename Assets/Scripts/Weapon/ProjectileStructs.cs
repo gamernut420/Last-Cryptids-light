@@ -3,12 +3,6 @@ using UnityEngine;
 [System.Serializable]
 public struct ProjectileData
 {
-    [Min(0)]
-    public float Damage;
-
-    [Min(1f)]
-    public float Speed;
-
     [Min(1)]
     public int Gauge;
 
@@ -19,4 +13,7 @@ public struct ProjectileData
 
     [Min(0f)]
     public float LifeTime;
+
+    [Header("----- VFX -----")]
+    public GameObject TracerPrefab;
 }

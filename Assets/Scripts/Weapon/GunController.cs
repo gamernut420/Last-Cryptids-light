@@ -5,7 +5,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 {
     [SerializeField] GameObject WeaponModel;
 
-    [Header("Gun Stats")]
+    [Header("----- Gun Stats -----")]
     [SerializeField] string WeaponName;
     [Tooltip("This is in Rounds per Minute")]
     [SerializeField][Min(0f)] float FireRate = 500;
@@ -13,25 +13,29 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [SerializeField][Min(1)] int MagSize = 30;
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
     [SerializeField][Range(0, 90)] float SpreadAmmount = 0;
-    [SerializeField] ProjectileData BulletData;
 
-    [Header("Aim")]
+    [Header("----- Bullet Stats -----")]
+    [SerializeField][Min(0f)] float Damage = 25;
+    [SerializeField][Min(0f)] float BulletSpeed = 500;
+    [SerializeField] BulletData Bullet;
+
+    [Header("----- Aim -----")]
     [SerializeField] GameObject AimObject;
     [SerializeField] float AimSmoothing = 10;
 
     Vector3 aimPoint;
     bool isAiming;
 
-    [Header("Recoil")]
+    [Header("----- Recoil -----")]
     [SerializeField] float VerticleRecoil;
     [SerializeField] float HorizontalRecoil;
 
-    [Header("VFX")]
+    [Header("----- VFX -----")]
     [SerializeField] GameObject Muzzle;
     [SerializeField] GameObject[] Flashes;
     [SerializeField] float SwayAmmount = 10;
 
-    [Header("Audio")]
+    [Header("----- Audio -----")]
     [SerializeField] AudioSource gunAudio;
     [SerializeField] AudioClip gunShootSound;
     public float gunshotHearingRadius = 20f;
@@ -228,7 +232,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     IEnumerator ShootGun()
     {
-        for(int i = 0; i < BulletData.Gauge; i++)
+        for(int i = 0; i < Bullet.projectileData.Gauge; i++)
         {
             Quaternion bulletRotation = Camera.main.transform.rotation;
 
@@ -236,7 +240,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             if (isAiming)
             {
-                spreadMod -= spreadMod * BulletData.SpreadReduction;
+                spreadMod -= spreadMod * Bullet.projectileData.SpreadReduction;
             }
 
             float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.x;
@@ -244,7 +248,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
 
-            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, BulletData);
+            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Bullet.projectileData, Damage, BulletSpeed);
         }
 
         if (gunAudio != null && gunShootSound != null)
