@@ -7,6 +7,7 @@ public class InventorySlot : MonoBehaviour
     [SerializeField] Image itemImage;
     [SerializeField] TextMeshProUGUI itemText;
     [SerializeField] TextMeshProUGUI itemCount;
+    [SerializeField] TextMeshProUGUI slotNumber;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -14,6 +15,7 @@ public class InventorySlot : MonoBehaviour
         itemImage.enabled = false;
         itemText.enabled = false;
         itemCount.enabled = false;
+        slotNumber.enabled = false;
     }
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
