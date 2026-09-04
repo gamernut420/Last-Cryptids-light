@@ -84,15 +84,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void CheckComponents()
     {
-        if (GetComponent<ProjectileManager>() == null)
-        {
-            projectileManager = gameObject.AddComponent<ProjectileManager>();
-        }
-        else
-        {
-            projectileManager = GetComponent<ProjectileManager>();
-        }
-
         if (GetComponent<AudioSource>() == null)
         {
             gunAudio = gameObject.AddComponent<AudioSource>();
@@ -167,10 +158,12 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
     }
 
-    public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default)
+    public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, ProjectileManager _projManager = null, Vector3 gripLocation = default)
     {
         owningPlayer = player;
         playerCamera = camera;
+
+        projectileManager = _projManager;
 
         basePosition = gripLocation;
 
@@ -219,7 +212,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
                 Reload();
             }
 
-            if (tryingShoot && canShoot)
+            if (tryingShoot && canShoot && projectileManager != null)
             {
                 StartCoroutine(ShootGun());
                 if (Input.GetKey(KeyCode.Mouse0))
@@ -248,7 +241,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
 
-            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Bullet.projectileData, Damage, BulletSpeed);
+            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Damage, BulletSpeed, Bullet.projectileData);
         }
 
         if (gunAudio != null && gunShootSound != null)

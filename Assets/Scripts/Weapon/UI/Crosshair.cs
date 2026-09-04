@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Crosshair : MonoBehaviour
@@ -22,7 +23,10 @@ public class Crosshair : MonoBehaviour
 
     void ToggleVisibility(bool state)
     {
-        gameObject.SetActive(!state);
+        if(gameObject != null)
+        {
+            gameObject.SetActive(!state);
+        }
     }
 
     private void OnEnable()

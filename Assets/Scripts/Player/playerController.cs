@@ -23,6 +23,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public float sprintHearingRadius = 10f;
 
     [Header("Weapon")]
+    [SerializeField] ProjectileManager projectileManager;
     [SerializeField] GameObject WeaponGrip;
     GameObject ActiveWeapon;
     GameObject[] weapons = new GameObject[3];
@@ -196,7 +197,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 ActiveWeapon = weapons[activeWeaponSlot];
             }
 
-            wep.SetPlayerVariables(GetComponent<IPlayer>(), Camera.main.GetComponent<ICamera>(), WeaponGrip.transform.localPosition);
+            wep.SetPlayerVariables(
+                GetComponent<IPlayer>(),
+                Camera.main.GetComponent<ICamera>(),
+                projectileManager,
+                WeaponGrip.transform.localPosition);
+
             wep.SetWeaponUse(true);
 
             Weapon.transform.SetParent(Camera.main.transform);
@@ -378,6 +384,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         weapon.SetPlayerVariables(
             GetComponent<IPlayer>(),
             playerCamera.GetComponent<ICamera>(),
+            projectileManager,
             WeaponGrip.transform.localPosition
         );
 
