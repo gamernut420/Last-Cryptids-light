@@ -16,7 +16,7 @@ public class CheckpointManager : MonoBehaviour
     private static readonly string[] savedWeaponNames = new string[WeaponSlotCount];
     private static readonly int[] savedMagazineAmmo = new int[WeaponSlotCount];
     private static readonly int[] savedReserveAmmo = new int[WeaponSlotCount];
-    private static string savedActiveWeaponName;
+    private static string savedActiveItemName;
     private static float suppressPlateUntilUnscaledTime;
 
     public static bool ShouldIgnorePlateActivation()
@@ -138,12 +138,12 @@ public class CheckpointManager : MonoBehaviour
             savedReserveAmmo[slot] = 0;
         }
 
-        savedActiveWeaponName = string.Empty;
+        savedActiveItemName = string.Empty;
 
         if (weaponController == null) return;
 
         GameObject[] carriedWeapons = weaponController.GetWeaponsForCheckpoint();
-        savedActiveWeaponName = weaponController.GetActiveWeaponNameForCheckpoint();
+        savedActiveItemName = weaponController.GetActiveItemNameForCheckpoint();
 
         int slotsToSave = Mathf.Min(carriedWeapons.Length, WeaponSlotCount);
 
@@ -161,7 +161,7 @@ public class CheckpointManager : MonoBehaviour
             Debug.Log($"Checkpoint weapon slot {slot + 1}: " + $"{savedWeaponNames[slot]}, " + $"ammo {savedMagazineAmmo[slot]} / {savedReserveAmmo[slot]}", this);
         }
 
-        if (string.IsNullOrEmpty(savedActiveWeaponName))
+        if (string.IsNullOrEmpty(savedActiveItemName))
         {
             Debug.LogWarning(
                 "CheckpointManager: The player had no registered active weapon " +
@@ -172,7 +172,7 @@ public class CheckpointManager : MonoBehaviour
         else
         {
             Debug.Log(
-                $"Checkpoint active weapon: {savedActiveWeaponName}",
+                $"Checkpoint active weapon: {savedActiveItemName}",
                 this
             );
         }
@@ -230,7 +230,7 @@ public class CheckpointManager : MonoBehaviour
             }
         }
 
-        weaponController.EquipWeaponForCheckpoint(savedActiveWeaponName);
+        weaponController.EquipWeaponForCheckpoint(savedActiveItemName);
         weaponController.RefreshWeaponUIForCheckpoint();
     }
 }

@@ -8,5 +8,7 @@ public interface IPlayer
 
     void PlayerAddItem(GameObject Item);
 
+    bool HealPlayer(int amount, bool overHeal = false);
+
     ProjectileManager GetProjectileManager();
 }

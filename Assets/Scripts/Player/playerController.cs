@@ -23,7 +23,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Header("Weapon")]
     [SerializeField] ProjectileManager projectileManager;
     [SerializeField] GameObject WeaponGrip;
-    GameObject ActiveWeapon;
+    GameObject ActiveItem;
     GameObject[] hotbar = new GameObject[4];
     int activeItemSlot;
     public static System.Action<bool> ShowAmmoUI;
@@ -45,8 +45,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         speedOrig = speed;
 
         UpdateWeaponUI();
-
-        ShowAmmoUI?.Invoke(false);
     }
 
     // Update is called once per frame
@@ -69,7 +67,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         ///////   Testing Logic    ///////
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
-        if (Input.GetKeyDown(KeyCode.K)) takeDamage(Hp);
+        if (Input.GetKeyDown(KeyCode.K)) takeDamage(1);
     }
 
     void movement()
@@ -139,9 +137,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public bool PlayerRefillAmmo(int amount)
     {
-        if(ActiveWeapon != null)
+        if(ActiveItem != null)
         {
-            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
 
             if (wep != null)
             {
@@ -174,7 +172,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
             wep.SetWeaponUse(true);
 
-            ShowAmmoUI?.Invoke(ActiveWeapon != null);
             arrayStart = 0;
             arrayEnd = 1;
         }
@@ -192,16 +189,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             {
                 hadEmpty = true;
 
-                Debug.Log("Found Slot");
-
-                if (ActiveWeapon != null)
+                if (ActiveItem != null)
                 {
-                    ActiveWeapon.SetActive(false);
+                    ActiveItem.SetActive(false);
                 }
 
                 hotbar[i] = Item;
 
-                ActiveWeapon = hotbar[i];
+                ActiveItem = hotbar[i];
 
                 activeItemSlot = i;
 
@@ -211,11 +206,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         if (hadEmpty == false)
         {
+            int slotToUse = activeItemSlot;
+            
             DropWeapon();
 
-            hotbar[activeItemSlot] = Item;
+            hotbar[slotToUse] = Item;
 
-            ActiveWeapon = hotbar[activeItemSlot];
+            ActiveItem = hotbar[slotToUse];
+
+            activeItemSlot = slotToUse;
         }
 
         Item.transform.SetParent(Camera.main.transform);
@@ -224,17 +223,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         Item.transform.localRotation = Quaternion.identity;
 
-        ActiveWeapon.SetActive(false);
-        ActiveWeapon.SetActive(true);
+        ActiveItem.SetActive(false);
+        ActiveItem.SetActive(true);
 
         UpdateWeaponUI();
     }
 
     void DropWeapon()
     {
-        if (ActiveWeapon != null)
+        if (ActiveItem != null)
         {
-            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
 
             if (wep != null)
             {
@@ -242,47 +241,54 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 wep.SetPlayerVariables();
             }
 
-            ShowAmmoUI?.Invoke(false);
+            RaycastHit frontRay;
+            RaycastHit downRay;
+
+            Vector3 traceStart = transform.position;
+            Vector3 traceEnd = traceStart + (transform.forward * 3);
+
+            Vector3 dropLocation;
+
+            if (Physics.Linecast(traceStart, traceEnd, out frontRay))
+            {
+                traceStart = frontRay.point;
+            }
+            else
+            {
+                traceStart = traceEnd;
+
+            }
+
+            traceEnd = traceStart + (Vector3.down * 100);
+
+            if (Physics.Linecast(traceStart, traceEnd, out downRay))
+            {
+                dropLocation = downRay.point;
+            }
+            else
+            {
+                dropLocation = traceEnd;
+            }
+
+            ActiveItem.transform.SetParent(null);
+            ActiveItem.transform.position = dropLocation;
+            ActiveItem.transform.localRotation = Quaternion.Euler(0, ActiveItem.transform.localEulerAngles.y, 0);
+
+            ActiveItem.GetComponent<Collider>().enabled = true;
+
+            float posOffset = ActiveItem.GetComponent<Collider>().bounds.extents.y;
+
+            ActiveItem.transform.position += new Vector3(0, posOffset, 0);
+
+            ActiveItem = null;
+            hotbar[activeItemSlot] = null;
+            activeItemSlot = -1;
+
+            UpdateWeaponUI();
         }
-
-        RaycastHit frontRay;
-        RaycastHit downRay;
-
-        Vector3 traceStart = transform.position;
-        Vector3 traceEnd = traceStart + (transform.forward * 3);
-
-        Vector3 dropLocation;
-
-        if (Physics.Linecast(traceStart, traceEnd, out frontRay))
-        {
-            traceStart = frontRay.point;
-        }
-        else
-        {
-            traceStart = traceEnd;
-
-        }
-
-        traceEnd = traceStart + (Vector3.down * 100);
-
-        if (Physics.Linecast(traceStart, traceEnd, out downRay))
-        {
-            dropLocation = downRay.point;
-        }
-        else
-        {
-            dropLocation = traceEnd;
-        }
-
-        ActiveWeapon.transform.SetParent(null);
-        ActiveWeapon.transform.position = dropLocation;
-        ActiveWeapon.transform.localRotation = Quaternion.identity;
-
-        ActiveWeapon = null;
-        hotbar[activeItemSlot] = null;
-
-        UpdateWeaponUI();
     }
+
+
 
     void CheckSwapItem()
     {
@@ -312,20 +318,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         if (hotbar[index] != null && activeItemSlot != index)
         {
-            if (ActiveWeapon != null)
+            if (ActiveItem != null)
             {
-                ActiveWeapon.SetActive(false);
+                ActiveItem.SetActive(false);
             }
 
-            ActiveWeapon = hotbar[index];
+            ActiveItem = hotbar[index];
 
             activeItemSlot = index;
 
-            ActiveWeapon.SetActive(true);
+            ActiveItem.SetActive(true);
 
-            ShowAmmoUI?.Invoke(ActiveWeapon != null);
-
-            // weapon UI
             UpdateWeaponUI();
         }
     }
@@ -334,16 +337,16 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if (ActiveWeapon != null)
+            if (ActiveItem != null)
             {
-                IGadget gadget = ActiveWeapon.GetComponent<IGadget>();
+                IGadget gadget = ActiveItem.GetComponent<IGadget>();
 
                 if (gadget != null)
                 {
                     if (gadget.UseGadget(this))
                     {
-                        ActiveWeapon.transform.SetParent(null);
-                        ActiveWeapon = null;
+                        ActiveItem.transform.SetParent(null);
+                        ActiveItem = null;
                         hotbar[activeItemSlot] = null;
 
                         UpdateWeaponUI();
@@ -355,31 +358,37 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void UpdateWeaponUI()
     {
-        gameManager.instance.UpdateWeaponInv(hotbar);
-
-        if (ActiveWeapon != null)
+        if (ActiveItem != null)
         {
-            IWeapon wep = ActiveWeapon.GetComponent<IWeapon>();
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
 
             if (wep != null)
             {
                 gameManager.instance.UpdateActiveWep(wep.GetWeaponName());
+
+                ShowAmmoUI?.Invoke(true);
             }
             else
             {
-                IGadget gadget = ActiveWeapon.GetComponent<IGadget>();
+                IGadget gadget = ActiveItem.GetComponent<IGadget>();
 
                 if (gadget != null)
                 {
                     gameManager.instance.UpdateActiveWep(gadget.GetGadgetName());
+
+                    ShowAmmoUI?.Invoke(false);
                 }
             }
         }
         else
         {
+            activeItemSlot = -1;
             gameManager.instance.ShowReloadPrompt(false);
             gameManager.instance.UpdateActiveWep("None");
+            ShowAmmoUI?.Invoke(false);
         }
+
+        gameManager.instance.UpdateWeaponInv(hotbar, activeItemSlot);
     }
 
     public GameObject[] GetWeaponsForCheckpoint()
@@ -387,11 +396,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         return (GameObject[])hotbar.Clone();
     }
 
-    public string GetActiveWeaponNameForCheckpoint()
+    public string GetActiveItemNameForCheckpoint()
     {
-        if (ActiveWeapon == null) return string.Empty;
+        if (ActiveItem == null) return string.Empty;
 
-        IWeapon weapon = ActiveWeapon.GetComponent<IWeapon>();
+        IWeapon weapon = ActiveItem.GetComponent<IWeapon>();
         return weapon != null ? weapon.GetWeaponName() : string.Empty;
     }
 
@@ -440,14 +449,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             if (weapon == null || weapon.GetWeaponName() != weaponName)
                 continue;
 
-            if (ActiveWeapon != null)
+            if (ActiveItem != null)
             {
-                ActiveWeapon.SetActive(false);
+                ActiveItem.SetActive(false);
             }
 
-            ActiveWeapon = hotbar[slot];
+            ActiveItem = hotbar[slot];
             activeItemSlot = slot;
-            ActiveWeapon.SetActive(true);
+            ActiveItem.SetActive(true);
 
             ShowAmmoUI?.Invoke(true);
             UpdateWeaponUI();
@@ -457,13 +466,34 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void RefreshWeaponUIForCheckpoint()
     {
-        ShowAmmoUI?.Invoke(ActiveWeapon != null);
+        ShowAmmoUI?.Invoke(ActiveItem != null);
         UpdateWeaponUI();
     }
 
     public ProjectileManager GetProjectileManager()
     {
-        Debug.Log($"Returning {projectileManager}");
         return projectileManager;
+    }
+
+    public bool HealPlayer(int amount, bool overHeal = false)
+    {
+        if(Hp < HPOrig && !overHeal)
+        {
+            Hp += Mathf.Clamp(amount, 0, HPOrig - Hp);
+
+            updatePlayerUI();
+
+            return true;
+        }
+        else if (overHeal)
+        {
+            Hp += amount;
+
+            updatePlayerUI();
+
+            return true;
+        }
+
+        return false;
     }
 }
