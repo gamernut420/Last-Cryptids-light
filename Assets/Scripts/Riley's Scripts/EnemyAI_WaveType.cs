@@ -303,8 +303,8 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     {
         if (currentHP <= 0) return;
 
-        currentHP -= attackDamage;
-        Debug.Log($"{gameObject.name} took {attackDamage} damage. HP remaining: {currentHP}");
+        currentHP -= amount;
+        Debug.Log($"{gameObject.name} took {amount} damage. HP remaining: {currentHP}");
         StartCoroutine(flashRed());
         if (currentHP <= 0)
         {
@@ -312,6 +312,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             Die();
         }
     }
+
     void Die()
     {
         if(gameManager.instance != null)
