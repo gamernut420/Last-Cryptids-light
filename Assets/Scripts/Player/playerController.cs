@@ -71,7 +71,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         ///////   Testing Logic    ///////
 
         // Testing key: 'K' to instantly kill the playerand test the death screen
-        if (Input.GetKeyDown(KeyCode.K)) takeDamage(Hp);
+        if (Input.GetKeyDown(KeyCode.K)) takeDamage(1);
     }
 
     void movement()
@@ -194,8 +194,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             {
                 hadEmpty = true;
 
-                Debug.Log("Found Slot");
-
                 if (ActiveWeapon != null)
                 {
                     ActiveWeapon.SetActive(false);
@@ -245,49 +243,45 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             }
 
             ShowAmmoUI?.Invoke(false);
+
+            RaycastHit frontRay;
+            RaycastHit downRay;
+
+            Vector3 traceStart = transform.position;
+            Vector3 traceEnd = traceStart + (transform.forward * 3);
+
+            Vector3 dropLocation;
+
+            if (Physics.Linecast(traceStart, traceEnd, out frontRay))
+            {
+                traceStart = frontRay.point;
+            }
+            else
+            {
+                traceStart = traceEnd;
+
+            }
+
+            traceEnd = traceStart + (Vector3.down * 100);
+
+            if (Physics.Linecast(traceStart, traceEnd, out downRay))
+            {
+                dropLocation = downRay.point;
+            }
+            else
+            {
+                dropLocation = traceEnd;
+            }
+
+            ActiveWeapon.transform.SetParent(null);
+            ActiveWeapon.transform.position = dropLocation;
+            ActiveWeapon.transform.localRotation = Quaternion.Euler(0, ActiveWeapon.transform.localEulerAngles.y, 0);
+
+            ActiveWeapon = null;
+            hotbar[activeItemSlot] = null;
+
+            UpdateWeaponUI();
         }
-
-        RaycastHit frontRay;
-        RaycastHit downRay;
-
-        Vector3 traceStart = transform.position;
-        Vector3 traceEnd = traceStart + (transform.forward * 3);
-
-        Vector3 dropLocation;
-
-        Debug.DrawLine(traceStart, traceEnd, Color.red, 10);
-
-        if (Physics.Linecast(traceStart, traceEnd, out frontRay))
-        {
-            traceStart = frontRay.point;
-        }
-        else
-        {
-            traceStart = traceEnd;
-
-        }
-
-        traceEnd = traceStart + (Vector3.down * 100);
-
-        Debug.DrawLine(traceStart, traceEnd, Color.red, 10);
-
-        if (Physics.Linecast(traceStart, traceEnd, out downRay))
-        {
-            dropLocation = downRay.point;
-        }
-        else
-        {
-            dropLocation = traceEnd;
-        }
-
-        ActiveWeapon.transform.SetParent(null);
-        ActiveWeapon.transform.position = dropLocation;
-        ActiveWeapon.transform.localRotation = Quaternion.Euler(0, ActiveWeapon.transform.localEulerAngles.y, 0);
-
-        ActiveWeapon = null;
-        hotbar[activeItemSlot] = null;
-
-        UpdateWeaponUI();
     }
 
     void CheckSwapItem()
@@ -469,12 +463,28 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public ProjectileManager GetProjectileManager()
     {
-        Debug.Log($"Returning {projectileManager}");
         return projectileManager;
     }
 
-    public bool HealPlayer(float amount)
+    public bool HealPlayer(int amount, bool overHeal = false)
     {
-        throw new System.NotImplementedException();
+        if(Hp < HPOrig && !overHeal)
+        {
+            Hp += Mathf.Clamp(amount, 0, HPOrig - Hp);
+
+            updatePlayerUI();
+
+            return true;
+        }
+        else if (overHeal)
+        {
+            Hp += amount;
+
+            updatePlayerUI();
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -10,9 +10,9 @@ public class TestPlaceableGadget : PlaceableGadget
 
             sphere.GetComponent<Collider>().enabled = false;
 
-            sphere.transform.SetParent(transform, false);
-
             sphere.transform.localScale = new Vector3(25, 25, 25);
+
+            sphere.transform.position = transform.position;
 
             Debug.Log(transform.position);
 
