@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public abstract class ThrowableGadget : MonoBehaviour, IGadget, IProjectile, IInteract
+//this class handles the code used by all of the throwable gadgets
+//derive from this class to make a custom throwable
+public abstract class ThrowableGadget : GadgetBase, IProjectile
 {
-    [SerializeField] string GadgetName;
-
     [SerializeField][Min(0f)] float ThrowSpeed = 50;
     [SerializeField] float Gravity = 1;
     [SerializeField][Min(0f)] float LifeTime = 10;
 
     ProjectileManager projectileManager;
 
-    public bool UseGadget(IPlayer player)
+    public override bool UseGadget(IPlayer player)
     {
         if(player != null)
         {
@@ -42,7 +42,7 @@ public abstract class ThrowableGadget : MonoBehaviour, IGadget, IProjectile, IIn
 
     public abstract void Impact(RaycastHit hit);
 
-    public bool Interact(GameObject interactor)
+    public override bool Interact(GameObject interactor)
     {
         IPlayer player = interactor.GetComponent<IPlayer>();
 
@@ -56,15 +56,5 @@ public abstract class ThrowableGadget : MonoBehaviour, IGadget, IProjectile, IIn
         }
 
         return false;
-    }
-
-    public string ScreenMessage()
-    {
-        return $"Pickup {GadgetName}";
-    }
-
-    public string GetGadgetName()
-    {
-        return GadgetName;
     }
 }

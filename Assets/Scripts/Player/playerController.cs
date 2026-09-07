@@ -255,6 +255,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         Vector3 dropLocation;
 
+        Debug.DrawLine(traceStart, traceEnd, Color.red, 10);
+
         if (Physics.Linecast(traceStart, traceEnd, out frontRay))
         {
             traceStart = frontRay.point;
@@ -267,6 +269,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         traceEnd = traceStart + (Vector3.down * 100);
 
+        Debug.DrawLine(traceStart, traceEnd, Color.red, 10);
+
         if (Physics.Linecast(traceStart, traceEnd, out downRay))
         {
             dropLocation = downRay.point;
@@ -278,7 +282,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         ActiveWeapon.transform.SetParent(null);
         ActiveWeapon.transform.position = dropLocation;
-        ActiveWeapon.transform.localRotation = Quaternion.identity;
+        ActiveWeapon.transform.localRotation = Quaternion.Euler(0, ActiveWeapon.transform.localEulerAngles.y, 0);
 
         ActiveWeapon = null;
         hotbar[activeItemSlot] = null;
@@ -467,5 +471,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         Debug.Log($"Returning {projectileManager}");
         return projectileManager;
+    }
+
+    public bool HealPlayer(float amount)
+    {
+        throw new System.NotImplementedException();
     }
 }
