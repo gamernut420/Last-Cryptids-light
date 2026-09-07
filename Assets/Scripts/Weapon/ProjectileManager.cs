@@ -16,6 +16,8 @@ public class ProjectileManager : MonoBehaviour
 
         public GameObject tracer;
 
+        public GameObject projObject;
+
         public IProjectile iproj;
 
         public Vector3 velocity;
@@ -25,7 +27,7 @@ public class ProjectileManager : MonoBehaviour
 
     private List<Projectile> projectiles = new List<Projectile>();
 
-    public void ShootProjectile(Vector3 _location, Quaternion _rotation, float _damage, float _speed, ProjectileData _projData, IProjectile _iproj = null)
+    public void ShootProjectile(Vector3 _location, Quaternion _rotation, float _damage, float _speed, ProjectileData _projData)
     {
         Projectile tempProjectile = new Projectile();
 
@@ -35,8 +37,6 @@ public class ProjectileManager : MonoBehaviour
 
         tempProjectile.projData = _projData;
 
-        tempProjectile.iproj = _iproj;
-
         tempProjectile.tracer = Instantiate(_projData.TracerPrefab, _location, _rotation);
 
         Vector3 foward = _rotation * Vector3.forward;
@@ -44,6 +44,33 @@ public class ProjectileManager : MonoBehaviour
         tempProjectile.velocity = foward * _speed;
 
         tempProjectile.startPos = _location;
+
+        projectiles.Add(tempProjectile);
+    }
+
+    public void ShootObject(Vector3 _location, Quaternion _rotation, float _speed, float _gravity, float _lifeTime, IProjectile _iproj)
+    {
+        Projectile tempProjectile = new Projectile();
+
+        //create projectile data
+        ProjectileData tempData = new ProjectileData();
+
+        tempData.GravityScale = _gravity;
+
+        tempData.LifeTime = _lifeTime;
+
+        tempProjectile.projData = tempData;
+
+        //Set the rest of the data
+        tempProjectile.speed = _speed;
+
+        Vector3 foward = _rotation * Vector3.forward;
+
+        tempProjectile.velocity = foward * _speed;
+
+        tempProjectile.startPos = _location;
+
+        tempProjectile.iproj = _iproj;
 
         projectiles.Add(tempProjectile);
     }
@@ -117,6 +144,11 @@ public class ProjectileManager : MonoBehaviour
                 proj.projData.LifeTime -= Time.deltaTime;
 
                 projectiles[i] = proj;
+
+                if(proj.iproj != null)
+                {
+                    proj.iproj.UpdatePos(endPos);
+                }
             }
         }
     }

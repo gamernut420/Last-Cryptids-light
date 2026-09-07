@@ -383,7 +383,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         if (player != null)
         {
-            player.PlayerAddWeapon(gameObject);
+            player.PlayerAddItem(gameObject);
 
             return true;
         }

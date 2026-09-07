@@ -15,7 +15,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
-    [SerializeField] GameObject WeaponHotbar;
+    [SerializeField] GameObject ItemHotbar;
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
 
@@ -278,7 +278,7 @@ public class gameManager : MonoBehaviour
 
     public void UpdateWeaponInv(GameObject[] inv)
     {
-        InventorySlot[] slots = WeaponHotbar.GetComponentsInChildren<InventorySlot>();
+        InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
         
         for (int i = 0; i < inv.Length; i++)
         {
@@ -289,6 +289,15 @@ public class gameManager : MonoBehaviour
                 if (wep != null)
                 {
                     slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
+                }
+                else
+                {
+                    IGadget gadget = inv[i].GetComponent<IGadget>();
+
+                    if(gadget != null)
+                    {
+                        slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
+                    }
                 }
             }
             else

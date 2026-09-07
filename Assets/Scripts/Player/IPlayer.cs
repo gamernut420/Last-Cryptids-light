@@ -6,5 +6,7 @@ public interface IPlayer
 
     void PlayerAddItem(string itemName, int amount);
 
-    void PlayerAddWeapon(GameObject Weapon);
+    void PlayerAddItem(GameObject Item);
+
+    ProjectileManager GetProjectileManager();
 }
