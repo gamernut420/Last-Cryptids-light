@@ -9,12 +9,21 @@ public class InventorySlot : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemCount;
     [SerializeField] TextMeshProUGUI slotNumber;
 
+    Image slotImage;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        slotImage = GetComponent<Image>();
+
         itemImage.enabled = false;
         itemText.enabled = false;
         itemCount.enabled = false;
+    }
+
+    public void UpdateSlotColor(Color color)
+    {
+        slotImage.color = color;
     }
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
@@ -43,5 +52,12 @@ public class InventorySlot : MonoBehaviour
         {
             itemCount.enabled = false;
         }
+    }
+
+    public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount, Color color)
+    {
+        UpdateSlot(_itemImage, _itemText, _itemCount);
+
+        UpdateSlotColor(color);
     }
 }

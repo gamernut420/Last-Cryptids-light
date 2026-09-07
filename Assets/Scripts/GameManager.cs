@@ -276,7 +276,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void UpdateWeaponInv(GameObject[] inv)
+    public void UpdateWeaponInv(GameObject[] inv, int slotInUse)
     {
         InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
         
@@ -288,7 +288,14 @@ public class gameManager : MonoBehaviour
 
                 if (wep != null)
                 {
-                    slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
+                    if(i == slotInUse)
+                    {
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
+                    }
+                    else
+                    {
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
+                    }
                 }
                 else
                 {
@@ -296,13 +303,20 @@ public class gameManager : MonoBehaviour
 
                     if(gadget != null)
                     {
-                        slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
+                        if (i == slotInUse)
+                        {
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                        }
+                        else
+                        {
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                        }
                     }
                 }
             }
             else
             {
-                slots[i].UpdateSlot(null, null, 0);
+                slots[i].UpdateSlot(null, null, 0, Color.gray2);
             }
         }
     }

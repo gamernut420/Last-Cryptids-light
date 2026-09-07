@@ -393,7 +393,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     public string ScreenMessage()
     {
-        return "Pickup Weapon";
+        return $"Pickup {WeaponName}";
     }
 
     public string GetWeaponName()
