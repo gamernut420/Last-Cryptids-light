@@ -49,7 +49,6 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float projectileHeight = 2f;
     [SerializeField] private float hitboxExtendSpeed = 20f;
 
-
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
 
@@ -57,6 +56,13 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private int enemiesPerSummon = 2;
+
+    [Header("Teleporting")]
+    [SerializeField] private float teleportDistance = 30f;
+    [SerializeField] private float teleportNearPlayerDistance = 8f;
+    [SerializeField] private float teleportCooldown = 20;
+
+    private float teleportTimer;
 
     private Transform PlayerTransform
     {
@@ -73,7 +79,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP = maxHP;
+        currentHP = phase2HP;
 
         if (agent == null)
         {
@@ -99,6 +105,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
+        teleportTimer -= Time.deltaTime;
 
         CheckPhase();
 
@@ -106,6 +113,9 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             case BossPhase.Phase1:
                 Phase1Behavior();
+                break;
+            case BossPhase.Phase2:
+                Phase2Behavior();
                 break;
         }
     }
@@ -115,12 +125,27 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (PlayerTransform == null) return;
 
         Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
+        direction.y = 0;
 
         if (direction.sqrMagnitude <= 0.01f) return;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+    }
+
+    private void CheckTeleport()
+    {
+        if (PlayerTransform == null) return;
+
+        if (teleportTimer > 0f) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distanceToPlayer >= teleportDistance)
+        {
+            TeleportNearPlayer();
+        }
     }
 
     private void CheckPhase()
@@ -150,6 +175,30 @@ public class FinalBoss : MonoBehaviour, IDamage
         ChasePlayer();
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distanceToPlayer <= 5f)
+        {
+            MeleeAttack();
+        }
+        else
+        {
+            RangedAttack();
+        }
+    }
+
+    private void Phase2Behavior()
+    {
+        agent.speed = phase2Speed;
+        ChasePlayer();
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        float teleportChance = Random.Range(0, 100);
+
+        if (teleportChance < 10)
+        {
+            CheckTeleport();
+        }
 
         if (distanceToPlayer <= 5f)
         {
@@ -191,6 +240,29 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (projectile == null || projectileSpawnPoint == null) return;
 
         StartCoroutine(RangedAttackRoutine());
+    }
+
+    // TELEPORT NEAR PLAYER
+    private void TeleportNearPlayer()
+    {
+        if (PlayerTransform == null) return;
+
+        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+
+        Vector3 teleportPosition = PlayerTransform.position + new Vector3(randomDirection.x, 0, randomDirection.y) * teleportNearPlayerDistance;
+
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(teleportPosition, out hit, 5f, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+            FacePlayer();
+            agent.Warp(hit.position);
+
+            teleportTimer = teleportCooldown;
+
+            Debug.Log("Rift Boss teleported near player!");
+        }
     }
 
     public void takeDamage(int amount)
