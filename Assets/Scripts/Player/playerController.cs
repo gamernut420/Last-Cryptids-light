@@ -94,7 +94,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
         else if (Input.GetButtonUp("Sprint"))
         {
-            speed /= sprintMod;
+            speed = speedOrig;
         }
     }
 
