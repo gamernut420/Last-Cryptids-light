@@ -280,7 +280,7 @@ public class gameManager : MonoBehaviour
     {
         InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
         
-        for (int i = 0; i < inv.Length; i++)
+        for (int i = 0; i < slots.Length; i++)
         {
             if(inv[i] != null)
             {

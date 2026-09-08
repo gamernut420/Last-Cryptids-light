@@ -219,9 +219,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
                 hotbar[i] = Item;
 
-                ActiveItem = hotbar[i];
-
-                activeItemSlot = i;
+                SwapItem(i);
 
                 break;
             }

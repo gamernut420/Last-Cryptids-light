@@ -23,7 +23,10 @@ public class InventorySlot : MonoBehaviour
 
     public void UpdateSlotColor(Color color)
     {
-        slotImage.color = color;
+        if(slotImage != null)
+        {
+            slotImage.color = color;
+        }
     }
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
