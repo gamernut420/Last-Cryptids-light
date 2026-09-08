@@ -6,12 +6,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField] CharacterController controller;
 
     [Header("Player Stats:")]
-    [Range(1, 10)][SerializeField] int Hp;
-    [Range(1f, 10f)][SerializeField] float speed;
-    [Range(2f, 5f)][SerializeField] float sprintMod;
-    [Range(8, 15)][SerializeField] int jumpSpeed;
-    [Range(1, 3)][SerializeField] int jumpMax;
-    [Range(15, 45)][SerializeField] int gravity;
+    [SerializeField][Min(1f)] float MaxHP = 100;
+    [SerializeField] float BaseSpeed = 5;
+    [SerializeField] float MaxSpeed = 15;
+    [Range(8, 15)][SerializeField] int jumpSpeed = 10;
+    [Range(1, 3)][SerializeField] int jumpMax = 2;
+    [Range(15, 45)][SerializeField] int gravity = 35;
+
+    PlayerUpgrades upgradeManager;
 
     [Header("Inventory")]
     [SerializeField] PlayerInventory Inventory;
@@ -29,8 +31,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public static System.Action<bool> ShowAmmoUI;
 
     int jumpCount;
-    int HPOrig;
-    float speedOrig;
+    float currentHP;
+    float currentSpeed;
 
     Vector3 moveDir;
     Vector3 playerVel;
@@ -41,8 +43,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        HPOrig = Hp;
-        speedOrig = speed;
+        currentHP = MaxHP;
+        currentSpeed = BaseSpeed;
+
+        upgradeManager = GetComponent<PlayerUpgrades>();
+
+        upgradeManager.ApplyUpgrades();
 
         UpdateWeaponUI();
     }
@@ -50,6 +56,23 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            upgradeManager.ModifyHPUpgrades(1);
+
+            updatePlayerUI();
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            upgradeManager.ModifySpeedUpgrades(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.O))
+        {
+            upgradeManager.ModifyStaminaUpgrades(1);
+        }
+
+        sprint();
+
         if (gameManager.instance.isPaused) return;
 
         if (isDead) return;
@@ -59,7 +82,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         CheckSwapItem();
  
         movement();
-        sprint();
+        
         if (Input.GetKey(KeyCode.LeftShift))
         {
             NoiseManager.MakeNoise(transform.position, sprintHearingRadius);
@@ -79,7 +102,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
 
         moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
-        controller.Move(moveDir * speed * Time.deltaTime);
+        controller.Move(moveDir * currentSpeed * Time.deltaTime);
 
         jump();
         controller.Move(playerVel * Time.deltaTime);
@@ -88,13 +111,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void sprint()
     {
-        if (Input.GetButtonDown("Sprint"))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            speed *= sprintMod;
+            currentSpeed = MaxSpeed;
         }
-        else if (Input.GetButtonUp("Sprint"))
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            speed = speedOrig;
+            currentSpeed = BaseSpeed;
         }
     }
 
@@ -109,10 +132,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void takeDamage(int amount)
     {
-        Hp -= amount;
+        currentHP -= amount;
         updatePlayerUI();
         StartCoroutine(flashDamage());
-        if (Hp <= 0)
+        if (currentHP <= 0)
         {
             // you i'm dead!!!
             gameManager.instance.youLose();
@@ -127,7 +150,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)Hp / HPOrig;
+        gameManager.instance.playerHPBar.fillAmount = (float)currentHP / MaxHP;
     }
 
     public void PlayerAddItem(string itemName, int amount)
@@ -288,8 +311,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-
-
     void CheckSwapItem()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -429,7 +450,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         return true;
     }
 
-
     public void EquipWeaponForCheckpoint(string weaponName)
     {
         if (string.IsNullOrEmpty(weaponName)) return;
@@ -477,9 +497,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public bool HealPlayer(int amount, bool overHeal = false)
     {
-        if(Hp < HPOrig && !overHeal)
+        if(currentHP < MaxHP && !overHeal)
         {
-            Hp += Mathf.Clamp(amount, 0, HPOrig - Hp);
+            currentHP += Mathf.Clamp(amount, 0, MaxHP - currentHP);
 
             updatePlayerUI();
 
@@ -487,7 +507,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
         else if (overHeal)
         {
-            Hp += amount;
+            currentHP += amount;
 
             updatePlayerUI();
 
@@ -495,5 +515,58 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
 
         return false;
+    }
+
+    //HP getters and setters
+    public float GetCurrentHP()
+    {
+        return (float)currentHP;
+    }
+
+    public void SetCurrentHP(float ammount)
+    {
+        currentHP = (int)ammount;
+    }
+
+    public float GetMaxHP()
+    {
+        return (float)MaxHP;
+    }
+
+    public void SetMaxHP(float ammount)
+    {
+        MaxHP = (int)ammount;
+    }
+
+    //Speed getters and setters
+    public float GetBaseSpeed()
+    {
+        return BaseSpeed;
+    }
+
+    public void SetBaseSpeed(float speed)
+    {
+        BaseSpeed = speed;
+    }
+
+    public float GetMaxSpeed()
+    {
+        return MaxSpeed;
+    }
+
+    public void SetMaxSpeed(float speed)
+    {
+        MaxSpeed = speed;
+    }
+
+    //Stamina getters and setters
+    public float GetMaxStamina()
+    {
+        return 1;
+    }
+
+    public void SetMaxStamina(float ammount)
+    {
+        //set max stamina
     }
 }
