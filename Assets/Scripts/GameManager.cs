@@ -60,12 +60,6 @@ public class gameManager : MonoBehaviour
 
         Transform ui = transform.parent;
 
-        menuPause = ui.Find("PauseMenu")?.gameObject;
-        menuWin = ui.Find("Win Menu")?.gameObject;
-        menuLose = ui.Find("GameOverPanel")?.gameObject;
-        menuExtractionWin = ui.Find("Win Menu EX")?.gameObject;
-
-        hud = ui.Find("Hud")?.gameObject;
 
         if (hud != null)
         {
