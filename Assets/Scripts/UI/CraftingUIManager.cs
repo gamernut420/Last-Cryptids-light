@@ -8,13 +8,16 @@ public struct IngredientRequirement
 {
     public string itemName;
     public int requiredAmount;
+    public string itemDecription;
 }
 
 [System.Serializable]
 public struct CraftingRecipe
 {
     public string recipeName;
+    public string recipeItemDecription;
     public Sprite recipeIcon;
+
     public List<IngredientRequirement> requiredIngredients;
 }
 /// ----|
@@ -33,9 +36,9 @@ public class CraftingUIManager : MonoBehaviour
     [Header("UI Elements")]
     public Transform requirementsContainer;
     public GameObject requirementRowPreFab;
-    public Button craftButton;
     public GameObject buttonPrefab;
     public Transform contentContainer;
+    [SerializeField] TextMeshProUGUI itemDecription;
 
     private void Start()
     {
@@ -77,6 +80,7 @@ public class CraftingUIManager : MonoBehaviour
             TMP_Text rowText = row.GetComponentInChildren<TMP_Text>();
             if (rowText != null)
                 rowText.text = $"{requirement.itemName}: {requirement.requiredAmount}";
+            itemDecription.text = selectedRecipe.recipeItemDecription;
         }
     }
 
