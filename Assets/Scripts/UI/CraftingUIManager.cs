@@ -7,8 +7,9 @@ using TMPro;
 public struct IngredientRequirement
 {
     public string itemName;
-    public int requiredAmount;
     public string itemDecription;
+    public Sprite itemIcon;
+    public int requiredAmount;
 }
 
 [System.Serializable]
@@ -34,11 +35,12 @@ public class CraftingUIManager : MonoBehaviour
     //public CraftTable craftTable; // Needs the Craft table
    
     [Header("UI Elements")]
-    public Transform requirementsContainer;
-    public GameObject requirementRowPreFab;
-    public GameObject buttonPrefab;
-    public Transform contentContainer;
+    [SerializeField] Transform requirementsContainer;
+    [SerializeField] GameObject requirementRowPreFab;
+    [SerializeField] GameObject buttonPrefab;
+    [SerializeField] Transform contentContainer;
     [SerializeField] TextMeshProUGUI itemDecription;
+    [SerializeField] Image itemIcon;
 
     private void Start()
     {
@@ -81,6 +83,7 @@ public class CraftingUIManager : MonoBehaviour
             if (rowText != null)
                 rowText.text = $"{requirement.itemName}: {requirement.requiredAmount}";
             itemDecription.text = selectedRecipe.recipeItemDecription;
+            itemIcon.sprite = selectedRecipe.recipeIcon;
         }
     }
 
