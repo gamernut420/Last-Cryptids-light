@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Damage : MonoBehaviour
 {
-    enum damageType { bullet, enemyAttack };
+    enum damageType { bullet, enemyAttack, DOT};
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;
 
@@ -14,6 +14,7 @@ public class Damage : MonoBehaviour
 
     bool hasDamagedPlayer;
     private float damageTimer;
+    private IDamage currentTarget;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,33 +28,17 @@ public class Damage : MonoBehaviour
 
     private void Update()
     {
-        if (damageTimer  > 0)
+        if (damageTimer  > 0f)
         {
             damageTimer -= Time.deltaTime;
-        }
-    }
-
-    // Created for the boss ranged beam attack, but can be used for DOT damage as well
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.isTrigger) return;
-
-        IDamage dmg = other.GetComponent<IDamage>();
-
-        if (dmg == null) return;
-
-        if (type == damageType.enemyAttack)
-        {
-            if (damageTimer > 0) return;
-
-            dmg.takeDamage(damageAmount);
-            damageTimer = damageRate;
         }
     }
 
     private void OnEnable()
     {
         hasDamagedPlayer = false;
+        damageTimer = 0f;
+        currentTarget = null;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -62,6 +47,22 @@ public class Damage : MonoBehaviour
             return;
 
         IDamage dmg = other.GetComponent<IDamage>();
+
+        if (dmg != null)
+        {
+            if (type == damageType.DOT)
+            {
+                if (currentTarget != null) return;
+
+                currentTarget = dmg;
+
+                dmg.takeDamage(damageAmount);
+
+                damageTimer = damageRate;
+
+                return;
+            }
+        }
         if (dmg != null)
         {
             if (type == damageType.enemyAttack)
@@ -81,6 +82,43 @@ public class Damage : MonoBehaviour
                 Instantiate(hitEffect, transform.position, Quaternion.identity);
             }
             Destroy(gameObject);
+        }
+    }
+
+    // Created for the boss ranged beam attack, but can be used for DOT damage as well
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.isTrigger) return;
+
+        IDamage dmg = other.GetComponentInParent<IDamage>();
+
+        if (dmg == null) return;
+
+        if (type == damageType.DOT)
+        {
+            if (currentTarget != dmg) return;
+
+            if (damageTimer > 0) return;
+
+            dmg.takeDamage(damageAmount);
+            damageTimer = damageRate;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.isTrigger)
+            return;
+
+        IDamage dmg = other.GetComponentInParent<IDamage>();
+
+        if (dmg == null)
+            return;
+
+        if (type == damageType.DOT && currentTarget == dmg)
+        {
+            currentTarget = null;
+            damageTimer = 0f;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -49,7 +50,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float projectileHeight = 2f;
     [SerializeField] private float hitboxExtendSpeed = 20f;
 
-
+    bool isShooting = false;
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
 
@@ -57,6 +58,22 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private int enemiesPerSummon = 2;
+
+    [Header("Teleporting")]
+    [SerializeField] private float teleportDistance = 30f;
+    [SerializeField] private float teleportNearPlayerDistance = 8f;
+    [SerializeField] private float teleportCooldown = 20;
+    
+    private float teleportTimer;
+
+    [Header("Energy Fields")]
+    [SerializeField] private GameObject energyFieldPrefab;
+    [SerializeField] private Transform[] energyFieldSpawnPoints;
+    [SerializeField] int energyFieldsPerAttack = 2;
+    [SerializeField] float energyFieldCooldown = 10f;
+    [SerializeField] float energyFieldDuration = 6f;
+
+    private float energyFieldTimer;
 
     private Transform PlayerTransform
     {
@@ -73,7 +90,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP = maxHP;
+        currentHP = phase2HP;
 
         if (agent == null)
         {
@@ -99,6 +116,8 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
+        teleportTimer -= Time.deltaTime;
+        energyFieldTimer -= Time.deltaTime;
 
         CheckPhase();
 
@@ -106,6 +125,9 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             case BossPhase.Phase1:
                 Phase1Behavior();
+                break;
+            case BossPhase.Phase2:
+                Phase2Behavior();
                 break;
         }
     }
@@ -115,12 +137,29 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (PlayerTransform == null) return;
 
         Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
+        direction.y = 0;
 
         if (direction.sqrMagnitude <= 0.01f) return;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction);
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+    }
+
+    private void CheckTeleport()
+    {
+        if (PlayerTransform == null) return;
+
+        if (teleportTimer > 0f) return;
+
+        if (isShooting) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distanceToPlayer >= teleportDistance)
+        {
+            TeleportNearPlayer();
+        }
     }
 
     private void CheckPhase()
@@ -150,6 +189,36 @@ public class FinalBoss : MonoBehaviour, IDamage
         ChasePlayer();
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distanceToPlayer <= 5f)
+        {
+            MeleeAttack();
+        }
+        else
+        {
+            RangedAttack();
+        }
+    }
+
+    private void Phase2Behavior()
+    {
+        agent.speed = phase2Speed;
+        ChasePlayer();
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        float teleportChance = Random.Range(0, 100);
+
+        if (teleportChance < 10)
+        {
+            CheckTeleport();
+        }
+
+        if (energyFieldTimer <= 0f)
+        {
+            StartCoroutine(EnergyFieldAttack());
+            energyFieldTimer = energyFieldCooldown;
+        }
 
         if (distanceToPlayer <= 5f)
         {
@@ -191,6 +260,29 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (projectile == null || projectileSpawnPoint == null) return;
 
         StartCoroutine(RangedAttackRoutine());
+    }
+
+    // TELEPORT NEAR PLAYER
+    private void TeleportNearPlayer()
+    {
+        if (PlayerTransform == null) return;
+
+        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+
+        Vector3 teleportPosition = PlayerTransform.position + new Vector3(randomDirection.x, 0, randomDirection.y) * teleportNearPlayerDistance;
+
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(teleportPosition, out hit, 5f, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+            FacePlayer();
+            agent.Warp(hit.position);
+
+            teleportTimer = teleportCooldown;
+
+            Debug.Log("Rift Boss teleported near player!");
+        }
     }
 
     public void takeDamage(int amount)
@@ -239,6 +331,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private IEnumerator RangedAttackRoutine()
     {
+        isShooting = true;
         chargingRangedAttack = true;
 
         Debug.Log("Boss is charging ranged attack!");
@@ -250,6 +343,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             agent.isStopped = false;
             chargingRangedAttack = false;
+            isShooting = false;
             yield break;
         }
 
@@ -277,6 +371,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
             agent.isStopped = false;
             chargingRangedAttack = false;
+            isShooting = false;
             yield break;
         }
 
@@ -318,5 +413,35 @@ public class FinalBoss : MonoBehaviour, IDamage
         rangedTimer = rangedAttackCooldown;
         agent.isStopped = false;
         chargingRangedAttack = false;
+        isShooting = false;
+    }
+
+    private IEnumerator EnergyFieldAttack()
+    {
+        if (energyFieldSpawnPoints == null || energyFieldSpawnPoints.Length == 0)
+            yield break;
+
+        if (energyFieldPrefab == null)
+            yield break;
+        
+        Debug.Log("Rift Boss is creating energy fields!");
+
+        List<Transform> availablePoints = new List<Transform>(energyFieldSpawnPoints);
+
+        int fieldsToSpawn = Mathf.Min(energyFieldsPerAttack, availablePoints.Count);
+
+        for (int i = 0; i < fieldsToSpawn; i++)
+        {
+            int randomIndex = Random.Range(0, availablePoints.Count);
+            Transform spawnPoint = availablePoints[randomIndex];
+
+            availablePoints.RemoveAt(randomIndex);
+
+            GameObject field = Instantiate(energyFieldPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            Destroy(field, energyFieldDuration);
+
+            yield return new WaitForSeconds(0.25f);
+        }
     }
 }
