@@ -249,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.030242
+      value: 9.51
       objectReference: {fileID: 0}
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalRotation.w
@@ -279,6 +279,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6200669056449944729, guid: 59060216d06166c4c9df52de3464d830, type: 3}
+      propertyPath: FireRateIncrease
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8146768552984532600, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_Name
       value: M4
@@ -286,8 +290,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8146768552984532600, guid: 59060216d06166c4c9df52de3464d830, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 356841127}
   m_SourcePrefab: {fileID: 100100000, guid: 59060216d06166c4c9df52de3464d830, type: 3}
+--- !u!1 &356841126 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8146768552984532600, guid: 59060216d06166c4c9df52de3464d830, type: 3}
+  m_PrefabInstance: {fileID: 356841125}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &356841127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356841126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157461f6921688347bd67ee18f57235f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrades
+  DamageIncrease: 10
+  VelocityIncrease: 25
+  FireRateIncrease: 25
+  MaxAmmoIncrease: 5
+  MagSizeIncrease: 5
 --- !u!1001 &664674845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -741,7 +770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5991443318599253341, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.70868
+      value: 9.571
       objectReference: {fileID: 0}
     - target: {fileID: 5991443318599253341, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
       propertyPath: m_LocalRotation.w
@@ -774,8 +803,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2071703257116349694, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1234927082}
   m_SourcePrefab: {fileID: 100100000, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
+--- !u!1 &1234927081 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2071703257116349694, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
+  m_PrefabInstance: {fileID: 1234927080}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1234927082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234927081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157461f6921688347bd67ee18f57235f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrades
+  DamageIncrease: 10
+  VelocityIncrease: 25
+  FireRateIncrease: 25
+  MaxAmmoIncrease: 5
+  MagSizeIncrease: 5
 --- !u!1 &1409720746
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,7 +1165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1765471373330086022, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.6086617
+      value: 8.198
       objectReference: {fileID: 0}
     - target: {fileID: 1765471373330086022, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1149,11 +1203,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9207232784105263065, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 827523684057955617, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1662564075}
   m_SourcePrefab: {fileID: 100100000, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
+--- !u!1 &1662564074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 827523684057955617, guid: 3aaddcc5ae5ab8d4d8b3b9f929b33c7a, type: 3}
+  m_PrefabInstance: {fileID: 1662564073}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1662564075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662564074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157461f6921688347bd67ee18f57235f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrades
+  DamageIncrease: 10
+  VelocityIncrease: 25
+  FireRateIncrease: 25
+  MaxAmmoIncrease: 5
+  MagSizeIncrease: 5
 --- !u!1 &1765111041
 GameObject:
   m_ObjectHideFlags: 0

@@ -55,12 +55,8 @@ public class PlayerUpgrades : MonoBehaviour
 
         player.SetCurrentHP(healthAmmount);
 
-        float staminaAmmount = StaminaIncrease * staminaUpgrades + baseStamina;
+        player.SetMaxStamina(StaminaIncrease * staminaUpgrades + baseStamina);
 
-        player.SetMaxStamina(staminaAmmount);
-
-        float speedAmmount = SpeedIncrease * speedUpgrades + baseSpeed;
-
-        player.SetMaxSpeed(speedAmmount);
+        player.SetMaxSpeed(SpeedIncrease * speedUpgrades + baseSpeed);
     }
 }
