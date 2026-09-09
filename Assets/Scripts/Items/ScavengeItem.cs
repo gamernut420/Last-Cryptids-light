@@ -6,9 +6,7 @@ using UnityEngine.InputSystem;
 
 public class ScavengeItem : MonoBehaviour, IInteract
 {
-    [Header("Item Settings")]
-    [SerializeField] string itemName = "Item Name";
-    [Range(1, 10)][SerializeField] int quantity;
+    [SerializeField] private ScriptableItem itemData;
     [SerializeField][Min(0)] float HoldTimer;
 
     [Header("References")]
@@ -29,7 +27,7 @@ public class ScavengeItem : MonoBehaviour, IInteract
 
         if (player != null)
         {
-            player.PlayerAddItem(itemName, quantity);
+            player.PlayerAddItem(itemData.itemName, itemData.stackCount);
 
             Destroy(gameObject);
 

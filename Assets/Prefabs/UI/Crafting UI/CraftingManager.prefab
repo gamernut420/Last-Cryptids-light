@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8593580597352527174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6115645062797617087}
+  - component: {fileID: 4003083892945278181}
+  m_Layer: 5
+  m_Name: CraftingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6115645062797617087
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593580597352527174}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4003083892945278181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593580597352527174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c23a66837d8f48b4fa52f7fff55b7fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingUIManager
+  mokeRecipe:
+  - recipeName: Heath Potion
+    recipeItemDecription: Lorem ipsum dolor sit amet consectetur adipiscing elit.
+      Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
+      pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar
+      vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+      lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu.
+      Ad litora torquent per conubia nostra inceptos himenaeos.
+    recipeIcon: {fileID: 0}
+    requiredIngredients:
+    - itemName: root
+      requiredAmount: 2
+      itemDecription: 
+    - itemName: shrooms
+      requiredAmount: 1
+      itemDecription: 
+  - recipeName: Sword
+    recipeItemDecription: Lorem ipsum dolor sit amet consectetur adipiscing elit.
+      Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
+      pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar
+      vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada
+      lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu.
+      Ad litora torquent per conubia nostra inceptos himenaeos.
+    recipeIcon: {fileID: 0}
+    requiredIngredients:
+    - itemName: Iron
+      requiredAmount: 3
+      itemDecription: 
+    - itemName: Wood
+      requiredAmount: 1
+      itemDecription: 
+    - itemName: Wood
+      requiredAmount: 1
+      itemDecription: 
+  requirementsContainer: {fileID: 0}
+  requirementRowPreFab: {fileID: 2558745250965643763, guid: 6b87f6dad1882e548a48a4fea72a8be1, type: 3}
+  buttonPrefab: {fileID: 3552448574855743358, guid: 1c183cfa6fdbf9549945d22c68eb85c0, type: 3}
+  contentContainer: {fileID: 0}
+  itemDecription: {fileID: 0}
