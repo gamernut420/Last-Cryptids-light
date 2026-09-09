@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -49,6 +50,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float projectileHeight = 2f;
     [SerializeField] private float hitboxExtendSpeed = 20f;
 
+    bool isShooting = false;
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
 
@@ -61,8 +63,17 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
     [SerializeField] private float teleportCooldown = 20;
-
+    
     private float teleportTimer;
+
+    [Header("Energy Fields")]
+    [SerializeField] private GameObject energyFieldPrefab;
+    [SerializeField] private Transform[] energyFieldSpawnPoints;
+    [SerializeField] int energyFieldsPerAttack = 2;
+    [SerializeField] float energyFieldCooldown = 10f;
+    [SerializeField] float energyFieldDuration = 6f;
+
+    private float energyFieldTimer;
 
     private Transform PlayerTransform
     {
@@ -106,6 +117,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
         teleportTimer -= Time.deltaTime;
+        energyFieldTimer -= Time.deltaTime;
 
         CheckPhase();
 
@@ -139,6 +151,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (PlayerTransform == null) return;
 
         if (teleportTimer > 0f) return;
+
+        if (isShooting) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
@@ -198,6 +212,12 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (teleportChance < 10)
         {
             CheckTeleport();
+        }
+
+        if (energyFieldTimer <= 0f)
+        {
+            StartCoroutine(EnergyFieldAttack());
+            energyFieldTimer = energyFieldCooldown;
         }
 
         if (distanceToPlayer <= 5f)
@@ -311,6 +331,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private IEnumerator RangedAttackRoutine()
     {
+        isShooting = true;
         chargingRangedAttack = true;
 
         Debug.Log("Boss is charging ranged attack!");
@@ -322,6 +343,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             agent.isStopped = false;
             chargingRangedAttack = false;
+            isShooting = false;
             yield break;
         }
 
@@ -349,6 +371,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
             agent.isStopped = false;
             chargingRangedAttack = false;
+            isShooting = false;
             yield break;
         }
 
@@ -390,5 +413,35 @@ public class FinalBoss : MonoBehaviour, IDamage
         rangedTimer = rangedAttackCooldown;
         agent.isStopped = false;
         chargingRangedAttack = false;
+        isShooting = false;
+    }
+
+    private IEnumerator EnergyFieldAttack()
+    {
+        if (energyFieldSpawnPoints == null || energyFieldSpawnPoints.Length == 0)
+            yield break;
+
+        if (energyFieldPrefab == null)
+            yield break;
+        
+        Debug.Log("Rift Boss is creating energy fields!");
+
+        List<Transform> availablePoints = new List<Transform>(energyFieldSpawnPoints);
+
+        int fieldsToSpawn = Mathf.Min(energyFieldsPerAttack, availablePoints.Count);
+
+        for (int i = 0; i < fieldsToSpawn; i++)
+        {
+            int randomIndex = Random.Range(0, availablePoints.Count);
+            Transform spawnPoint = availablePoints[randomIndex];
+
+            availablePoints.RemoveAt(randomIndex);
+
+            GameObject field = Instantiate(energyFieldPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            Destroy(field, energyFieldDuration);
+
+            yield return new WaitForSeconds(0.25f);
+        }
     }
 }
