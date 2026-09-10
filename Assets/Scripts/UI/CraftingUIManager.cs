@@ -42,6 +42,8 @@ public class CraftingUIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemDecription;
     [SerializeField] Image itemIcon;
 
+    private CraftingRecipe currentSelectedRecipe; // Needs the Recipe book
+
     private void Start()
     {
         PopulateRecipeButtons();
@@ -61,7 +63,6 @@ public class CraftingUIManager : MonoBehaviour
         }
     }
 
-    private CraftingRecipe currentSelectedRecipe; // Needs the Recipe book
 
     public void OnSelectedRecipe(CraftingRecipe selectedRecipe)
     {
@@ -81,9 +82,17 @@ public class CraftingUIManager : MonoBehaviour
 
             TMP_Text rowText = row.GetComponentInChildren<TMP_Text>();
             if (rowText != null)
-                rowText.text = $"{requirement.itemName}: {requirement.requiredAmount}";
-            itemDecription.text = selectedRecipe.recipeItemDecription;
-            itemIcon.sprite = selectedRecipe.recipeIcon;
+            {
+                int playerHasAmount = 0;
+               // if (PlayerInventory.Instance != null && PlayerInventory.Instance.items.ContainsKey(requirement.itemRequired))
+               //     playerHasAmount = PlayerInventory.Instance.items[requirement.itemData];
+            }
+            rowText.text = $"{requirement.itemName}: {requirement.requiredAmount}";
+            if(itemDecription != null) 
+                itemDecription.text = selectedRecipe.recipeItemDecription;
+
+            if(itemIcon != null)
+                itemIcon.sprite = selectedRecipe.recipeIcon;
         }
     }
 
