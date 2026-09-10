@@ -106,12 +106,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             playerVel.y = jumpSpeed;
         }
     }
-
     public void takeDamage(int amount)
+    {
+        takeDamage(amount, true);
+    }
+    public void takeDamage(int amount, bool showFlash = true)
     {
         Hp -= amount;
         updatePlayerUI();
-        StartCoroutine(flashDamage());
+        if(showFlash) 
+            StartCoroutine(flashDamage());
+
         if (Hp <= 0)
         {
             // you i'm dead!!!
