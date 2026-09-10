@@ -24,20 +24,7 @@ public class WaveEnemySpawner : MonoBehaviour
     {
         if (gameManager.instance != null && gameManager.instance.beacon != null)
         {
-            RescueBeacon beaconScript = gameManager.instance.beacon.GetComponent<RescueBeacon>();
-
-            if (beaconScript != null && beaconScript.isRepaired)
-            {
-                totalElapsedTime += Time.deltaTime;
-                if (!isSpawningActive)
-                {
-                    waveTimer += Time.deltaTime;
-                    if (waveTimer >= timeBetweenWaves)
-                    {
-                        StartCoroutine(SpawnWaveRoutine());
-                    }
-                }
-            }
+            
         }
     }
 
