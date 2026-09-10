@@ -3,37 +3,48 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
+    public static PlayerInventory Instance { get; private set; }
 
     // Stores item amounts
-    Dictionary<string, int> items = new Dictionary<string, int>();
+    [System.NonSerialized]
+    public Dictionary<ScriptableItem, int> items = new Dictionary<ScriptableItem, int>();
 
-    public static System.Action<string> UpdateInventoryText;
+    [Header("UI Slots Reference")]
+    public InventorySlotUI[] inventorySlots;
+
+    private void Awake()
+    {
+        if(Instance != null && Instance!=this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     // Adds items
-    public void AddItem(string itemName, int amount)
+    public void AddItem(ScriptableItem itemData, int amount)
     {
-        if (items.ContainsKey(itemName))
-        {
-            items[itemName] += amount;
-        }
-        else
-        {
-            items.Add(itemName, amount);
-        }
+        if (itemData == null) return;
 
-        Debug.Log(itemName + ": " + items[itemName]);
+        if(items.ContainsKey(itemData))
+            items[itemData] += amount;
+        else
+            items.Add(itemData, amount);
+
+        Debug.Log(itemData + ": " + items[itemData]);
         UpdateUI();
     }
 
     // Checks for item
-    public bool HasItem(string itemName)
+    public bool HasItem(ScriptableItem itemName)
     {
         return items.ContainsKey(itemName);
     }
 
 
     // Gets item amount
-    public int GetAmount(string itemName)
+    public int GetAmount(ScriptableItem itemName)
     {
         if (items.ContainsKey(itemName))
         {
@@ -47,16 +58,17 @@ public class PlayerInventory : MonoBehaviour
     // Update inventory UI in GM
     void UpdateUI()
     {
-        string tempText = string.Empty;
+        int index = 0;
 
-        foreach (string item in items.Keys)
+        foreach (KeyValuePair<ScriptableItem, int> pair in items)
         {
-            tempText += item + ": " + GetAmount(item) + "\n";
+            inventorySlots[index].SetItem(pair.Key, pair.Value);
+            index++;
         }
 
-        if(UpdateInventoryText != null)
+        for(int i = index; i < inventorySlots.Length; i++)
         {
-            UpdateInventoryText(tempText);
+            inventorySlots[i].ClearSlot();
         }
     }
 }

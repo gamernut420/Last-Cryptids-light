@@ -91,12 +91,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         if (gameManager.instance != null && gameManager.instance.beacon != null)
         {
-            RescueBeacon beaconScript = gameManager.instance.beacon.GetComponent<RescueBeacon>();
-            if (beaconScript != null && beaconScript.isRepaired)
-            {
-                Destroy(gameObject);
-                return;
-            }
+
         }
 
         TrackPlayerMovement();
