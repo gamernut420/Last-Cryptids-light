@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5541302583373663112}
   - component: {fileID: 2513181805889014587}
-  - component: {fileID: 155647976816451460}
+  - component: {fileID: 6200669056449944729}
   - component: {fileID: 436236581649053109}
   - component: {fileID: 5953194356379619409}
   - component: {fileID: 2498830273448799321}
@@ -136,7 +136,7 @@ MonoBehaviour:
   gunAudio: {fileID: 436236581649053109}
   gunShootSound: {fileID: 8300000, guid: 385137d1f615f524ea78bc1569276ee5, type: 3}
   gunshotHearingRadius: 20
---- !u!114 &155647976816451460
+--- !u!114 &6200669056449944729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,10 +145,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8146768552984532600}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
+  m_Script: {fileID: 11500000, guid: 157461f6921688347bd67ee18f57235f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
-  DebugProjectiles: 1
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrades
+  DamageIncrease: 10
+  VelocityIncrease: 25
+  FireRateIncrease: 2.5
+  MaxAmmoIncrease: 5
+  MagSizeIncrease: 5
 --- !u!82 &436236581649053109
 AudioSource:
   m_ObjectHideFlags: 0

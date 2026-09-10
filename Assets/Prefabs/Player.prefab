@@ -167,6 +167,7 @@ GameObject:
   - component: {fileID: 2049368398075440799}
   - component: {fileID: 5315753236146374053}
   - component: {fileID: 944948598716401364}
+  - component: {fileID: 1739610888703370354}
   - component: {fileID: 4824105635487887755}
   - component: {fileID: 4152988610959837521}
   - component: {fileID: 8991024000488833142}
@@ -248,9 +249,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
-  Hp: 100
-  speed: 5
-  sprintMod: 3
+  MaxHP: 100
+  BaseSpeed: 5
+  MaxSpeed: 15
   jumpSpeed: 9
   jumpMax: 2
   gravity: 35
@@ -259,6 +260,21 @@ MonoBehaviour:
   sprintHearingRadius: 25
   projectileManager: {fileID: 8991024000488833142}
   WeaponGrip: {fileID: 8334678730768581162}
+--- !u!114 &1739610888703370354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298198ee7cb722d4c8a17ba18e5f8eb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrades
+  HPIncrease: 5
+  StaminaIncrease: 5
+  SpeedIncrease: 5
 --- !u!114 &4824105635487887755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,21 +287,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b66b14de1484684dae68a9e46579336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  inventorySlots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &4152988610959837521
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,10 +21,13 @@ public class InventorySlot : MonoBehaviour
         itemCount.enabled = false;
     }
 
-    //public void UpdateSlotColor(Color color)
-    //{
-    //    slotImage.color = color;
-    //}
+    public void UpdateSlotColor(Color color)
+    {
+        if(slotImage != null)
+        {
+            slotImage.color = color;
+        }
+    }
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
     {
@@ -54,10 +57,10 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    //public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount, Color color)
-    //{
-    //    UpdateSlot(_itemImage, _itemText, _itemCount);
+    public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount, Color color)
+    {
+        UpdateSlot(_itemImage, _itemText, _itemCount);
 
-    //    UpdateSlotColor(color);
-    //}
+        UpdateSlotColor(color);
+    }
 }

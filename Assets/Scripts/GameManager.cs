@@ -18,6 +18,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject ItemHotbar;
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
+    [SerializeField] GameObject ShopUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
@@ -294,7 +295,7 @@ public class gameManager : MonoBehaviour
     {
         InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
         
-        for (int i = 0; i < inv.Length; i++)
+        for (int i = 0; i < slots.Length; i++)
         {
             if(inv[i] != null)
             {
@@ -371,5 +372,19 @@ public class gameManager : MonoBehaviour
         }
     }
 
+    public void ShowShopUI(bool show, Vector3 _spawnLocation)
+    {
+        if (show)
+        {
+            statePause();
+        }
+        else
+        {
+            stateUnpause();
+        }
 
+        ShopUI.SetActive(show);
+
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
+    }
 }
