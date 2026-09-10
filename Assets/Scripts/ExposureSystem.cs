@@ -5,18 +5,14 @@ using UnityEngine.Rendering.Universal;
 public class ExposureSystem : MonoBehaviour
 {
     [Header("Exposure Settings")]
-    [Range(0, 10)][SerializeField] float exposureRate;
-    [SerializeField] private float damagePerTick;
-    [SerializeField] private float damageInterval;
+    [SerializeField] float exposureRate = 0.2f;
     [SerializeField] bool isOutside;
-    private float damageTimer = 0f;
 
     [Header("Exposure Settings")]
     [Tooltip("Amonut of health restored per second while inside the home base.")]
-    [SerializeField] private float healRate;
-    [SerializeField] private float healPerTick;
-    [SerializeField] private float healInterval;
+    [SerializeField] private float healRate = 0.05f;
     private float healAccumulator = 0f;
+    private float damageAccumlator = 0f;
 
 
     [Header("Visual Pulse Settings")]
@@ -29,7 +25,6 @@ public class ExposureSystem : MonoBehaviour
     [Header("Visual Effects")]
     [SerializeField] private Volume exposureVolume;
     private Vignette vignette;
-    private float damageAccumlator = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,10 +51,12 @@ public class ExposureSystem : MonoBehaviour
         }
         else
         {
+            // Heal Player when in safe zone
+            HandleHealing(healRate);
+
             // Clear the warning effect when back inside
             if (vignette != null)
             {
-                HandleHealing(healRate);
                 vignette.intensity.value = Mathf.MoveTowards(vignette.intensity.value, 0f, Time.deltaTime * 2f);
             }
         }
@@ -69,7 +66,7 @@ public class ExposureSystem : MonoBehaviour
     {
         damageAccumlator += deltaDanage;
         // Once accumulated damage hit 1 or more, deal 1 point of damage
-        if (damageAccumlator >= 1f)
+        if (damageAccumlator >= 0.25f)
         {
             int damageToDeal = Mathf.FloorToInt(damageAccumlator); 
             damageAccumlator -= damageToDeal;
