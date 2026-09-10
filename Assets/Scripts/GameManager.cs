@@ -22,6 +22,13 @@ public class gameManager : MonoBehaviour
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
 
+    [Header("UI Tracking")]
+    [SerializeField] private GameObject exposurePromptObject;
+    [SerializeField] private float promptDuration;
+    private float promptTimer = 0f;
+    private bool isShowingPrompt = false;
+
+
     [HideInInspector] public int killCount = 0;
 
     [Header("Checkpoint")]
@@ -148,6 +155,19 @@ public class gameManager : MonoBehaviour
             else if (menuActive == menuPause)
             {
                 stateUnpause();
+            }
+        }
+
+        if (isShowingPrompt)
+        {
+            promptTimer -= Time.deltaTime;
+            if (promptTimer <= 0f)
+            {
+                isShowingPrompt = false;
+                if (exposurePromptObject != null)
+                {
+                    exposurePromptObject.SetActive(false);
+                }
             }
         }
     }
@@ -338,6 +358,16 @@ public class gameManager : MonoBehaviour
         if (checkpointManager != null)
         {
             checkpointManager.LoadCheckpoint();
+        }
+    }
+
+    public void ShowExposurePrompt()
+    {
+        if(exposurePromptObject != null)
+        {
+            exposurePromptObject.SetActive(true);
+            promptTimer = promptDuration;
+            isShowingPrompt = true;
         }
     }
 

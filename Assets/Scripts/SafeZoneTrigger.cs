@@ -6,8 +6,11 @@ public class SafeZoneTrigger : MonoBehaviour
     {
         // Check if the player enters the safe zone
         ExposureSystem playerExposure = other.GetComponent<ExposureSystem>();
-        if (playerExposure != null)
+        if (playerExposure != null) 
+        { 
             playerExposure.SetOutsideStatus(false);
+            
+        }
 
     }
 
@@ -17,5 +20,10 @@ public class SafeZoneTrigger : MonoBehaviour
         ExposureSystem playerExposure = other.GetComponent<ExposureSystem>();
         if (playerExposure != null)
             playerExposure.SetOutsideStatus(true);
+
+        if (gameManager.instance != null)
+        {
+            gameManager.instance.ShowExposurePrompt();
+        }
     }
 }
