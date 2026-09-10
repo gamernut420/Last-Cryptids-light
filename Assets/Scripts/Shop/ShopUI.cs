@@ -191,6 +191,6 @@ public class ShopUI : MonoBehaviour
 
     public void OnClickedExit()
     {
-        gameObject.SetActive(false);
+        gameManager.instance.ShowShopUI(false);
     }
 }

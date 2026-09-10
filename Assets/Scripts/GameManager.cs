@@ -18,6 +18,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject ItemHotbar;
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
+    [SerializeField] GameObject ShopUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
@@ -371,5 +372,16 @@ public class gameManager : MonoBehaviour
         }
     }
 
-
+    public void ShowShopUI(bool show)
+    {
+        if (show)
+        {
+            statePause();
+        }
+        else
+        {
+            stateUnpause();
+        }
+            ShopUI.SetActive(show);
+    }
 }
