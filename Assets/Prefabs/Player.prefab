@@ -210,8 +210,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063abaea4e9206b45a1495e9c3644a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExposureSystem
-  exposureRate: 0.6
+  exposureRate: 0.2
+  damagePerTick: 1
+  damageInterval: 1
   isOutside: 0
+  healRate: 0.05
+  healPerTick: 1
+  healInterval: 1
+  pulseSpeed: 4
+  minIntensity: 0.2
+  maxIntensity: 0.4
   exposureVolume: {fileID: 0}
 --- !u!114 &5315753236146374053
 MonoBehaviour:

@@ -6,7 +6,25 @@ public class ExposureSystem : MonoBehaviour
 {
     [Header("Exposure Settings")]
     [Range(0, 10)][SerializeField] float exposureRate;
+    [SerializeField] private float damagePerTick;
+    [SerializeField] private float damageInterval;
     [SerializeField] bool isOutside;
+    private float damageTimer = 0f;
+
+    [Header("Exposure Settings")]
+    [Tooltip("Amonut of health restored per second while inside the home base.")]
+    [SerializeField] private float healRate;
+    [SerializeField] private float healPerTick;
+    [SerializeField] private float healInterval;
+    private float healAccumulator = 0f;
+
+
+    [Header("Visual Pulse Settings")]
+    [SerializeField] private float pulseSpeed;
+    [SerializeField] private float minIntensity;
+    [SerializeField] private float maxIntensity;
+
+
 
     [Header("Visual Effects")]
     [SerializeField] private Volume exposureVolume;
@@ -32,7 +50,7 @@ public class ExposureSystem : MonoBehaviour
             // Create a pulsing warning effect 
             if(vignette != null)
             {
-                float pulse = Mathf.Sin(Time.time * 6f) * 0.15f + 0.35f;
+                float pulse = Mathf.Sin(Time.time * pulseSpeed) * (maxIntensity - minIntensity) * 0.5f + (minIntensity + maxIntensity) * 0.5f;
                 vignette.intensity.value = pulse;
             }
         }
@@ -40,7 +58,10 @@ public class ExposureSystem : MonoBehaviour
         {
             // Clear the warning effect when back inside
             if (vignette != null)
+            {
+                HandleHealing(healRate);
                 vignette.intensity.value = Mathf.MoveTowards(vignette.intensity.value, 0f, Time.deltaTime * 2f);
+            }
         }
     }
 
@@ -65,6 +86,23 @@ public class ExposureSystem : MonoBehaviour
    public void SetOutsideStatus(bool other)
     {
         isOutside = other;
+    }
+
+    void HandleHealing(float daltaTime)
+    {
+        healAccumulator += healRate * daltaTime;
+
+        if (healAccumulator >= 1f)
+        {
+            int healthToRestore = Mathf.FloorToInt(healAccumulator);
+            healAccumulator -= healthToRestore;
+
+            IPlayer player = GetComponent<IPlayer>();
+            if (player != null)
+            {
+                player.HealPlayer(healthToRestore, false);
+            }
+        }
     }
 }
 
