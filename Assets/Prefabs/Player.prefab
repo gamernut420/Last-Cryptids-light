@@ -195,6 +195,28 @@ Transform:
   - {fileID: 3210098913573034285}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
+=======
+--- !u!114 &2049368398075440799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063abaea4e9206b45a1495e9c3644a0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExposureSystem
+  exposureRate: 6
+  isOutside: 1
+  healRate: 0.5
+  pulseSpeed: 4
+  minIntensity: 0.2
+  maxIntensity: 0.4
+  exposureVolume: {fileID: 0}
+>>>>>>> Stashed changes
 --- !u!114 &5315753236146374053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,7 +248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
-  Hp: 10
+  Hp: 100
   speed: 5
   sprintMod: 3
   jumpSpeed: 9
