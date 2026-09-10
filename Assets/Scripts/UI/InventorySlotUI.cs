@@ -29,5 +29,28 @@ public class InventorySlotUI : MonoBehaviour
         iconImage.gameObject.SetActive(false);
         stackSizeText.gameObject.SetActive(false);
     }
+    public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
+    {
+        if (_itemImage != null)
+        {
+            iconImage.enabled = true;
 
+            iconImage.sprite = _itemImage;
+        }
+        else
+        {
+            iconImage.enabled = false;
+
+        }
+
+        if (_itemCount > 1)
+        {
+            stackSizeText.enabled = true;
+            stackSizeText.text = _itemCount.ToString();
+        }
+        else
+        {
+            stackSizeText.enabled = false;
+        }
+    }
 }

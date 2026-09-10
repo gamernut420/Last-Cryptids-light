@@ -305,11 +305,11 @@ public class gameManager : MonoBehaviour
                 {
                     if(i == slotInUse)
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
                     }
                     else
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
                     }
                 }
                 else
@@ -320,18 +320,18 @@ public class gameManager : MonoBehaviour
                     {
                         if (i == slotInUse)
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
                         }
                         else
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
                         }
                     }
                 }
             }
             else
             {
-                slots[i].UpdateSlot(null, null, 0, Color.gray2);
+                slots[i].UpdateSlot(null, null, 0);
             }
         }
     }
