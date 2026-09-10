@@ -10,5 +10,9 @@ public interface IPlayer
 
     bool HealPlayer(int amount, bool overHeal = false);
 
+    int GetPlayerFunds();
+
+    void ModifyPlayerFunds(int ammount);
+
     ProjectileManager GetProjectileManager();
 }

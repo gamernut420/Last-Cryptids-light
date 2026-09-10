@@ -288,6 +288,7 @@ GameObject:
   - component: {fileID: 505847807036053633}
   - component: {fileID: 5375705630202756288}
   - component: {fileID: 1881357586226946228}
+  - component: {fileID: -1498727499937116740}
   m_Layer: 5
   m_Name: ShopUI_Item
   m_TagString: Untagged
@@ -332,6 +333,10 @@ MonoBehaviour:
   ItemName: {fileID: 301945382551849561}
   Description: {fileID: 332001254173228292}
   Price: {fileID: 8938679843501492907}
+  BackgroundPanel: {fileID: 1881357586226946228}
+  DefaultColor: {r: 0, g: 0, b: 0.5019608, a: 1}
+  SelectedColor: {r: 0, g: 0, b: 0.8039216, a: 1}
+  InaffordableColor: {r: 0.8627452, g: 0.07843138, b: 0.2352941, a: 1}
 --- !u!222 &5375705630202756288
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -353,7 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.79622644, b: 0.79622644, a: 1}
+  m_Color: {r: 0, g: 0, b: 0.5019608, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -370,6 +375,35 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-1498727499937116740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7333340885476258756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 505847807036053633}
+          m_TargetAssemblyTypeName: ShopUI_Item, Assembly-CSharp
+          m_MethodName: OnClicked
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &8229201941616628835
 GameObject:
   m_ObjectHideFlags: 0

@@ -867,6 +867,7 @@ MonoBehaviour:
   Funds: {fileID: 8954534055876276616}
   CategoryUIRoot: {fileID: 8391591185223442192}
   ItemUIRoot: {fileID: 7061778856520341312}
+  PurchaseButton: {fileID: 0}
   CategoryUIPrefab: {fileID: 7504562486438455291, guid: 69e77d436ac69eb43bdc33f4e96864a1, type: 3}
   ItemUIPrefab: {fileID: 7333340885476258756, guid: 8b53eb66b282f014fa9eafc0b215f8bc, type: 3}
   AvailableItems:
@@ -1682,7 +1683,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2596223045896321651}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 499256608887410710}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: OnClickedPurchase
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4849265855569267669
 GameObject:
   m_ObjectHideFlags: 0
@@ -2588,4 +2601,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6676046350605775511}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 499256608887410710}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: OnClickedExit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

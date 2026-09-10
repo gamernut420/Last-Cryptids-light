@@ -34,6 +34,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     float currentHP;
     float currentSpeed;
 
+    //Set for testing this will be used alongside kills
+    int points = 12345;
+
     Vector3 moveDir;
     Vector3 playerVel;
 
@@ -573,5 +576,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void SetMaxStamina(float ammount)
     {
         //set max stamina
+    }
+
+    public int GetPlayerFunds()
+    {
+        return points;
+    }
+
+    public void ModifyPlayerFunds(int ammount)
+    {
+        points += ammount;
     }
 }

@@ -20,6 +20,8 @@ public class ShopUI_Category : MonoBehaviour
 
         CategoryName.text = Category.CatagoryName;
 
+        SelectedFnc = onSelected;
+
         SetIsSelected(false);
     }
 
@@ -30,6 +32,9 @@ public class ShopUI_Category : MonoBehaviour
 
     public void OnClicked()
     {
-        SelectedFnc.Invoke(Category);
+        if (Category != null && SelectedFnc != null)
+        {
+            SelectedFnc.Invoke(Category);
+        }
     }
 }

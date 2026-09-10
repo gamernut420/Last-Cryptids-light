@@ -22,7 +22,7 @@ public class Crosshair : MonoBehaviour
 
     void ToggleVisibility(bool state)
     {
-        if(gameObject != null)
+        if(this != null)
         {
             gameObject.SetActive(!state);
         }
