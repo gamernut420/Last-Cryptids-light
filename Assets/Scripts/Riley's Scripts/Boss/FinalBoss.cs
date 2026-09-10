@@ -56,13 +56,24 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [Header("Enemy Summoning")]
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private float spawnRadius = 30f;
+    [SerializeField] private float minSpawnDistance = 5f;
+
+    [SerializeField] private int maxEnemiesAlive = 6;
     [SerializeField] private int enemiesPerSummon = 2;
+
+    [SerializeField] private float summonCooldown = 10f;
+    [SerializeField] private LayerMask groundLayer;
+
+    private List<GameObject> spawnedEnemies = new List<GameObject>();
+    private bool waitingToSummon;
+    private bool maxEnemies;
+    private float summonTimer;
 
     [Header("Teleporting")]
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
-    [SerializeField] private float teleportCooldown = 20;
+    [SerializeField] private float teleportCooldown = 20f;
     
     private float teleportTimer;
 
@@ -90,7 +101,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP = phase2HP;
+        currentHP = maxHP;
 
         if (agent == null)
         {
@@ -120,6 +131,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         energyFieldTimer -= Time.deltaTime;
 
         CheckPhase();
+        UpdateSummonTimer();
+        if (spawnedEnemies.Count >= maxEnemiesAlive)
+        {
+            maxEnemies = true;
+        }
 
         switch (currentPhase)
         {
@@ -203,6 +219,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     private void Phase2Behavior()
     {
         agent.speed = phase2Speed;
+        rangedAttackCooldown = 10f;
         ChasePlayer();
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
@@ -285,6 +302,50 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    //SUMMON ENEMIES
+    private void SummonEnemies()
+    {
+        CleanEnemyList();
+
+        if (spawnedEnemies.Count >= maxEnemiesAlive) return;
+
+
+        if (waitingToSummon) return;
+
+        int enemiesToSpawn = Mathf.Min(enemiesPerSummon, maxEnemiesAlive - spawnedEnemies.Count);
+        for (int i = 0; i < enemiesToSpawn; i++)
+        {
+            SpawnEnemy();
+        }
+    }
+
+    private void SpawnEnemy()
+    {
+        Vector2 randomCircle = Random.insideUnitCircle.normalized * Random.Range(minSpawnDistance, spawnRadius);
+
+        Vector3 spawnPosition = new Vector3(transform.position.x + randomCircle.x, transform.position.y + 5f, transform.position.z + randomCircle.y);
+
+        RaycastHit hit;
+        if (Physics.Raycast(spawnPosition, Vector3.down, out hit, 30f, groundLayer))
+        {
+            Vector3 directionToTarget = transform.position - hit.point;
+            directionToTarget.y = 0;
+            Quaternion spawnRotation = directionToTarget != Vector3.zero
+                ? Quaternion.LookRotation(directionToTarget)
+                : Quaternion.identity;
+
+            GameObject newEnemy = Instantiate(enemyPrefab, hit.point, spawnRotation);
+
+            BasicEnemy enemyAI = newEnemy.GetComponent<BasicEnemy>();
+            if (enemyAI != null)
+            {
+                enemyAI.SetBossEnemy();
+            }
+
+            spawnedEnemies.Add(newEnemy);
+        }
+    }
+
     public void takeDamage(int amount)
     {
         if (currentPhase == BossPhase.Dead) return;
@@ -307,6 +368,47 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (currentHP <= 0)
         {
             Die();
+        }
+    }
+
+    private void CleanEnemyList()
+    {
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            if (spawnedEnemies[i] == null)
+            {
+                spawnedEnemies.RemoveAt(i);
+            }
+        }
+    }
+
+    private void UpdateSummonTimer()
+    {
+        CleanEnemyList();
+
+        if (spawnedEnemies.Count > 0 && maxEnemies)
+        {
+            waitingToSummon = false;
+            summonTimer = summonCooldown;
+            return;
+        }
+
+        if (!waitingToSummon)
+        {
+            waitingToSummon = true;
+            summonTimer = summonCooldown;
+            maxEnemies = false;
+
+            Debug.Log("All summoned enemies defeated. Boss will summon again in " + summonCooldown + " seconds.");
+        }
+
+        summonTimer -= Time.deltaTime;
+
+        if (summonTimer <= 0)
+        {
+            waitingToSummon = false;
+            Debug.Log("Rift Warden is summoning more enemies!");
+            SummonEnemies();
         }
     }
 

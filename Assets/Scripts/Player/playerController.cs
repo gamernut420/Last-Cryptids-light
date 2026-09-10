@@ -129,18 +129,25 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             playerVel.y = jumpSpeed;
         }
     }
-
     public void takeDamage(int amount)
+    {
+        takeDamage(amount, true);
+    }
+
+    public void takeDamage(int amount, bool showFlash = true)
     {
         currentHP -= amount;
         updatePlayerUI();
-        StartCoroutine(flashDamage());
+        if(showFlash) 
+            StartCoroutine(flashDamage());
+
         if (currentHP <= 0)
         {
             // you i'm dead!!!
             gameManager.instance.youLose();
         }
     }
+
     IEnumerator flashDamage()
     {
         gameManager.instance.damageFlashPanel.SetActive(true);
