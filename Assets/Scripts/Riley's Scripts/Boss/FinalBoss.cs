@@ -17,6 +17,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
 
+    [Header("Objective")]
+    [SerializeField] private ObjectiveData bossObjective;
+
     [Header("Health")]
     [SerializeField] private float maxHP = 1000f;
     private float currentHP;
@@ -24,6 +27,10 @@ public class FinalBoss : MonoBehaviour, IDamage
     [Header("Boss Phase")]
     [SerializeField] private float phase2HP = 500f;
     [SerializeField] private float phase3HP = 200f;
+    [SerializeField] private float phase2TransitionDelay = 5f;
+
+    private bool phase2Transitioning;
+    private bool phase2Triggered;
 
     [Header("Movement")]
     [SerializeField] private NavMeshAgent agent;
@@ -85,6 +92,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
+    public bool bossKilled = false;
 
     private Transform PlayerTransform
     {
@@ -114,8 +122,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
         agent.speed = phase1Speed;
-
-        
     }
 
     // Update is called once per frame
@@ -144,6 +150,9 @@ public class FinalBoss : MonoBehaviour, IDamage
                 break;
             case BossPhase.Phase2:
                 Phase2Behavior();
+                break;
+            case BossPhase.Phase3:
+                Phase3Behavior();
                 break;
         }
     }
@@ -190,6 +199,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
         else if (currentHP <= phase2HP)
         {
+            if (!phase2Triggered)
+            {
+                StartCoroutine(Phase2Transition());
+            }
             currentPhase = BossPhase.Phase2;
         }
         else
@@ -216,10 +229,79 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private IEnumerator Phase2Transition()
+    {
+        phase2Transitioning = true;
+        phase2Triggered = true;
+
+        Debug.Log("Rift Warden is syphoning the power from the rift machines!");
+
+        agent.isStopped = true;
+
+        yield return new WaitForSeconds(phase2TransitionDelay);
+
+        if (PlayerTransform == null)
+        {
+            phase2Transitioning = false;
+            agent.isStopped = false;
+            yield break;
+        }
+
+        Debug.Log("Rift Power activated! Boss is teleporting");
+
+        TeleportNearPlayer();
+
+        meleeTimer = 0f;
+        rangedTimer = 0f;
+        energyFieldTimer = 0f;
+        teleportTimer = teleportCooldown;
+
+        agent.isStopped = false;
+        phase2Transitioning = false;
+    }
+
     private void Phase2Behavior()
     {
+        if (phase2Transitioning) return;
+
         agent.speed = phase2Speed;
         rangedAttackCooldown = 10f;
+
+        ChasePlayer();
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        float teleportChance = Random.Range(0, 100);
+
+        if (teleportChance < 10)
+        {
+            CheckTeleport();
+        }
+
+        if (energyFieldTimer <= 0f)
+        {
+            StartCoroutine(EnergyFieldAttack());
+            energyFieldTimer = energyFieldCooldown;
+        }
+
+        if (distanceToPlayer <= 5f)
+        {
+            MeleeAttack();
+        }
+        else
+        {
+            RangedAttack();
+        }
+    }
+
+    private void Phase3Behavior()
+    {
+        agent.speed = phase3Speed;
+        attackCooldown *= 0.25f;
+        energyFieldCooldown *= 0.2f;
+
+        Debug.Log("The Rift Warden is enraged and going Beserk!");
+
         ChasePlayer();
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
@@ -350,6 +432,8 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (currentPhase == BossPhase.Dead) return;
 
+        if (phase2Transitioning) return;
+
         currentHP -= amount;
         Debug.Log("Rift Boss Health:" + currentHP + "/" + maxHP);
 
@@ -415,8 +499,12 @@ public class FinalBoss : MonoBehaviour, IDamage
     private void Die()
     {
         currentPhase = BossPhase.Dead;
-
         agent.isStopped = true;
+        
+        if (bossObjective != null)
+        {
+            ObjectiveManager.Instance.CompleteObjective(bossObjective.objectiveID);
+        }
 
         Debug.Log("Rift Boss Defeated!");
 

@@ -141,6 +141,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3035572959994920918}
+  - component: {fileID: 337022537497007271}
   - component: {fileID: 8021564407550965913}
   - component: {fileID: 581006470254560512}
   - component: {fileID: 4726723265810829230}
@@ -170,6 +171,20 @@ Transform:
   - {fileID: 2106611881038324178}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &337022537497007271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5331241819255924531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b783391610cd9fb4dba4af5555e87501, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTrigger
+  targetObjective: {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+  isCompeletionTrigger: 0
 --- !u!114 &8021564407550965913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,9 +202,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   turnSpeed: 8
+  bossObjective: {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
   maxHP: 1000
   phase2HP: 500
   phase3HP: 200
+  phase2TransitionDelay: 5
   agent: {fileID: 7543238301187523072}
   phase1Speed: 3.5
   phase2Speed: 5
@@ -210,7 +227,7 @@ MonoBehaviour:
   minSpawnDistance: 5
   maxEnemiesAlive: 6
   enemiesPerSummon: 2
-  summonCooldown: 10
+  summonCooldown: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -227,7 +244,7 @@ MonoBehaviour:
   energyFieldsPerAttack: 2
   energyFieldCooldown: 10
   energyFieldDuration: 6
-  isInBossFight: 0
+  bossKilled: 0
 --- !u!33 &581006470254560512
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -14,8 +14,6 @@ public class TestPlaceableGadget : PlaceableGadget
 
             sphere.transform.position = transform.position;
 
-            Debug.Log(transform.position);
-
             return true;
         }
 

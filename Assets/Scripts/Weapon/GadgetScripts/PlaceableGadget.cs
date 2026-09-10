@@ -31,8 +31,6 @@ public abstract class PlaceableGadget : GadgetBase
 
         if(Physics.Linecast(traceStart, traceEnd, out hit, 1))
         {
-            Debug.Log($"Hit at {hit.point}");
-
             transform.SetParent(null);
 
             transform.position = hit.point;

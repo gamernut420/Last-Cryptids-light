@@ -18,6 +18,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject ItemHotbar;
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
+    [SerializeField] GameObject ShopUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
@@ -294,7 +295,7 @@ public class gameManager : MonoBehaviour
     {
         InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
         
-        for (int i = 0; i < inv.Length; i++)
+        for (int i = 0; i < slots.Length; i++)
         {
             if(inv[i] != null)
             {
@@ -304,11 +305,11 @@ public class gameManager : MonoBehaviour
                 {
                     if(i == slotInUse)
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
                     }
                     else
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1);
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
                     }
                 }
                 else
@@ -319,18 +320,18 @@ public class gameManager : MonoBehaviour
                     {
                         if (i == slotInUse)
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
                         }
                         else
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1);
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
                         }
                     }
                 }
             }
             else
             {
-                slots[i].UpdateSlot(null, null, 0);
+                slots[i].UpdateSlot(null, null, 0, Color.gray2);
             }
         }
     }
@@ -371,5 +372,19 @@ public class gameManager : MonoBehaviour
         }
     }
 
+    public void ShowShopUI(bool show, Vector3 _spawnLocation)
+    {
+        if (show)
+        {
+            statePause();
+        }
+        else
+        {
+            stateUnpause();
+        }
 
+        ShopUI.SetActive(show);
+
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
+    }
 }

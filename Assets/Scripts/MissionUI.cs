@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
 
 public class MissionUI : MonoBehaviour
 {
@@ -9,12 +8,12 @@ public class MissionUI : MonoBehaviour
     private void Update()
     {
         if(ObjectiveManager.Instance != null && 
-            ObjectiveManager.Instance.activeObjuctives.Count > 0)
+            ObjectiveManager.Instance.activeObjectives.Count > 0)
         {
             string displayText = "<b>Objectives:</b>\n";
             bool hasIncompleteObjs = false;
 
-            foreach (ObjectiveData obj in ObjectiveManager.Instance.activeObjuctives)
+            foreach (ObjectiveData obj in ObjectiveManager.Instance.activeObjectives)
             {
                 if (!obj.isCompleted)
                 {

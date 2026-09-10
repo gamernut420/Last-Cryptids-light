@@ -6,7 +6,7 @@ public class ObjectiveManager : MonoBehaviour
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Active Objectives")]
-    public List<ObjectiveData> activeObjuctives = new List<ObjectiveData>();
+    public List<ObjectiveData> activeObjectives = new List<ObjectiveData>();
 
     public Transform currentCompassTarget;
 
@@ -23,9 +23,9 @@ public class ObjectiveManager : MonoBehaviour
 
     public void AddObjective(ObjectiveData newObj)
     {
-        if(!activeObjuctives.Contains(newObj))
+        if(!activeObjectives.Contains(newObj))
         {
-            activeObjuctives.Add(newObj);
+            activeObjectives.Add(newObj);
             
             //Set the compass target to this new objecive if it has a location
             if(newObj.targetLocation != null) currentCompassTarget = newObj.targetLocation;
@@ -35,11 +35,11 @@ public class ObjectiveManager : MonoBehaviour
 
     public void CompleteObjective(string objectiveID)
     {
-        ObjectiveData targetObjactive = activeObjuctives.Find(o => o.objectiveID == objectiveID);
-        if (targetObjactive != null && !targetObjactive.isCompleted)
+        ObjectiveData targetObjective = activeObjectives.Find(o => o.objectiveID == objectiveID);
+        if (targetObjective != null && !targetObjective.isCompleted)
         {
-            targetObjactive.isCompleted = true;
-            Debug.Log($"Objective Completed: {targetObjactive.objectiveTitle}");
+            targetObjective.isCompleted = true;
+            Debug.Log($"Objective Completed: {targetObjective.objectiveTitle}");
 
             // Remove from active list or transition to next objective here
 

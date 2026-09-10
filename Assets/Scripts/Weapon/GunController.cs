@@ -49,6 +49,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     ProjectileManager projectileManager;
     IPlayer owningPlayer;
     ICamera playerCamera;
+    WeaponUpgrades upgrader;
 
     //Checks
     bool isInUse;
@@ -84,13 +85,18 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void CheckComponents()
     {
-        if (GetComponent<AudioSource>() == null)
+        upgrader = GetComponent<WeaponUpgrades>();
+
+        if (upgrader == null)
+        {
+            upgrader = gameObject.AddComponent<WeaponUpgrades>();
+        }
+
+        gunAudio = GetComponent<AudioSource>();
+
+        if (gunAudio == null)
         {
             gunAudio = gameObject.AddComponent<AudioSource>();
-        }
-        else
-        {
-            gunAudio = GetComponent<AudioSource>();
         }
 
         if (GetComponent<MeshFilter>() == null)
@@ -181,6 +187,27 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     {
         if (!gameManager.instance.isPaused && isInUse)
         {
+            if (Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                upgrader.ModifyDamage(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                upgrader.ModifyVelocity(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                upgrader.ModifyFireRate(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                upgrader.ModifyMaxAmmo(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                upgrader.ModifyMagSize(1);
+            }
+
             DetermineAim();
 
             WeaponSway();
@@ -418,5 +445,77 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
         CheckAmmo();
+    }
+
+
+    //Getters and setters
+    public float GetDamage()
+    {
+        return Damage;
+    }
+
+    public void SetDamage(float ammount)
+    {
+        Damage = ammount;
+    }
+
+    public float GetVelocity()
+    {
+        return BulletSpeed;
+    }
+
+    public void SetVelocity(float ammount)
+    {
+        BulletSpeed = ammount;
+    }
+
+    public float GetFireRate()
+    {
+        return FireRate;
+    }
+
+    public void SetFireRate(float ammount)
+    {
+        FireRate = Mathf.Clamp(ammount, 0, int.MaxValue);
+    }
+
+    public int GetMaxAmmo()
+    {
+        return MaxReserveAmmo;
+    }
+
+    public void SetMaxAmmo(int ammount)
+    {
+        MaxReserveAmmo = ammount;
+    }
+
+    public int GetCurrentReserveAmmo()
+    {
+        return currentReserveAmmo;
+    }
+
+    public void SetCurrentReserveAmmo(int ammount)
+    {
+        currentReserveAmmo = ammount;
+    }
+
+    public int GetMagSize()
+    {
+        return MagSize;
+    }
+
+    public void SetMagSize(int ammount)
+    {
+        MagSize = ammount;
+    }
+
+    public int GetCurrentAmmo()
+    {
+        return currentAmmo;
+    }
+
+    public void SetCurrentAmmo(int ammount)
+    {
+        currentAmmo = ammount;
     }
 }
