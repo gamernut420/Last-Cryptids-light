@@ -4,7 +4,6 @@ using TMPro;
 
 public class PlayerInventory : MonoBehaviour
 {
-
     // Stores item amounts
     Dictionary<string, int> items = new Dictionary<string, int>();
 
@@ -32,6 +31,18 @@ public class PlayerInventory : MonoBehaviour
         return items.ContainsKey(itemName);
     }
 
+    // ADDED FOR CRAFTING:
+    // Allows recipes to check whether the player has a specific
+    // quantity of an item instead of only checking if it exists.
+    public bool HasItem(string itemName, int requiredAmount)
+    {
+        if (requiredAmount <= 0)
+        {
+            return false;
+        }
+
+        return GetAmount(itemName) >= requiredAmount;
+    }
 
     // Gets item amount
     public int GetAmount(string itemName)
@@ -44,6 +55,34 @@ public class PlayerInventory : MonoBehaviour
         return 0;
     }
 
+    // ADDED FOR CRAFTING:
+    // Removes a specified amount of an item when a recipe is crafted.
+    // Returns false if the player does not have enough of the item.
+    public bool RemoveItem(string itemName, int amount)
+    {
+        if (amount <= 0)
+        {
+            return false;
+        }
+
+        if (!HasItem(itemName, amount))
+        {
+            return false;
+        }
+
+        items[itemName] -= amount;
+
+        // ADDED FOR CRAFTING:
+        // Removes the inventory entry entirely if the amount reaches zero.
+        if (items[itemName] <= 0)
+        {
+            items.Remove(itemName);
+        }
+
+        UpdateUI();
+
+        return true;
+    }
 
     // Update inventory UI in GM
     void UpdateUI()
@@ -55,7 +94,7 @@ public class PlayerInventory : MonoBehaviour
             tempText += item + ": " + GetAmount(item) + "\n";
         }
 
-        if(UpdateInventoryText != null)
+        if (UpdateInventoryText != null)
         {
             UpdateInventoryText(tempText);
         }
