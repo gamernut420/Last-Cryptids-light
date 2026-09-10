@@ -17,6 +17,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
 
+    [Header("Objective")]
+    [SerializeField] private ObjectiveData bossObjective;
+
     [Header("Health")]
     [SerializeField] private float maxHP = 1000f;
     private float currentHP;
@@ -89,6 +92,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
+    public bool bossKilled = false;
 
     private Transform PlayerTransform
     {
@@ -118,8 +122,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
         agent.speed = phase1Speed;
-
-        
     }
 
     // Update is called once per frame
@@ -497,8 +499,12 @@ public class FinalBoss : MonoBehaviour, IDamage
     private void Die()
     {
         currentPhase = BossPhase.Dead;
-
         agent.isStopped = true;
+        
+        if (bossObjective != null)
+        {
+            ObjectiveManager.Instance.CompleteObjective(bossObjective.objectiveID);
+        }
 
         Debug.Log("Rift Boss Defeated!");
 
