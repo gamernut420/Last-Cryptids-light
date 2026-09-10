@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using Unity.Jobs;
 
 public class BasicEnemy : MonoBehaviour, IDamage
 {
-    public enum AIType { Melee, Range };
+    public enum AIType 
+    { 
+        Melee, 
+        Range 
+    }
 
     [Header("AI Type")]
     [SerializeField] private AIType aiType;
@@ -77,6 +80,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float speed;
 
     Color colorOrig;
+    FinalBoss spawn = new FinalBoss();
 
     private Transform PlayerTransform
     {
@@ -152,7 +156,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         CalculatePlayerVelocity();
 
-        if (CanSeePlayer() || aggroTimer > 0f)
+        if (CanSeePlayer() || aggroTimer > 0f || spawn.isInBossFight)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 

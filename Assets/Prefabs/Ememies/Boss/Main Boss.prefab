@@ -205,12 +205,29 @@ MonoBehaviour:
   projectileWidth: 2
   projectileHeight: 2
   hitboxExtendSpeed: 40
-  enemyPrefab: {fileID: 0}
-  spawnPoints: []
+  enemyPrefab: {fileID: 7071000206556148062, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
+  spawnRadius: 30
+  minSpawnDistance: 5
+  maxEnemiesAlive: 6
   enemiesPerSummon: 2
+  summonCooldown: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
   teleportDistance: 30
   teleportNearPlayerDistance: 8
   teleportCooldown: 20
+  energyFieldPrefab: {fileID: 7060007482161181010, guid: a28a77c5071645041a88169ee8ddfa67, type: 3}
+  energyFieldSpawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  energyFieldsPerAttack: 2
+  energyFieldCooldown: 10
+  energyFieldDuration: 6
+  isInBossFight: 0
 --- !u!33 &581006470254560512
 MeshFilter:
   m_ObjectHideFlags: 0
