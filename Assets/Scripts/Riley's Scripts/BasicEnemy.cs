@@ -80,7 +80,12 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float speed;
 
     Color colorOrig;
-    FinalBoss spawn = new FinalBoss();
+    private bool bossEnemy = false;
+
+    public void SetBossEnemy()
+    {
+        bossEnemy = true;
+    }
 
     private Transform PlayerTransform
     {
@@ -156,7 +161,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         CalculatePlayerVelocity();
 
-        if (CanSeePlayer() || aggroTimer > 0f || spawn.isInBossFight)
+        if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
@@ -291,6 +296,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
         if (distanceToPlayer < minimumRangedDistance)
         {
             BackAwayFromPlayer();
+        }
+        else if (distanceToPlayer > rangedAttackRange - minimumRangedDistance)
+        {
+            agent.SetDestination(PlayerTransform.position);
         }
         else
         {

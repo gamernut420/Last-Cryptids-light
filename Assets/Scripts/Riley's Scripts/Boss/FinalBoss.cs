@@ -67,6 +67,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
     private bool waitingToSummon;
+    private bool maxEnemies;
     private float summonTimer;
 
     [Header("Teleporting")]
@@ -84,7 +85,6 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
-    public bool isInBossFight;
 
     private Transform PlayerTransform
     {
@@ -102,7 +102,6 @@ public class FinalBoss : MonoBehaviour, IDamage
     void Start()
     {
         currentHP = maxHP;
-        isInBossFight = true;
 
         if (agent == null)
         {
@@ -133,6 +132,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         CheckPhase();
         UpdateSummonTimer();
+        if (spawnedEnemies.Count >= maxEnemiesAlive)
+        {
+            maxEnemies = true;
+        }
 
         switch (currentPhase)
         {
@@ -306,6 +309,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (spawnedEnemies.Count >= maxEnemiesAlive) return;
 
+
         if (waitingToSummon) return;
 
         int enemiesToSpawn = Mathf.Min(enemiesPerSummon, maxEnemiesAlive - spawnedEnemies.Count);
@@ -331,6 +335,13 @@ public class FinalBoss : MonoBehaviour, IDamage
                 : Quaternion.identity;
 
             GameObject newEnemy = Instantiate(enemyPrefab, hit.point, spawnRotation);
+
+            BasicEnemy enemyAI = newEnemy.GetComponent<BasicEnemy>();
+            if (enemyAI != null)
+            {
+                enemyAI.SetBossEnemy();
+            }
+
             spawnedEnemies.Add(newEnemy);
         }
     }
@@ -375,7 +386,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         CleanEnemyList();
 
-        if (spawnedEnemies.Count > 0)
+        if (spawnedEnemies.Count > 0 && maxEnemies)
         {
             waitingToSummon = false;
             summonTimer = summonCooldown;
@@ -386,6 +397,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             waitingToSummon = true;
             summonTimer = summonCooldown;
+            maxEnemies = false;
 
             Debug.Log("All summoned enemies defeated. Boss will summon again in " + summonCooldown + " seconds.");
         }
@@ -405,7 +417,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         currentPhase = BossPhase.Dead;
 
         agent.isStopped = true;
-        isInBossFight = false;
 
         Debug.Log("Rift Boss Defeated!");
 
