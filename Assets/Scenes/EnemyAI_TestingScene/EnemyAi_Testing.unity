@@ -1162,11 +1162,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!195 &1544931160 stripped
-NavMeshAgent:
-  m_CorrespondingSourceObject: {fileID: 6998082953913142249, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-  m_PrefabInstance: {fileID: 7207166814717964340}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1566193507 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3753276472544181414, guid: 425d57ce0110e614082ecaafd59be4f0, type: 3}
@@ -1278,11 +1273,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1908967248506960924, guid: 425d57ce0110e614082ecaafd59be4f0, type: 3}
   m_PrefabInstance: {fileID: 1664221783}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1675883521 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8810034230262550288, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-  m_PrefabInstance: {fileID: 7207166814717964340}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1687918359 stripped
 Transform:
@@ -1742,7 +1732,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1348687183633318763, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 119.02561
+      value: 122.83
       objectReference: {fileID: 0}
     - target: {fileID: 1348687183633318763, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1783,26 +1773,6 @@ PrefabInstance:
     - target: {fileID: 7071000206556148062, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
       propertyPath: m_Name
       value: Basic Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364862128440608332, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-      propertyPath: agent
-      value: 
-      objectReference: {fileID: 1544931160}
-    - target: {fileID: 7364862128440608332, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-      propertyPath: fieldOfView
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 7364862128440608332, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-      propertyPath: attackHitbox
-      value: 
-      objectReference: {fileID: 1675883521}
-    - target: {fileID: 7364862128440608332, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-      propertyPath: detectionRange
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 8810034230262550288, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
-      propertyPath: m_Layer
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

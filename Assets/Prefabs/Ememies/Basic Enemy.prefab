@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &878016119147048829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 236569903529242654}
+  m_Layer: 0
+  m_Name: ThrowPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &236569903529242654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878016119147048829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0.9, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1348687183633318763}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7071000206556148062
 GameObject:
   m_ObjectHideFlags: 0
@@ -35,6 +66,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6998728699246170021}
+  - {fileID: 236569903529242654}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7364862128440608332
@@ -49,18 +81,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1b7305a1a8f994f899d8636a24d5b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
-  maxHP: 50
-  agent: {fileID: 0}
-  moveSpeed: 3.5
-  detectionRange: 15
-  fieldOfView: 90
+  aiType: 0
+  agent: {fileID: 6998082953913142249}
   sightBlocker:
     serializedVersion: 2
-    m_Bits: 0
-  attackHitbox: {fileID: 0}
+    m_Bits: 8
+  model: {fileID: 1314059448403710582}
+  roamRadius: 10
+  roamWaitTime: 2
+  meleeMaxHP: 50
+  moveSpeed: 3.5
+  detectionRange: 30
+  fieldOfView: 90
+  attackHitbox: {fileID: 8810034230262550288}
   attackRange: 3
   attackCooldown: 1.5
   attackDuration: 0.5
+  loseAggro: 2
+  rangeMaxHP: 30
+  RmoveSpeed: 3.5
+  RdetectionRange: 30
+  RfieldOfView: 90
+  projectilePrefab: {fileID: 7792910582156755231, guid: 79eafe39c72db8e4abbe713cf4fd4a45, type: 3}
+  throwPoint: {fileID: 236569903529242654}
+  throwCooldown: 2
+  rangedAttackRange: 30
+  minimumRangedDistance: 8
+  launchAngle: 45
+  projectileLifetime: 5
+  usePlayerRigidbody: 1
+  estimatedPlayerSpeed: 5
 --- !u!33 &6921717133420145470
 MeshFilter:
   m_ObjectHideFlags: 0
