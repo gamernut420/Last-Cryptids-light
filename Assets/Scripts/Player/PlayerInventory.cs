@@ -44,31 +44,38 @@ public class PlayerInventory : MonoBehaviour
 
 
     // Gets item amount
-    public int GetAmount(ScriptableItem itemName)
+    public int GetAmount(ScriptableItem itemData)
     {
-        if (items.ContainsKey(itemName))
+        if (items.ContainsKey(itemData))
         {
-            return items[itemName];
+            return items[itemData];
         }
 
         return 0;
     }
 
 
+
     // Update inventory UI in GM
     void UpdateUI()
     {
-        int index = 0;
-
-        foreach (KeyValuePair<ScriptableItem, int> pair in items)
+        int i = 0;
+       foreach(KeyValuePair<ScriptableItem, int> kvp in items)
         {
-            inventorySlots[index].SetItem(pair.Key, pair.Value);
-            index++;
+            if(i < inventorySlots.Length)
+            {
+                inventorySlots[i].gameObject.SetActive(true);
+                inventorySlots[i].UpdateSlot(kvp.Key.itemIcon, kvp.Key.itemName, kvp.Value);
+                i++;
+            }
         }
 
-        for(int i = index; i < inventorySlots.Length; i++)
+       for(int j = i; j < inventorySlots.Length; j++) 
         {
-            inventorySlots[i].ClearSlot();
+            inventorySlots[j].gameObject.SetActive(false);
+            
+
         }
+       
     }
 }

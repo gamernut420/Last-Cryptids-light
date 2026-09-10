@@ -211,12 +211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExposureSystem
   exposureRate: 0.2
-  damagePerTick: 1
-  damageInterval: 1
   isOutside: 0
   healRate: 0.05
-  healPerTick: 1
-  healInterval: 1
   pulseSpeed: 4
   minIntensity: 0.2
   maxIntensity: 0.4
@@ -252,7 +248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::playerController
   controller: {fileID: 8658993058510956839}
-  Hp: 10
+  Hp: 100
   speed: 5
   sprintMod: 3
   jumpSpeed: 9
@@ -275,6 +271,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b66b14de1484684dae68a9e46579336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  inventorySlots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &4152988610959837521
 MonoBehaviour:
   m_ObjectHideFlags: 0

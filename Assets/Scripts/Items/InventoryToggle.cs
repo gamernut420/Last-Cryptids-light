@@ -26,7 +26,9 @@ public class InventoryToggle : MonoBehaviour
 
     public void ToggleInevntory()
     {
-        if (inventoryPanel != null)
+        bool isActive = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(isActive);
+        if (isActive)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
