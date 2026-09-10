@@ -22,26 +22,33 @@ public class ShopUI : MonoBehaviour
     Dictionary<ItemCatagory, ShopUI_Category> CategoryToUIMap;
     Dictionary<ShopItem, ShopUI_Item> ItemToUIMap;
 
-    IPlayer player;
+    IPlayer Player;
+    Vector3 SpawnLocation;
 
     private void Start()
     {
-        player = gameManager.instance.player.GetComponent<IPlayer>();
+        Player = gameManager.instance.player.GetComponent<IPlayer>();
 
         RefreshUI_Common();
 
         RefreshUI_Categories();
     }
 
+    public void SetStation(IPlayer _player, Vector3 _spawnLocation)
+    {
+        Player = _player;
+        SpawnLocation = _spawnLocation;
+    }
+
     void RefreshUI_Common()
     {
-        if(player != null)
+        if(Player != null)
         {
-            Funds.text = $"Points: {player.GetPlayerFunds().ToString()}";
+            Funds.text = $"Points: {Player.GetPlayerFunds().ToString()}";
         }
 
         PurchaseButton.interactable = (
-            player != null &&
+            Player != null &&
             SelectedItem != null &&
             CanPurchase()
             );
@@ -53,7 +60,7 @@ public class ShopUI : MonoBehaviour
                 var item = itemMap.Key;
                 var itemUI = itemMap.Value;
 
-                itemUI.SetCanAfford(player.GetPlayerFunds() >= item.Price);
+                itemUI.SetCanAfford(Player.GetPlayerFunds() >= item.Price);
             }
         }
     }
@@ -164,9 +171,9 @@ public class ShopUI : MonoBehaviour
 
     bool CanPurchase()
     {
-        if(player != null && SelectedItem != null)
+        if(Player != null && SelectedItem != null)
         {
-            return player.GetPlayerFunds() >= SelectedItem.Price;
+            return Player.GetPlayerFunds() >= SelectedItem.Price;
         }
         
         return false;
@@ -174,9 +181,12 @@ public class ShopUI : MonoBehaviour
 
     void PurchaseItem()
     {
-        player.ModifyPlayerFunds(-SelectedItem.Price);
+        Player.ModifyPlayerFunds(-SelectedItem.Price);
 
         //Add spawning of items here
+        GameObject newItem = Instantiate(SelectedItem.ItemPrefab);
+
+        newItem.transform.position = SpawnLocation;
     }
 
     public void OnClickedPurchase()
@@ -191,6 +201,6 @@ public class ShopUI : MonoBehaviour
 
     public void OnClickedExit()
     {
-        gameManager.instance.ShowShopUI(false);
+        gameManager.instance.ShowShopUI(false, Vector3.zero);
     }
 }

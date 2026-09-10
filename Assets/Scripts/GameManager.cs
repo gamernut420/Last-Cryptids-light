@@ -372,7 +372,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void ShowShopUI(bool show)
+    public void ShowShopUI(bool show, Vector3 _spawnLocation)
     {
         if (show)
         {
@@ -382,6 +382,9 @@ public class gameManager : MonoBehaviour
         {
             stateUnpause();
         }
-            ShopUI.SetActive(show);
+
+        ShopUI.SetActive(show);
+
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
     }
 }

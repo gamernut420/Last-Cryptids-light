@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class ShopStation : MonoBehaviour, IInteract
 {
+    [SerializeField] GameObject SpawnLocation;
+
     public bool Interact(GameObject interactor)
     {
-        gameManager.instance.ShowShopUI(true);
+        gameManager.instance.ShowShopUI(true, SpawnLocation.transform.position);
 
         return true;
     }
