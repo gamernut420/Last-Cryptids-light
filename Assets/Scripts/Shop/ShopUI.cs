@@ -61,6 +61,7 @@ public class ShopUI : MonoBehaviour
                 var itemUI = itemMap.Value;
 
                 itemUI.SetCanAfford(Player.GetPlayerFunds() >= item.Price);
+                itemUI.SetIsSelected(item == SelectedItem);
             }
         }
     }
@@ -154,17 +155,7 @@ public class ShopUI : MonoBehaviour
 
     void OnItemSelected(ShopItem newItem)
     {
-        Debug.Log($"Selected {newItem}");
-
         SelectedItem = newItem;
-
-        foreach (var itemMap in ItemToUIMap)
-        {
-            var item = itemMap.Key;
-            var itemUI = itemMap.Value;
-
-            itemUI.SetIsSelected(item == SelectedItem);
-        }
 
         RefreshUI_Common();
     }
