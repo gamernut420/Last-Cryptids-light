@@ -6,7 +6,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField] CharacterController controller;
 
     [Header("Player Stats:")]
-    [Range(1, 10)][SerializeField] int Hp;
+    [Range(1, 100)][SerializeField] int Hp;
     [Range(1f, 10f)][SerializeField] float speed;
     [Range(2f, 5f)][SerializeField] float sprintMod;
     [Range(8, 15)][SerializeField] int jumpSpeed;

@@ -195,6 +195,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 944948598716401364, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+      propertyPath: Hp
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2049368398075440799, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+      propertyPath: damagePerTick
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2049368398075440799, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+      propertyPath: damageInterval
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2049368398075440799, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: exposureVolume
       value: 
@@ -383,6 +395,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2408728424504453974, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_Name
+      value: ExposurePrompt Text
+      objectReference: {fileID: 0}
+    - target: {fileID: 2408728424504453974, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3955772981761916171, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_Name
       value: UI
