@@ -5,7 +5,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 {
     [SerializeField] GameObject WeaponModel;
 
-    [Header("Gun Stats")]
+    [Header("----- Gun Stats -----")]
     [SerializeField] string WeaponName;
     [Tooltip("This is in Rounds per Minute")]
     [SerializeField][Min(0f)] float FireRate = 500;
@@ -13,25 +13,29 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [SerializeField][Min(1)] int MagSize = 30;
     [SerializeField][Min(1)] int MaxReserveAmmo = 120;
     [SerializeField][Range(0, 90)] float SpreadAmmount = 0;
-    [SerializeField] ProjectileData BulletData;
 
-    [Header("Aim")]
+    [Header("----- Bullet Stats -----")]
+    [SerializeField][Min(0f)] float Damage = 25;
+    [SerializeField][Min(0f)] float BulletSpeed = 500;
+    [SerializeField] BulletData Bullet;
+
+    [Header("----- Aim -----")]
     [SerializeField] GameObject AimObject;
     [SerializeField] float AimSmoothing = 10;
 
     Vector3 aimPoint;
     bool isAiming;
 
-    [Header("Recoil")]
+    [Header("----- Recoil -----")]
     [SerializeField] float VerticleRecoil;
     [SerializeField] float HorizontalRecoil;
 
-    [Header("VFX")]
+    [Header("----- VFX -----")]
     [SerializeField] GameObject Muzzle;
     [SerializeField] GameObject[] Flashes;
     [SerializeField] float SwayAmmount = 10;
 
-    [Header("Audio")]
+    [Header("----- Audio -----")]
     [SerializeField] AudioSource gunAudio;
     [SerializeField] AudioClip gunShootSound;
     public float gunshotHearingRadius = 20f;
@@ -80,15 +84,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void CheckComponents()
     {
-        if (GetComponent<ProjectileManager>() == null)
-        {
-            projectileManager = gameObject.AddComponent<ProjectileManager>();
-        }
-        else
-        {
-            projectileManager = GetComponent<ProjectileManager>();
-        }
-
         if (GetComponent<AudioSource>() == null)
         {
             gunAudio = gameObject.AddComponent<AudioSource>();
@@ -163,10 +158,12 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         UpdateAmmoText?.Invoke(currentAmmo, currentReserveAmmo);
     }
 
-    public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, Vector3 gripLocation = default)
+    public void SetPlayerVariables(IPlayer player = null, ICamera camera = null, ProjectileManager _projManager = null, Vector3 gripLocation = default)
     {
         owningPlayer = player;
         playerCamera = camera;
+
+        projectileManager = _projManager;
 
         basePosition = gripLocation;
 
@@ -215,7 +212,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
                 Reload();
             }
 
-            if (tryingShoot && canShoot)
+            if (tryingShoot && canShoot && projectileManager != null)
             {
                 StartCoroutine(ShootGun());
                 if (Input.GetKey(KeyCode.Mouse0))
@@ -228,7 +225,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     IEnumerator ShootGun()
     {
-        for(int i = 0; i < BulletData.Gauge; i++)
+        for(int i = 0; i < Bullet.projectileData.Gauge; i++)
         {
             Quaternion bulletRotation = Camera.main.transform.rotation;
 
@@ -236,7 +233,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             if (isAiming)
             {
-                spreadMod -= spreadMod * BulletData.SpreadReduction;
+                spreadMod -= spreadMod * Bullet.projectileData.SpreadReduction;
             }
 
             float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.x;
@@ -244,7 +241,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
 
-            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, BulletData);
+            projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Damage, BulletSpeed, Bullet.projectileData);
         }
 
         if (gunAudio != null && gunShootSound != null)
@@ -386,7 +383,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
         if (player != null)
         {
-            player.PlayerAddWeapon(gameObject);
+            player.PlayerAddItem(gameObject);
 
             return true;
         }
@@ -396,7 +393,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     public string ScreenMessage()
     {
-        return "Pickup Weapon";
+        return $"Pickup {WeaponName}";
     }
 
     public string GetWeaponName()

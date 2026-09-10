@@ -89,13 +89,9 @@ MonoBehaviour:
   MagSize: 8
   MaxReserveAmmo: 40
   SpreadAmmount: 12
-  BulletData:
-    Damage: 20
-    Speed: 200
-    Gauge: 12
-    SpreadReduction: 0.75
-    GravityScale: 1
-    LifeTime: 10
+  Damage: 25
+  BulletSpeed: 500
+  Bullet: {fileID: 11400000, guid: 326ce3a38cfc0a54f980f14223fea135, type: 2}
   AimObject: {fileID: 5194456591652310928}
   AimSmoothing: 10
   VerticleRecoil: 2
