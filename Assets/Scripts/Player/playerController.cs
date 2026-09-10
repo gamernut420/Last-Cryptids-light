@@ -163,7 +163,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         gameManager.instance.playerHPBar.fillAmount = (float)currentHP / MaxHP;
     }
 
-    public void PlayerAddItem(string itemName, int amount)
+    public void PlayerAddItem(ScriptableItem itemName, int amount)
     {
         Inventory.AddItem(itemName, amount);
     }

@@ -27,7 +27,7 @@ public class ScavengeItem : MonoBehaviour, IInteract
 
         if (player != null)
         {
-            player.PlayerAddItem(itemData.itemName, itemData.stackCount);
+            player.PlayerAddItem(itemData, itemData.stackCount);
 
             Destroy(gameObject);
 

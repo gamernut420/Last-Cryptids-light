@@ -3,24 +3,24 @@ using UnityEngine;
 
 public class InventoryText : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI inventory;
+//    [SerializeField] TextMeshProUGUI inventory;
 
-    private void OnEnable()
-    {
-        inventory = gameObject.GetComponent<TextMeshProUGUI>();
+//    private void OnEnable()
+//    {
+//        inventory = gameObject.GetComponent<TextMeshProUGUI>();
 
-        PlayerInventory.UpdateInventoryText += UpdateText;
+//        PlayerInventory.UpdateInventoryText += UpdateText;
 
-        inventory.text = string.Empty;
-    }
+//        inventory.text = string.Empty;
+//    }
 
-    private void OnDisable()
-    {
-        PlayerInventory.UpdateInventoryText -= UpdateText;
-    }
+//    private void OnDisable()
+//    {
+//        PlayerInventory.UpdateInventoryText -= UpdateText;
+//    }
 
-    void UpdateText(string text)
-    {
-        inventory.text = text;
-    }
+//    void UpdateText(string text)
+//    {
+//        inventory.text = text;
+//    }
 }

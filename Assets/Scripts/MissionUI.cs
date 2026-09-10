@@ -1,40 +1,33 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class MissionUI : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] TextMeshProUGUI missionObjectiveText;
+    public TextMeshProUGUI objectiveText;
 
-    [Header("Target Reference")]
-    [SerializeField] GameObject beacon;
-    [SerializeField] RescueBeacon rescueBeaconScript;
-
-    private void Awake()
+    private void Update()
     {
-        beacon = GameObject.FindWithTag("Beacon");
+        if(ObjectiveManager.Instance != null && 
+            ObjectiveManager.Instance.activeObjuctives.Count > 0)
+        {
+            string displayText = "<b>Objectives:</b>\n";
+            bool hasIncompleteObjs = false;
 
-        if(beacon != null )
-        {
-            rescueBeaconScript = beacon.GetComponent<RescueBeacon>();
-        }
-    }
-    void Update()
-    {
-        if(rescueBeaconScript != null && missionObjectiveText != null)
-        {
-            if(!rescueBeaconScript.isRepaired)
+            foreach (ObjectiveData obj in ObjectiveManager.Instance.activeObjuctives)
             {
-                missionObjectiveText.text = "<b>Current Objactive:</b>\n" +
-                                             "Collact required parts for the beacon.\n\n" +
-                                             rescueBeaconScript.ScreenMessage();
+                if (!obj.isCompleted)
+                {
+                    displayText += $"- {obj.objectiveTitle}\n";
+                    hasIncompleteObjs = true;
+                }
+                else
+                    displayText += $"<s>- {obj.objectiveTitle} (Complete)</s>\n";
             }
-            else
-            {
-                missionObjectiveText.text = "<b>Current Objective:</b>\n" +
-                                            "Beacon active! \nSurvive the enemy waves until extraction arrives.";
-            }
+            if (!hasIncompleteObjs)
+                displayText += "\nAll Objective Complete! Time to go home!";
+
+                objectiveText.text = displayText;
         }
-        
     }
 }
