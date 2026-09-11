@@ -20,9 +20,21 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     public float investigationSpeed = 10f;
     public float patrolRadius = 15f;
     public float attackRadius = 3f;
-    [SerializeField] int attackDamage = 3;
-    [SerializeField] float attackCooldown = 1.5f;
+    [SerializeField] private GameObject attackHitbox;
+    [SerializeField] private float attackHitboxDuration = 0.5f;
+    [SerializeField] private float attackCooldown = 1f;
     [SerializeField] LayerMask playerLayer;
+
+    private bool attacking;
+
+    [Header("Projectile")]
+    [SerializeField] private GameObject projectile;
+    [SerializeField] private Transform projectileSpawnPoint;
+    [SerializeField] private float projectileCooldown = 5f;
+    [SerializeField] private float launchAngle = 10f;
+    [SerializeField] private float projectileLifetime = 5f;
+
+    private float projectileTimer;
 
     Color colorOrig;
 
@@ -77,6 +89,11 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         CheckEnemyMaterial();
         MoveToRandomPoint();
         footstepAudio = GetComponent<AudioManager>();
+
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+        }
         
         if (PlayerTransform != null)
         {
@@ -89,10 +106,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
-        if (gameManager.instance != null && gameManager.instance.beacon != null)
-        {
-
-        }
+        projectileTimer -= Time.deltaTime;
 
         TrackPlayerMovement();
         attackTimer += Time.deltaTime;
@@ -167,6 +181,51 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
     }
 
+    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float angleInDegrees)
+    {
+        Vector3 playerXZ = new Vector3(targetPoint.x, startPoint.y, targetPoint.z);
+        float distanceXZ = Vector3.Distance(startPoint, playerXZ);
+        float deltaY = targetPoint.y - startPoint.y;
+
+        float radAngle = angleInDegrees * Mathf.Deg2Rad;
+        float gravity = Physics.gravity.y;
+
+        float velocitySquared = (gravity * distanceXZ * distanceXZ) / (2 * Mathf.Cos(radAngle) * Mathf.Cos(radAngle) * (deltaY - distanceXZ * Mathf.Tan(radAngle)));
+
+        if (velocitySquared <= 0)
+        {
+            return (targetPoint - startPoint).normalized * 10f;
+        }
+
+        float totalSpeed = Mathf.Sqrt(velocitySquared);
+        float forwardSpeed = totalSpeed * Mathf.Cos(radAngle);
+        float verticalSpeed = totalSpeed * Mathf.Sin(radAngle);
+
+        Vector3 directionXZ = (playerXZ - startPoint).normalized;
+        Vector3 launchVelocity = directionXZ * forwardSpeed + Vector3.up * verticalSpeed;
+        return launchVelocity;
+    }
+
+    private void ThrowProjectile(Vector3 targetPosition)
+    {
+        if (projectile == null || projectileSpawnPoint == null) return;
+
+        Vector3 launchVelocity = CalculateLaunchVelocity(projectileSpawnPoint.position, targetPosition, launchAngle);
+
+        if (launchVelocity.sqrMagnitude <= 0.01f) return;
+
+        GameObject thrownObj = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(launchVelocity));
+
+        Rigidbody rb = thrownObj.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = launchVelocity;
+        }
+
+        Destroy(thrownObj, projectileLifetime);
+    }
+
     void TrackPlayerMovement()
     {
         if (Vector3.Distance(PlayerTransform.position, playerLastPosition) > 0.01f)
@@ -190,16 +249,27 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         if (distanceToNoise <= actualHearingRange)
         {
+           
             lastHeardPosition = noisePosition;
             memoryTimer = timeToForgetSound;
 
             SetEarsAlert(true);
 
+            if (projectileTimer <= 0f && currentState != State.Attack)
+            {
+                ThrowProjectile(noisePosition);
+                projectileTimer = projectileCooldown;
+            }
+
             if (currentState != State.Attack)
             {
                 currentState = State.InvestigateSound;
                 agent.speed = investigationSpeed;
-                agent.SetDestination(lastHeardPosition);
+
+                if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+                {
+                    agent.SetDestination(lastHeardPosition);
+                }
             }
         }
     }
@@ -281,21 +351,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (attackTimer >= attackCooldown)
         {
             attackTimer = 0f;
-
-            Vector3 rayDirection = transform.forward;
-            RaycastHit hitInfo;
-
-            if (Physics.Raycast(transform.position, rayDirection, out hitInfo, 4f, playerLayer))
-            {
-                if (hitInfo.transform == PlayerTransform)
-                {
-                    IDamage dmg = hitInfo.transform.GetComponent<IDamage>();
-                    if (dmg != null)
-                    {
-                        dmg.takeDamage(attackDamage);
-                    }
-                }
-            }
+            StartCoroutine(AttackRoutine());
         }
 
         if (distanceToPlayer > attackRadius)
@@ -306,6 +362,32 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             agent.speed = investigationSpeed;
             agent.SetDestination(lastHeardPosition);
         }
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        attacking = true;
+        agent.isStopped = true;
+
+        Vector3 targetDirection = PlayerTransform.position - transform.position;
+        targetDirection.y = 0f;
+
+        if (targetDirection.sqrMagnitude > 0.01f)
+        {
+            transform.rotation = Quaternion.LookRotation(targetDirection);
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(true);
+            yield return new WaitForSeconds(attackHitboxDuration);
+            attackHitbox.SetActive(false);
+        }
+
+        agent.isStopped = false;
+        attacking = false;
     }
 
     public void takeDamage(int amount)
