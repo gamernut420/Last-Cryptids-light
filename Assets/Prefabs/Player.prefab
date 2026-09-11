@@ -164,14 +164,17 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2483160741635494670}
+  - component: {fileID: 2049368398075440799}
   - component: {fileID: 5315753236146374053}
   - component: {fileID: 944948598716401364}
   - component: {fileID: 4824105635487887755}
   - component: {fileID: 4152988610959837521}
+  - component: {fileID: 8991024000488833142}
   - component: {fileID: 8658993058510956839}
   - component: {fileID: 5866693792444434996}
   - component: {fileID: 9170469016527242597}
   - component: {fileID: -3155101964481643572}
+  - component: {fileID: 856075966814930088}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -195,6 +198,29 @@ Transform:
   - {fileID: 3210098913573034285}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2049368398075440799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063abaea4e9206b45a1495e9c3644a0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExposureSystem
+  exposureRate: 0.2
+  damagePerTick: 1
+  damageInterval: 1
+  isOutside: 0
+  healRate: 0.05
+  healPerTick: 1
+  healInterval: 1
+  pulseSpeed: 4
+  minIntensity: 0.2
+  maxIntensity: 0.4
+  exposureVolume: {fileID: 0}
 --- !u!114 &5315753236146374053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
   InteractionRange: 5
-  InteractionSize: 0.1
+  InteractionSize: 0.2
   IgnoreLayer:
     serializedVersion: 2
     m_Bits: 264
@@ -235,6 +261,7 @@ MonoBehaviour:
   Inventory: {fileID: 4824105635487887755}
   walkHearingRadius: 10
   sprintHearingRadius: 25
+  projectileManager: {fileID: 8991024000488833142}
   WeaponGrip: {fileID: 8334678730768581162}
 --- !u!114 &4824105635487887755
 MonoBehaviour:
@@ -265,6 +292,19 @@ MonoBehaviour:
   extraEnemiesPerWave: 2
   timeBetweenWaves: 5
   spawnRate: 0.5
+--- !u!114 &8991024000488833142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5e79cb29072d6744a46df89788a4f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileManager
+  DebugProjectiles: 0
 --- !u!143 &8658993058510956839
 CharacterController:
   m_ObjectHideFlags: 0
@@ -370,6 +410,33 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &856075966814930088
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7513145481605942756}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8334678730768581162
 GameObject:
   m_ObjectHideFlags: 0

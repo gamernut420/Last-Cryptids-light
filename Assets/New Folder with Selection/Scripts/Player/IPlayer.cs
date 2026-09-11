@@ -6,5 +6,9 @@ public interface IPlayer
 
     void PlayerAddItem(string itemName, int amount);
 
-    void PlayerAddWeapon(GameObject Weapon);
+    void PlayerAddItem(GameObject Item);
+
+    bool HealPlayer(int amount, bool overHeal = false);
+
+    ProjectileManager GetProjectileManager();
 }

@@ -15,12 +15,19 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuExtractionWin;
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
-    [SerializeField] TextMeshProUGUI WeaponInventory;
+    [SerializeField] GameObject ItemHotbar;
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
+
+    [Header("UI Tracking")]
+    [SerializeField] private GameObject exposurePromptObject;
+    [SerializeField] private float promptDuration;
+    private float promptTimer = 0f;
+    private bool isShowingPrompt = false;
+
 
     [HideInInspector] public int killCount = 0;
 
@@ -60,12 +67,6 @@ public class gameManager : MonoBehaviour
 
         Transform ui = transform.parent;
 
-        menuPause = ui.Find("PauseMenu")?.gameObject;
-        menuWin = ui.Find("Win Menu")?.gameObject;
-        menuLose = ui.Find("GameOverPanel")?.gameObject;
-        menuExtractionWin = ui.Find("Win Menu EX")?.gameObject;
-
-        hud = ui.Find("Hud")?.gameObject;
 
         if (hud != null)
         {
@@ -154,6 +155,19 @@ public class gameManager : MonoBehaviour
             else if (menuActive == menuPause)
             {
                 stateUnpause();
+            }
+        }
+
+        if (isShowingPrompt)
+        {
+            promptTimer -= Time.deltaTime;
+            if (promptTimer <= 0f)
+            {
+                isShowingPrompt = false;
+                if (exposurePromptObject != null)
+                {
+                    exposurePromptObject.SetActive(false);
+                }
             }
         }
     }
@@ -276,9 +290,10 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void UpdateWeaponInv(GameObject[] inv)
+    public void UpdateWeaponInv(GameObject[] inv, int slotInUse)
     {
-        WeaponInventory.text = string.Empty;
+        InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
+        
         for (int i = 0; i < inv.Length; i++)
         {
             if(inv[i] != null)
@@ -287,12 +302,35 @@ public class gameManager : MonoBehaviour
 
                 if (wep != null)
                 {
-                    WeaponInventory.text += $"{i + 1}. {wep.GetWeaponName()}\n";
+                    if(i == slotInUse)
+                    {
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
+                    }
+                    else
+                    {
+                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
+                    }
+                }
+                else
+                {
+                    IGadget gadget = inv[i].GetComponent<IGadget>();
+
+                    if(gadget != null)
+                    {
+                        if (i == slotInUse)
+                        {
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                        }
+                        else
+                        {
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                        }
+                    }
                 }
             }
             else
             {
-                WeaponInventory.text += $"{i + 1}.\n";
+                slots[i].UpdateSlot(null, null, 0, Color.gray2);
             }
         }
     }
@@ -320,6 +358,16 @@ public class gameManager : MonoBehaviour
         if (checkpointManager != null)
         {
             checkpointManager.LoadCheckpoint();
+        }
+    }
+
+    public void ShowExposurePrompt()
+    {
+        if(exposurePromptObject != null)
+        {
+            exposurePromptObject.SetActive(true);
+            promptTimer = promptDuration;
+            isShowingPrompt = true;
         }
     }
 

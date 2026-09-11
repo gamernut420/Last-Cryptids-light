@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileManager : MonoBehaviour
@@ -17,6 +16,10 @@ public class ProjectileManager : MonoBehaviour
 
         public GameObject tracer;
 
+        public GameObject projObject;
+
+        public IProjectile iproj;
+
         public Vector3 velocity;
 
         public Vector3 startPos;
@@ -24,15 +27,15 @@ public class ProjectileManager : MonoBehaviour
 
     private List<Projectile> projectiles = new List<Projectile>();
 
-    public void ShootProjectile(Vector3 _location, Quaternion _rotation, ProjectileData _projData, float _damage, float _speed)
+    public void ShootProjectile(Vector3 _location, Quaternion _rotation, float _damage, float _speed, ProjectileData _projData)
     {
         Projectile tempProjectile = new Projectile();
-
-        tempProjectile.projData = _projData;
 
         tempProjectile.damage = _damage;
 
         tempProjectile.speed = _speed;
+
+        tempProjectile.projData = _projData;
 
         tempProjectile.tracer = Instantiate(_projData.TracerPrefab, _location, _rotation);
 
@@ -45,6 +48,33 @@ public class ProjectileManager : MonoBehaviour
         projectiles.Add(tempProjectile);
     }
 
+    public void ShootObject(Vector3 _location, Quaternion _rotation, float _speed, float _gravity, float _lifeTime, IProjectile _iproj)
+    {
+        Projectile tempProjectile = new Projectile();
+
+        //create projectile data
+        ProjectileData tempData = new ProjectileData();
+
+        tempData.GravityScale = _gravity;
+
+        tempData.LifeTime = _lifeTime;
+
+        tempProjectile.projData = tempData;
+
+        //Set the rest of the data
+        tempProjectile.speed = _speed;
+
+        Vector3 foward = _rotation * Vector3.forward;
+
+        tempProjectile.velocity = foward * _speed;
+
+        tempProjectile.startPos = _location;
+
+        tempProjectile.iproj = _iproj;
+
+        projectiles.Add(tempProjectile);
+    }
+
     private void UpdateProjectiles()
     {
         for (int i = projectiles.Count - 1; i >= 0; i--)
@@ -53,7 +83,10 @@ public class ProjectileManager : MonoBehaviour
 
             Vector3 endPos = proj.startPos + (proj.velocity * Time.deltaTime);
 
-            proj.tracer.transform.position = proj.startPos;
+            if(proj.tracer != null)
+            {
+                proj.tracer.transform.position = proj.startPos;
+            }
 
             RaycastHit hit;
 
@@ -65,18 +98,28 @@ public class ProjectileManager : MonoBehaviour
             //projectile collided
             if (Physics.Linecast(proj.startPos, endPos, out hit)) 
             {
-                proj.tracer.transform.position = endPos;
+                if (proj.tracer != null)
+                {
+                    proj.tracer.transform.position = endPos;
+                }
 
                 if (DebugProjectiles)
                 {
                     Debug.Log(hit.collider.gameObject.name);
                 }
 
-                IDamage idmg = hit.collider.GetComponent<IDamage>();
-
-                if(idmg != null)
+                if(proj.iproj != null)
                 {
-                    idmg.takeDamage((int)proj.damage);
+                    proj.iproj.Impact(hit);
+                }
+                else
+                {
+                    IDamage idmg = hit.collider.GetComponent<IDamage>();
+
+                    if (idmg != null)
+                    {
+                        idmg.takeDamage((int)proj.damage);
+                    }
                 }
 
                 RemoveProjectile(i);
@@ -101,6 +144,11 @@ public class ProjectileManager : MonoBehaviour
                 proj.projData.LifeTime -= Time.deltaTime;
 
                 projectiles[i] = proj;
+
+                if(proj.iproj != null)
+                {
+                    proj.iproj.UpdatePos(endPos);
+                }
             }
         }
     }
