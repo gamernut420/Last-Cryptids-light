@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8542382801371157979}
   - component: {fileID: 9155393017810543765}
   - component: {fileID: 3328295698613764061}
+  - component: {fileID: 184645500026970742}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -27,13 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4774182061805828916}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.00041175238, z: -0, w: 0.99999994}
-  m_LocalPosition: {x: -4.475006, y: -0.14000034, z: -0.049942017}
-  m_LocalScale: {x: 9, y: 4, z: 0.1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.38, y: -0.14000034, z: 0.16}
+  m_LocalScale: {x: 4.5, y: 4, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7508775477315547400}
-  m_LocalEulerAnglesHint: {x: 0, y: 0.047, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8542382801371157979
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -112,6 +113,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &184645500026970742
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4774182061805828916}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 1, z: 2.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &8231310867093189500
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,8 +203,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10.086212, y: 5.093668, z: 1}
-  m_Center: {x: -4.2334137, y: -0.2840004, z: 0}
+  m_Size: {x: 4.9605255, y: 5.093668, z: 0.40818787}
+  m_Center: {x: -2.2994308, y: -0.2840004, z: 0.258873}
 --- !u!82 &3055865381258638408
 AudioSource:
   m_ObjectHideFlags: 0
@@ -197,7 +214,7 @@ AudioSource:
   m_GameObject: {fileID: 8231310867093189500}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 7188904818081384389, guid: af87610b33fc88146903fc286a1a3d2e, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
