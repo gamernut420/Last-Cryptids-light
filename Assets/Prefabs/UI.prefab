@@ -1494,6 +1494,7 @@ MonoBehaviour:
   playerScript: {fileID: 0}
   cameraScript: {fileID: 0}
   ambiencePlaylist: {fileID: 0}
+  pauseMenuMusic: {fileID: 0}
   isPaused: 0
   isExtracting: 0
 --- !u!114 &6966736145444322220
@@ -2403,7 +2404,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97933044a9dc2147ab4d218917bd994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
-  activeObjectives: []
+  activeObjectives:
+  - {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
+  - {fileID: 11400000, guid: ab761f88137f666439a69808e6b2cc1f, type: 2}
+  - {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+  - {fileID: 11400000, guid: 7fd3dd0021e0b1a479f1a1c23fb5777b, type: 2}
+  - {fileID: 11400000, guid: ca5f08c396c98ec4394337b57108168a, type: 2}
+  - {fileID: 11400000, guid: 1a012f1c93ba2a44eafefc836c8f3ad9, type: 2}
+  - {fileID: 11400000, guid: 043e98f878af08f4c9cc22aecb157b11, type: 2}
+  - {fileID: 11400000, guid: e8475490310a1f546b434985ff8d6f95, type: 2}
+  - {fileID: 11400000, guid: 57d9c4b86ce3e864b8a6cfe3697d9501, type: 2}
   currentCompassTarget: {fileID: 0}
 --- !u!1 &2339145441169819559
 GameObject:
@@ -4922,7 +4932,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2640068699162174154
 Transform:
   m_ObjectHideFlags: 0
@@ -5292,10 +5302,10 @@ RectTransform:
   - {fileID: 7855572484309281653}
   m_Father: {fileID: 4607604006872540332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 100, y: -80}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5966473776357138884
 CanvasRenderer:
