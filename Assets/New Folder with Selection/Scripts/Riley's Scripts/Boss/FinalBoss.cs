@@ -17,6 +17,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
 
+    [Header("Objective")]
+    [SerializeField] private ObjectiveData bossObjective;
+
     [Header("Health")]
     [SerializeField] private float maxHP = 1000f;
     private float currentHP;
@@ -24,6 +27,10 @@ public class FinalBoss : MonoBehaviour, IDamage
     [Header("Boss Phase")]
     [SerializeField] private float phase2HP = 500f;
     [SerializeField] private float phase3HP = 200f;
+    [SerializeField] private float phase2TransitionDelay = 5f;
+
+    private bool phase2Transitioning;
+    private bool phase2Triggered;
 
     [Header("Movement")]
     [SerializeField] private NavMeshAgent agent;
@@ -56,13 +63,24 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [Header("Enemy Summoning")]
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private float spawnRadius = 30f;
+    [SerializeField] private float minSpawnDistance = 5f;
+
+    [SerializeField] private int maxEnemiesAlive = 6;
     [SerializeField] private int enemiesPerSummon = 2;
+
+    [SerializeField] private float summonCooldown = 10f;
+    [SerializeField] private LayerMask groundLayer;
+
+    private List<GameObject> spawnedEnemies = new List<GameObject>();
+    private bool waitingToSummon;
+    private bool maxEnemies;
+    private float summonTimer;
 
     [Header("Teleporting")]
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
-    [SerializeField] private float teleportCooldown = 20;
+    [SerializeField] private float teleportCooldown = 20f;
     
     private float teleportTimer;
 
@@ -90,7 +108,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP = phase2HP;
+        currentHP = maxHP;
 
         if (agent == null)
         {
@@ -103,8 +121,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
         agent.speed = phase1Speed;
-
-        
     }
 
     // Update is called once per frame
@@ -120,6 +136,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         energyFieldTimer -= Time.deltaTime;
 
         CheckPhase();
+        UpdateSummonTimer();
+        if (spawnedEnemies.Count >= maxEnemiesAlive)
+        {
+            maxEnemies = true;
+        }
 
         switch (currentPhase)
         {
@@ -128,6 +149,9 @@ public class FinalBoss : MonoBehaviour, IDamage
                 break;
             case BossPhase.Phase2:
                 Phase2Behavior();
+                break;
+            case BossPhase.Phase3:
+                Phase3Behavior();
                 break;
         }
     }
@@ -174,6 +198,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
         else if (currentHP <= phase2HP)
         {
+            if (!phase2Triggered)
+            {
+                StartCoroutine(Phase2Transition());
+            }
             currentPhase = BossPhase.Phase2;
         }
         else
@@ -200,9 +228,79 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private IEnumerator Phase2Transition()
+    {
+        phase2Transitioning = true;
+        phase2Triggered = true;
+
+        Debug.Log("Rift Warden is syphoning the power from the rift machines!");
+
+        agent.isStopped = true;
+
+        yield return new WaitForSeconds(phase2TransitionDelay);
+
+        if (PlayerTransform == null)
+        {
+            phase2Transitioning = false;
+            agent.isStopped = false;
+            yield break;
+        }
+
+        Debug.Log("Rift Power activated! Boss is teleporting");
+
+        TeleportNearPlayer();
+
+        meleeTimer = 0f;
+        rangedTimer = 0f;
+        energyFieldTimer = 0f;
+        teleportTimer = teleportCooldown;
+
+        agent.isStopped = false;
+        phase2Transitioning = false;
+    }
+
     private void Phase2Behavior()
     {
+        if (phase2Transitioning) return;
+
         agent.speed = phase2Speed;
+        rangedAttackCooldown = 10f;
+
+        ChasePlayer();
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        float teleportChance = Random.Range(0, 100);
+
+        if (teleportChance < 10)
+        {
+            CheckTeleport();
+        }
+
+        if (energyFieldTimer <= 0f)
+        {
+            StartCoroutine(EnergyFieldAttack());
+            energyFieldTimer = energyFieldCooldown;
+        }
+
+        if (distanceToPlayer <= 5f)
+        {
+            MeleeAttack();
+        }
+        else
+        {
+            RangedAttack();
+        }
+    }
+
+    private void Phase3Behavior()
+    {
+        agent.speed = phase3Speed;
+        attackCooldown *= 0.25f;
+        energyFieldCooldown *= 0.2f;
+
+        Debug.Log("The Rift Warden is enraged and going Beserk!");
+
         ChasePlayer();
 
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
@@ -285,9 +383,55 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    //SUMMON ENEMIES
+    private void SummonEnemies()
+    {
+        CleanEnemyList();
+
+        if (spawnedEnemies.Count >= maxEnemiesAlive) return;
+
+
+        if (waitingToSummon) return;
+
+        int enemiesToSpawn = Mathf.Min(enemiesPerSummon, maxEnemiesAlive - spawnedEnemies.Count);
+        for (int i = 0; i < enemiesToSpawn; i++)
+        {
+            SpawnEnemy();
+        }
+    }
+
+    private void SpawnEnemy()
+    {
+        Vector2 randomCircle = Random.insideUnitCircle.normalized * Random.Range(minSpawnDistance, spawnRadius);
+
+        Vector3 spawnPosition = new Vector3(transform.position.x + randomCircle.x, transform.position.y + 5f, transform.position.z + randomCircle.y);
+
+        RaycastHit hit;
+        if (Physics.Raycast(spawnPosition, Vector3.down, out hit, 30f, groundLayer))
+        {
+            Vector3 directionToTarget = transform.position - hit.point;
+            directionToTarget.y = 0;
+            Quaternion spawnRotation = directionToTarget != Vector3.zero
+                ? Quaternion.LookRotation(directionToTarget)
+                : Quaternion.identity;
+
+            GameObject newEnemy = Instantiate(enemyPrefab, hit.point, spawnRotation);
+
+            BasicEnemy enemyAI = newEnemy.GetComponent<BasicEnemy>();
+            if (enemyAI != null)
+            {
+                enemyAI.SetBossEnemy();
+            }
+
+            spawnedEnemies.Add(newEnemy);
+        }
+    }
+
     public void takeDamage(int amount)
     {
         if (currentPhase == BossPhase.Dead) return;
+
+        if (phase2Transitioning) return;
 
         currentHP -= amount;
         Debug.Log("Rift Boss Health:" + currentHP + "/" + maxHP);
@@ -310,11 +454,56 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private void CleanEnemyList()
+    {
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            if (spawnedEnemies[i] == null)
+            {
+                spawnedEnemies.RemoveAt(i);
+            }
+        }
+    }
+
+    private void UpdateSummonTimer()
+    {
+        CleanEnemyList();
+
+        if (spawnedEnemies.Count > 0 && maxEnemies)
+        {
+            waitingToSummon = false;
+            summonTimer = summonCooldown;
+            return;
+        }
+
+        if (!waitingToSummon)
+        {
+            waitingToSummon = true;
+            summonTimer = summonCooldown;
+            maxEnemies = false;
+
+            Debug.Log("All summoned enemies defeated. Boss will summon again in " + summonCooldown + " seconds.");
+        }
+
+        summonTimer -= Time.deltaTime;
+
+        if (summonTimer <= 0)
+        {
+            waitingToSummon = false;
+            Debug.Log("Rift Warden is summoning more enemies!");
+            SummonEnemies();
+        }
+    }
+
     private void Die()
     {
         currentPhase = BossPhase.Dead;
-
         agent.isStopped = true;
+        
+        if (bossObjective != null)
+        {
+            ObjectiveManager.Instance.CompleteObjective(bossObjective.objectiveID);
+        }
 
         Debug.Log("Rift Boss Defeated!");
 
@@ -362,7 +551,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
         BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
         Transform projectileVisual = newProjectile.transform.Find("RiftBeam Visual");
-        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
+        BossProjectileCollision sonicBoom = newProjectile.GetComponent<BossProjectileCollision>();
 
         if (hitboxCollider == null)
         {

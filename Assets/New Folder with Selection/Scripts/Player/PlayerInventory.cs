@@ -3,29 +3,44 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    // Stores item amounts
-    Dictionary<string, int> items = new Dictionary<string, int>();
+<<<<<<< HEAD:Assets/New Folder with Selection/Scripts/Player/PlayerInventory.cs
+=======
+    public static PlayerInventory Instance { get; private set; }
 
-    public static System.Action<string> UpdateInventoryText;
+>>>>>>> 6e12d616291331462449f8f33cd9aabbb51fb23d:Assets/Scripts/Player/PlayerInventory.cs
+    // Stores item amounts
+    [System.NonSerialized]
+    public Dictionary<ScriptableItem, int> items = new Dictionary<ScriptableItem, int>();
+
+    [Header("UI Slots Reference")]
+    public InventorySlotUI[] inventorySlots;
+
+    private void Awake()
+    {
+        if(Instance != null && Instance!=this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     // Adds items
-    public void AddItem(string itemName, int amount)
+    public void AddItem(ScriptableItem itemData, int amount)
     {
-        if (items.ContainsKey(itemName))
-        {
-            items[itemName] += amount;
-        }
-        else
-        {
-            items.Add(itemName, amount);
-        }
+        if (itemData == null) return;
 
-        Debug.Log(itemName + ": " + items[itemName]);
+        if(items.ContainsKey(itemData))
+            items[itemData] += amount;
+        else
+            items.Add(itemData, amount);
+
+        Debug.Log(itemData + ": " + items[itemData]);
         UpdateUI();
     }
 
     // Checks for item
-    public bool HasItem(string itemName)
+    public bool HasItem(ScriptableItem itemName)
     {
         return items.ContainsKey(itemName);
     }
@@ -44,11 +59,11 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // Gets item amount
-    public int GetAmount(string itemName)
+    public int GetAmount(ScriptableItem itemData)
     {
-        if (items.ContainsKey(itemName))
+        if (items.ContainsKey(itemData))
         {
-            return items[itemName];
+            return items[itemData];
         }
 
         return 0;
@@ -83,19 +98,31 @@ public class PlayerInventory : MonoBehaviour
         return true;
     }
 
+
     // Update inventory UI in GM
     void UpdateUI()
     {
-        string tempText = string.Empty;
-
-        foreach (string item in items.Keys)
+        int i = 0;
+       foreach(KeyValuePair<ScriptableItem, int> kvp in items)
         {
-            tempText += item + ": " + GetAmount(item) + "\n";
+            if(i < inventorySlots.Length)
+            {
+                inventorySlots[i].gameObject.SetActive(true);
+                inventorySlots[i].UpdateSlot(kvp.Key.itemIcon, kvp.Key.itemName, kvp.Value);
+                i++;
+            }
         }
 
+<<<<<<< HEAD:Assets/New Folder with Selection/Scripts/Player/PlayerInventory.cs
         if (UpdateInventoryText != null)
+=======
+       for(int j = i; j < inventorySlots.Length; j++) 
+>>>>>>> 6e12d616291331462449f8f33cd9aabbb51fb23d:Assets/Scripts/Player/PlayerInventory.cs
         {
-            UpdateInventoryText(tempText);
+            inventorySlots[j].gameObject.SetActive(false);
+            
+
         }
+       
     }
 }

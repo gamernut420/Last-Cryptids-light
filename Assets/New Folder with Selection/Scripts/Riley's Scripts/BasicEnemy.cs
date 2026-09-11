@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using Unity.Jobs;
 
 public class BasicEnemy : MonoBehaviour, IDamage
 {
-    public enum AIType { Melee, Range };
+    public enum AIType 
+    { 
+        Melee, 
+        Range 
+    }
 
     [Header("AI Type")]
     [SerializeField] private AIType aiType;
@@ -77,6 +80,12 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float speed;
 
     Color colorOrig;
+    private bool bossEnemy = false;
+
+    public void SetBossEnemy()
+    {
+        bossEnemy = true;
+    }
 
     private Transform PlayerTransform
     {
@@ -152,7 +161,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         CalculatePlayerVelocity();
 
-        if (CanSeePlayer() || aggroTimer > 0f)
+        if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
@@ -288,6 +297,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             BackAwayFromPlayer();
         }
+        else if (distanceToPlayer > rangedAttackRange - minimumRangedDistance)
+        {
+            agent.SetDestination(PlayerTransform.position);
+        }
         else
         {
             StopMovement();
@@ -360,8 +373,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             rb.linearVelocity = launchVelocity;
         }
-
-        Destroy(thrownObj, projectileLifetime);
+        if (thrownObj != null)
+        {
+            Destroy(thrownObj, projectileLifetime);
+        }
     }
 
     private void CalculatePlayerVelocity()
