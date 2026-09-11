@@ -92,7 +92,6 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
-    public bool bossKilled = false;
 
     private Transform PlayerTransform
     {
