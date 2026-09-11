@@ -223,7 +223,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             rb.linearVelocity = launchVelocity;
         }
 
-        Destroy(thrownObj, projectileLifetime);
+        if (thrownObj != null)
+        {
+            Destroy(thrownObj, projectileLifetime);
+        }
     }
 
     void TrackPlayerMovement()

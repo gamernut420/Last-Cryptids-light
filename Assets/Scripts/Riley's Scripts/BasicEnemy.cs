@@ -373,8 +373,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             rb.linearVelocity = launchVelocity;
         }
-
-        Destroy(thrownObj, projectileLifetime);
+        if (thrownObj != null)
+        {
+            Destroy(thrownObj, projectileLifetime);
+        }
     }
 
     private void CalculatePlayerVelocity()

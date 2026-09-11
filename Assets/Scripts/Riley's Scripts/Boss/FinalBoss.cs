@@ -551,7 +551,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
         BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
         Transform projectileVisual = newProjectile.transform.Find("RiftBeam Visual");
-        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
+        BossProjectileCollision sonicBoom = newProjectile.GetComponent<BossProjectileCollision>();
 
         if (hitboxCollider == null)
         {
