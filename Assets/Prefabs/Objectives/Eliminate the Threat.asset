@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
   m_Name: Eliminate the Threat
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
+  prerequisiteObjective: {fileID: 11400000, guid: e8475490310a1f546b434985ff8d6f95, type: 2}
+  isUnlocked: 0
   objectiveID: primary_kill_boss
   objectiveTitle: Defeat the Final Boss
   objectiveDescription: Track down and eliminate the major threat inside the arena.
   targetLocation: {fileID: 0}
-  isCompleted: 1
+  isCompleted: 0
