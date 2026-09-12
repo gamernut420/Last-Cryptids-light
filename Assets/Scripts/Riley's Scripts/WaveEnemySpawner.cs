@@ -33,6 +33,13 @@ public class WaveEnemySpawner : MonoBehaviour
         isSpawningActive = true;
         int timePassed = Mathf.FloorToInt(totalElapsedTime / timeBetweenWaves);
         int currentWaveCount = spawnCount + (timePassed * extraEnemiesPerWave);
+        //added by sean
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
+        {
+            currentWaveCount = difficultyManager.GetScaledEnemyCount(currentWaveCount);
+        }
+        //end added by sean
         NavMeshTriangulation navMeshData = NavMesh.CalculateTriangulation();
 
         if (navMeshData.indices.Length == 0)

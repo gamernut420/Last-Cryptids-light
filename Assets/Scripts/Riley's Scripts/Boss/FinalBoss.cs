@@ -108,6 +108,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //added by sean
+        ApplyDifficultyScaling();
+        //end added by sean
         currentHP = maxHP;
 
         if (agent == null)
@@ -122,6 +125,26 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         agent.speed = phase1Speed;
     }
+
+    //added by sean
+    public void ApplyDifficultyScaling()
+    {
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager == null)
+        {
+            return;
+        }
+        maxHP = difficultyManager.GetScaledEnemyHealth(maxHP);
+        phase2HP = difficultyManager.GetScaledEnemyHealth(phase2HP);
+        phase3HP = difficultyManager.GetScaledEnemyHealth(phase3HP);
+        phase1Speed = difficultyManager.GetScaledEnemySpeed(phase1Speed);
+        phase2Speed = difficultyManager.GetScaledEnemySpeed(phase2Speed);
+        phase3Speed = difficultyManager.GetScaledEnemySpeed(phase3Speed);
+        maxEnemiesAlive = difficultyManager.GetScaledEnemyCount(maxEnemiesAlive);
+        enemiesPerSummon = difficultyManager.GetScaledEnemyCount(enemiesPerSummon);
+        energyFieldsPerAttack = difficultyManager.GetScaledEnemyCount(energyFieldsPerAttack);
+    }
+    //end added by sean
 
     // Update is called once per frame
     void Update()
@@ -633,4 +656,6 @@ public class FinalBoss : MonoBehaviour, IDamage
             yield return new WaitForSeconds(0.25f);
         }
     }
+
+    
 }
