@@ -228,7 +228,15 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
                 currentSpeed = Random.Range(straferMinSpeed, straferMaxSpeed);
                 break;
         }
-
+        //added by sean
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
+        {
+            maxHP = difficultyManager.GetScaledEnemyHealth(maxHP);
+            currentSpeed = difficultyManager.GetScaledEnemySpeed(currentSpeed);
+            attackDamage = difficultyManager.GetScaledEnemyDamage(attackDamage);
+        }
+        // end added by sean
         currentHP = maxHP;
 
         if (agent != null)

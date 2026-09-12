@@ -126,6 +126,14 @@ public class BasicEnemy : MonoBehaviour, IDamage
             maxHP = rangeMaxHP;
             speed = RmoveSpeed;
         }
+        //added by sean
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
+        {
+            maxHP = difficultyManager.GetScaledEnemyHealth(maxHP);
+            speed = difficultyManager.GetScaledEnemySpeed(speed);
+        }
+        //end added by sean
 
         currentHP = maxHP;
 
