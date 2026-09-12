@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,10 +8,11 @@ public class EnemyAI : MonoBehaviour, IDamage
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private LayerMask playerLayer;
     [SerializeField] Renderer model;
     private Material modelMat;
 
-    [Header("Stats")]
+    [Header("Health")]
     [SerializeField] private int maxHP = 25;
     private int currentHP;
 
@@ -26,6 +29,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private Camera playerCamera;
     [Tooltip("Half of the player's field of view. 45 = 90 degrees total FOV.")]
     [SerializeField] private float playerViewAngle = 45f;
+    [SerializeField] private float playerViewDistance = 100f;
 
     [SerializeField] private LayerMask sightBlocker;
 
@@ -40,19 +44,32 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private float hideDistance = 1.5f;
     [Tooltip("Maximum distance to search for nearby cover.")]
     [SerializeField] private float coverSearchDistance = 15f;
+    [SerializeField] private float coverOffset = 1.5f;
     [Tooltip("How far to search when finding a valid NavMesh position.")]
     [SerializeField] private float navMeshSearchDistance = 4f;
+
+    [Header("Attack")]
+    [SerializeField] private GameObject attackHitbox;
+    [SerializeField] private float attackRAnge = 2.5f;
+    [SerializeField] private float attackCooldown = 5f;
+    [SerializeField] private float attackWindup = 0.25f;
+    [SerializeField] private float attackHitboxDuration = 0.5f;
+    [SerializeField] private float attackRetreatDistance = 15f;
 
     private enum StalkerState
     {
         Stalking,
-        Hiding
+        Hiding,
+        Attacking
     }
 
     private StalkerState currentState = StalkerState.Stalking;
     
     private Vector3 currentStalkPosition;
     private float positionTimer;
+    private float attackTimer;
+
+    private bool attacking = false;
     private bool hasStalkPosition;
 
     private Transform PlayerTransform
@@ -82,6 +99,11 @@ public class EnemyAI : MonoBehaviour, IDamage
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
+
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+        }
 
         if (playerCamera == null)
         {
@@ -125,60 +147,75 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null || playerCamera == null) return;
 
+        UpdateTimers();
+
         bool playerIsMoving = IsPlayerMoving();
         bool playerCanSeeMe = IsPlayerLookingAtMe();
 
-        if (playerCanSeeMe)
+        if (playerCanSeeMe && !attacking)
         {
+            Debug.Log("Player is looking at stalker");
             if (!wasVisible)
             {
-                HandleBeingSeen();
+                EnterHiding();
             }
-            agent.isStopped = false;
+            
             wasVisible = false;
+            agent.isStopped = false;
+            lastPlayerPosition = PlayerTransform.position;
             playerWasMoving = playerIsMoving;
             return;
         }
 
         wasVisible = false;
-
+        
         if (currentState == StalkerState.Hiding)
         {
-            if (!ReachedStalkPosition())
-            {
-                agent.isStopped = false;
-                playerWasMoving = playerIsMoving;
-                return;
-            }
+            HandleHiding(playerIsMoving);
+            lastPlayerPosition = PlayerTransform.position;
+            playerWasMoving = playerIsMoving;
+            return;
+        }
+        
+        if (currentState == StalkerState.Attacking)
+        {
+            lastPlayerPosition = PlayerTransform.position;
+            playerWasMoving = playerIsMoving;
+            return;
+        }
 
-            agent.isStopped = true;
-
-            if (playerIsMoving)
-            {
-                currentState = StalkerState.Stalking;
-                hasStalkPosition = false;
-                positionTimer = positionUpdateTime;
-                agent.isStopped = false;
-            }
-
+        if (!attacking && CanAttack())
+        {
+            StartCoroutine(AttackRoutine());
+            lastPlayerPosition = PlayerTransform.position;
             playerWasMoving = playerIsMoving;
             return;
         }
 
         HandleStalking(playerIsMoving);
+        lastPlayerPosition = PlayerTransform.position;
         playerWasMoving = playerIsMoving;
     }
 
-    private void HandleBeingSeen()
+    private void UpdateTimers()
     {
-        currentState = StalkerState.Hiding;
-        hasStalkPosition = false;
-        positionTimer = 0f;
-        FindHidePosition();
+        if (attackTimer > 0f)
+            attackTimer -= Time.deltaTime;
+
+        if (positionTimer > 0f)
+            positionTimer -= Time.deltaTime;
     }
 
     private void HandleStalking(bool playerIsMoving)
     {
+        if (!playerIsMoving)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
+        agent.isStopped = false;
+        positionTimer -= Time.deltaTime;
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
         if (distanceToPlayer < minStalkDistance)
@@ -190,30 +227,20 @@ public class EnemyAI : MonoBehaviour, IDamage
         if (distanceToPlayer > maxStalkDistance)
         {
             FindNewStalkPosition();
+            positionTimer = positionUpdateTime;
             return;
         }
 
-        if (!playerIsMoving)
+        if (positionTimer <= 0f || !hasStalkPosition)
         {
-            agent.isStopped = true;
-            return;
-        }
-
-        if (playerIsMoving && !playerWasMoving)
-        {
-            agent.isStopped = false;
-            hasStalkPosition = false;
+            FindNewStalkPosition();
             positionTimer = positionUpdateTime;
         }
 
-        agent.isStopped = false;
-        positionTimer += Time.deltaTime;
-
-        if (positionTimer >= positionUpdateTime || !hasStalkPosition || ReachedStalkPosition())
+        if (hasStalkPosition)
         {
-            FindNewStalkPosition();
+            agent.SetDestination(currentStalkPosition);
         }
-
     }
 
     private void FindNewStalkPosition()
@@ -298,10 +325,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         Vector3 direction = transform.position - PlayerTransform.position;
         direction.y = 0f;
         if (direction.sqrMagnitude < 0.01f)
-        {
-            direction = Random.insideUnitCircle;
-            direction.y = 0f;
-        }
+            direction = -PlayerTransform.forward;
 
         direction.Normalize();
 
@@ -313,12 +337,45 @@ public class EnemyAI : MonoBehaviour, IDamage
             currentStalkPosition = hit.position;
             hasStalkPosition = true;
             agent.isStopped = false;
-            agent.SetDestination(hit.position);
+            agent.SetDestination(currentStalkPosition);
         }
+    }
+
+    private void EnterHiding()
+    {
+        currentState = StalkerState.Hiding;
+        hasStalkPosition = false;
+        positionTimer = 0f;
+        FindHidePosition();
+    }
+
+    private void HandleHiding(bool playerIsMoving)
+    {
+        if (!ReachedStalkPosition())
+        {
+            agent.isStopped = false;
+            playerWasMoving = playerIsMoving;
+            return;
+        }
+
+        agent.isStopped = true;
+
+        if (playerIsMoving)
+        {
+            currentState = StalkerState.Stalking;
+            hasStalkPosition = false;
+            positionTimer = positionUpdateTime;
+            agent.isStopped = false;
+        }
+
+        playerWasMoving = playerIsMoving;
     }
 
     private void FindHidePosition()
     {
+        if (IsPlayerLookingAtMe() == false)
+            return;
+
         Vector3 bestPosition = transform.position;
         float bestDistance = Mathf.Infinity;
 
@@ -367,10 +424,6 @@ public class EnemyAI : MonoBehaviour, IDamage
             agent.isStopped = false;
             agent.SetDestination(currentStalkPosition);
         }
-        else
-        {
-            MoveAwayFromPlayer();
-        }
     }
 
     private bool PlayerCanSeePosition(Vector3 position)
@@ -387,7 +440,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         if (angle > playerViewAngle) return false;
 
-        if(Physics.Raycast(playerCamera.transform.position, direction, distance, sightBlocker))
+        if (Physics.Raycast(playerCamera.transform.position, direction, distance, sightBlocker))
         {
             return false;
         }
@@ -396,19 +449,23 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private bool IsPlayerLookingAtMe()
     {
-        Vector3 directionToStalker = transform.position - playerCamera.transform.position;
+        if (playerCamera == null)
+            return false;
+
+        Vector3 target = transform.position + Vector3.up * 1f;
+        Vector3 directionToStalker = target - playerCamera.transform.position;
         float distance = directionToStalker.magnitude;
 
-        if (distance <= 0.01f) return false;
+        if (distance > playerViewDistance) 
+            return false;
 
-        directionToStalker.Normalize();
+        float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker.normalized);
 
-        float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker);
-
-        if (angle > playerViewAngle) return false;
+        if (angle > playerViewAngle) 
+            return false;
 
         RaycastHit hit;
-        if (Physics.Raycast(playerCamera.transform.position, directionToStalker, out hit, distance, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(playerCamera.transform.position, directionToStalker.normalized, out hit, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             if (hit.transform == transform || hit.transform.IsChildOf(transform))
             {
@@ -430,10 +487,100 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private bool ReachedStalkPosition()
     {
-        if (!agent.hasPath) return true;
+        if (!hasStalkPosition) return true;
         if (agent.pathPending) return false;
 
-        return agent.remainingDistance <= agent.stoppingDistance + 1f;
+        return agent.remainingDistance <= agent.stoppingDistance + 0.5f;
+    }
+
+    private bool CanAttack()
+    {
+        if (attacking) return false;
+
+        if (attackTimer > 0) return false;
+
+        if (PlayerTransform == null) return false;
+
+        float distance = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distance > attackRAnge) return false;
+
+        if (!CheckLineOfSight()) return false;
+
+        if (IsPlayerLookingAtMe()) return false;
+
+        return true;
+    }
+
+    private bool CheckLineOfSight()
+    {
+        Vector3 origin = transform.position + Vector3.up;
+        Vector3 target = PlayerTransform.position + Vector3.up;
+        Vector3 direction = target - origin;
+        float distance = direction.magnitude;
+
+        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, distance, playerLayer))
+            return hit.transform == PlayerTransform || hit.transform.IsChildOf(PlayerTransform);
+
+        return false;
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        attacking = true;
+        currentState = StalkerState.Attacking;
+        agent.isStopped = true;
+
+        FacePlayer();
+
+        yield return new WaitForSeconds(attackWindup);
+
+        if (PlayerTransform == null)
+        {
+            FinishAttack();
+            yield break;
+        }
+
+        FacePlayer();
+
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(true);
+
+            yield return new WaitForSeconds(attackHitboxDuration);
+
+            attackHitbox.SetActive(false);
+        }
+
+        attackTimer = attackCooldown;
+        FindHidePosition();
+        currentState = StalkerState.Hiding;
+        attacking = false;
+    }    
+
+    private void FacePlayer()
+    {
+        if (PlayerTransform == null) return;
+
+        Vector3 direction = PlayerTransform.position - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = targetRotation;
+        }
+    }
+
+    private void FinishAttack()
+    {
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+
+        attackTimer = attackCooldown;
+        attacking = false;
+        currentState = StalkerState.Hiding;
+        FindHidePosition();
     }
 
     public void takeDamage(int amount)
@@ -442,8 +589,17 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         if (currentHP <= 0)
         {
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+
+        StopAllCoroutines();
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
