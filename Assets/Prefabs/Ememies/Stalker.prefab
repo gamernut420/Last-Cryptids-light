@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 112.04426, y: 1, z: 112.14179}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4422699303167314290}
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Bits: 8
   model: {fileID: 8735827518179565160}
   maxHP: 50
-  minStalkDistance: 20
+  minStalkDistance: 10
   maxStalkDistance: 40
   stalkSpeed: 8
   positionUpdateTime: 5
@@ -67,9 +67,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   playerMovementThreshold: 0.01
-  hideDistance: 1.5
+  hideDistance: 4
   coverSearchDistance: 15
-  coverOffset: 1.5
+  coverOffset: 3
   navMeshSearchDistance: 4
   attackHitbox: {fileID: 4699368421987932845}
   attackRAnge: 2.5

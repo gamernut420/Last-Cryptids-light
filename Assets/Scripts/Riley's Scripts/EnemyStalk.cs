@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] Renderer model;
     private Material modelMat;
+    Color colorOrig;
 
     [Header("Health")]
     [SerializeField] private int maxHP = 25;
@@ -116,6 +117,13 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
 
         lastPlayerPosition = PlayerTransform.position;
+
+        if (model != null)
+        {
+            modelMat = model.material;
+            colorOrig = modelMat.color;
+            modelMat.EnableKeyword("_EMMISSION");
+        }
     }
 
     /*void HearNoise(Vector3 noiseLocation, float noiseRadius)
@@ -155,12 +163,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         if (playerCanSeeMe && !attacking)
         {
             Debug.Log("Player is looking at stalker");
-            if (!wasVisible)
+            if (!wasVisible || ReachedStalkPosition())
             {
                 EnterHiding();
             }
             
-            wasVisible = false;
+            wasVisible = true;
             agent.isStopped = false;
             lastPlayerPosition = PlayerTransform.position;
             playerWasMoving = playerIsMoving;
@@ -171,7 +179,8 @@ public class EnemyAI : MonoBehaviour, IDamage
         
         if (currentState == StalkerState.Hiding)
         {
-            HandleHiding(playerIsMoving);
+            if (!IsCameraLookingAtAI())
+                HandleHiding(playerIsMoving);
             lastPlayerPosition = PlayerTransform.position;
             playerWasMoving = playerIsMoving;
             return;
@@ -426,6 +435,17 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
 
+    private bool IsCameraLookingAtAI()
+    {
+        if (playerCamera == null)
+            return false;
+
+        Vector3 directionToAI = (transform.position - playerCamera.transform.position).normalized;
+        float dot = Vector3.Dot(playerCamera.transform.forward, directionToAI);
+
+        return dot > 0.5f;
+    }
+
     private bool PlayerCanSeePosition(Vector3 position)
     {
         Vector3 direction = position + Vector3.up - playerCamera.transform.position;
@@ -585,12 +605,25 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
+        if (currentHP <= 0) return;
+
         currentHP -= amount;
+        Debug.Log($"{gameObject.name} took {amount} damage. HP: {currentHP} / {maxHP}");
+        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
             Die();
         }
+    }
+
+    IEnumerator flashRed()
+    {
+        modelMat.color = Color.red;
+        modelMat.SetColor("_EmissionColor", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        modelMat.color = colorOrig;
+        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     private void Die()
