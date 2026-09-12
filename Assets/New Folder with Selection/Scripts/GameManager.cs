@@ -19,6 +19,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
     [SerializeField] GameObject ShopUI;
+    [SerializeField] GameObject UpgradeUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
@@ -399,5 +400,19 @@ public class gameManager : MonoBehaviour
         ShopUI.SetActive(show);
 
         ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
+    }
+
+    public void ShowUpgradeUI(bool show)
+    {
+        if (show)
+        {
+            statePause();
+        }
+        else
+        {
+            stateUnpause();
+        }
+
+        UpgradeUI.SetActive(show);
     }
 }
