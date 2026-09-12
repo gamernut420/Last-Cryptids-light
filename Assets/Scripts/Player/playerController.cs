@@ -587,4 +587,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         points += ammount;
     }
+
+    public GameObject[] GetPlayerHotbar()
+    {
+        return hotbar;
+    }
 }

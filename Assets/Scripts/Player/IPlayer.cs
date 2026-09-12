@@ -14,5 +14,7 @@ public interface IPlayer
 
     void ModifyPlayerFunds(int ammount);
 
+    GameObject[] GetPlayerHotbar();
+
     ProjectileManager GetProjectileManager();
 }
