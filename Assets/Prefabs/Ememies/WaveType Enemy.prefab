@@ -261,6 +261,7 @@ Transform:
   m_Children:
   - {fileID: 6520200769010305348}
   - {fileID: 5985281520273612958}
+  - {fileID: 393171509440898546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1289633720426159657
@@ -285,23 +286,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_WaveType
   currentType: 0
   model: {fileID: 5647786696481377497}
+  attackHitbox: {fileID: 0}
   playerTag: Player
-  beaconTag: Beacon
   attackCooldown: 1.5
   attackRange: 3
-  attackDamage: 2
+  attackWindup: 0.2
+  attackHitboxDuration: 0.5
   playerAggroRadius: 8
-  tankyWeight: 25
-  fastWeight: 45
-  straferWeight: 30
-  tankMaxSpeed: 2
-  tankMinSpeed: 1
-  tankMaxHP: 10
-  tankMinHP: 8
-  fastMaxSpeed: 7
-  fastMinSpeed: 5
-  fastMaxHP: 5
-  fastMinHP: 3
   straferMaxSpeed: 4
   straferMinSpeed: 3
   straferMaxHP: 8
@@ -309,7 +300,6 @@ MonoBehaviour:
   maxHP: 0
   currentHP: 0
   currentSpeed: 0
-  currentTarget: {fileID: 0}
   audStepsVol: 1
   leftEyeRenderer: {fileID: 1567619509603580662}
   rightEyeRenderer: {fileID: 7223063774541147314}
@@ -504,3 +494,105 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &8765612472509878320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 393171509440898546}
+  - component: {fileID: 5207881996422675197}
+  - component: {fileID: 8007672733816006415}
+  - component: {fileID: 3528893264283896394}
+  m_Layer: 0
+  m_Name: Melee Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &393171509440898546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8765612472509878320}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7995971142281544838}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5207881996422675197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8765612472509878320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d964c87fe21cb9548997822e39bb60be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damage
+  type: 1
+  affectedByDifficulty: 0
+  rb: {fileID: 3528893264283896394}
+  damageAmount: 2
+  damageRate: 0
+  bulletSpeed: 0
+  bulletDestroyTime: 0
+  hitEffect: {fileID: 0}
+--- !u!65 &8007672733816006415
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8765612472509878320}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &3528893264283896394
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8765612472509878320}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

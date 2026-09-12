@@ -654,6 +654,11 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         StopAllCoroutines();
         Destroy(gameObject);
+
+        if (gameManager.instance != null)
+        {
+            gameManager.instance.AddKill();
+        }
     }
 
     private void OnDrawGizmosSelected()

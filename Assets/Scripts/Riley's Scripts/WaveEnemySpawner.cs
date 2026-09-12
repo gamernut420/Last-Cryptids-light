@@ -83,8 +83,8 @@ public class WaveEnemySpawner : MonoBehaviour
 
             while (!spawned)
             {
-                Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
-                Vector3 randomPosition = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+                float angle = Random.Range(0f, Mathf.PI * 2f);
+                Vector3 randomPosition = transform.position + new Vector3(Mathf.Cos(angle) * spawnRadius, 0f, Mathf.Sin(angle) * spawnRadius);
 
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(randomPosition, out hit, navMeshSearchDistance, NavMesh.AllAreas))
