@@ -62,6 +62,29 @@ public class CompassController : MonoBehaviour
     private int tickSpacing = 5;
 
 
+    // ADDED FOR SIGNAL INTERFERENCE:
+    [Header("Signal Interference")]
+
+    [Tooltip(
+        "How far POI markers can jitter horizontally " +
+        "while the compass signal is disrupted."
+    )]
+    [SerializeField]
+    [Min(0f)]
+    private float signalJitterAmount = 8f;
+
+    [Tooltip(
+        "Speed of signal interference jitter."
+    )]
+    [SerializeField]
+    [Min(0.1f)]
+    private float signalJitterSpeed = 18f;
+
+
+    // ADDED FOR SIGNAL INTERFERENCE:
+    private bool signalDisrupted;
+
+
     // Stores every compass tick so we can reposition them
     // without recreating UI objects every frame.
     private readonly List<CompassTick>
@@ -96,6 +119,7 @@ public class CompassController : MonoBehaviour
         {
             GameObject playerObject =
                 GameObject.FindWithTag("Player");
+
 
             if (playerObject != null)
             {
@@ -132,8 +156,8 @@ public class CompassController : MonoBehaviour
     /// <summary>
     /// Creates the compass markings one time.
     ///
-    /// We generate the complete 360 degrees and simply
-    /// reposition/hide the appropriate markings while rotating.
+    /// Generates the complete 360 degrees and repositions
+    /// the visible portion based on camera rotation.
     /// </summary>
     private void CreateCompassTicks()
     {
@@ -157,8 +181,7 @@ public class CompassController : MonoBehaviour
 
 
             RectTransform rect =
-                newTick.GetComponent<
-                    RectTransform>();
+                newTick.GetComponent<RectTransform>();
 
 
             TextMeshProUGUI text =
@@ -169,12 +192,17 @@ public class CompassController : MonoBehaviour
             CompassTick tick =
                 new CompassTick();
 
-            tick.angle = angle;
-            tick.rect = rect;
-            tick.gameObject = newTick;
+
+            tick.angle =
+                angle;
+
+            tick.rect =
+                rect;
+
+            tick.gameObject =
+                newTick;
 
 
-            // Only certain angles receive direction text.
             if (text != null)
             {
                 text.text =
@@ -188,11 +216,16 @@ public class CompassController : MonoBehaviour
 
 
     /// <summary>
-    /// Updates all tick positions based on the camera's
-    /// current Y rotation.
+    /// Updates tick positions based on camera rotation.
     /// </summary>
     private void UpdateCompass()
     {
+        if (compassArea == null)
+        {
+            return;
+        }
+
+
         float cameraYaw =
             playerCamera.eulerAngles.y;
 
@@ -214,14 +247,6 @@ public class CompassController : MonoBehaviour
                 compassTicks[i];
 
 
-            // DeltaAngle handles wrapping automatically.
-            //
-            // Example:
-            //
-            // Camera = 359 degrees
-            // Marker = 1 degree
-            //
-            // Delta = 2 instead of -358.
             float angleDifference =
                 Mathf.DeltaAngle(
                     cameraYaw,
@@ -245,8 +270,6 @@ public class CompassController : MonoBehaviour
             }
 
 
-            // Convert angular difference into normalized
-            // horizontal screen position.
             float normalizedPosition =
                 angleDifference /
                 halfVisibleDegrees;
@@ -272,9 +295,7 @@ public class CompassController : MonoBehaviour
 
 
     /// <summary>
-    /// Looks at the active world POIs and creates
-    /// UI markers for any POIs that don't currently
-    /// have one.
+    /// Creates UI markers for active POIs.
     /// </summary>
     private void RefreshPOIs()
     {
@@ -332,15 +353,15 @@ public class CompassController : MonoBehaviour
 
 
     /// <summary>
-    /// Updates every compass POI marker.
+    /// Updates all POI markers.
     /// </summary>
     private void UpdatePOIs()
     {
-        // Pick up any POIs that became active after Start().
         IReadOnlyList<CompassPOI> activePOIs =
             CompassPOI.ActivePOIs;
 
 
+        // Add newly activated POIs.
         for (
             int i = 0;
             i < activePOIs.Count;
@@ -356,7 +377,6 @@ public class CompassController : MonoBehaviour
         }
 
 
-        // Make a temporary cleanup list only when necessary.
         List<CompassPOI> removeList =
             null;
 
@@ -374,15 +394,32 @@ public class CompassController : MonoBehaviour
                 pair.Value;
 
 
-            if (poi == null)
+            // ADDED:
+            // Remove the marker not only when the world
+            // object is destroyed, but also when the POI
+            // has intentionally been removed from ActivePOIs.
+            if (poi == null ||
+                !CompassPOI.IsActivePOI(poi))
             {
+                if (marker != null)
+                {
+                    Destroy(
+                        marker.gameObject
+                    );
+                }
+
+
                 if (removeList == null)
                 {
                     removeList =
                         new List<CompassPOI>();
                 }
 
-                removeList.Add(poi);
+
+                removeList.Add(
+                    pair.Key
+                );
+
 
                 continue;
             }
@@ -411,15 +448,15 @@ public class CompassController : MonoBehaviour
 
 
     /// <summary>
-    /// Determines where one POI should appear
-    /// on the compass.
+    /// Determines where one POI appears on the compass.
     /// </summary>
     private void UpdatePOIMarker(
         CompassPOI poi,
         CompassPOIMarkerUI marker)
     {
         if (player == null ||
-            marker == null)
+            marker == null ||
+            poiContainer == null)
         {
             return;
         }
@@ -430,11 +467,7 @@ public class CompassController : MonoBehaviour
             player.position;
 
 
-        // Remove vertical difference.
-        //
-        // A POI on a mountain should still point toward
-        // the mountain horizontally instead of affecting
-        // the compass direction.
+        // Ignore vertical height differences.
         direction.y = 0f;
 
 
@@ -448,7 +481,6 @@ public class CompassController : MonoBehaviour
         }
 
 
-        // Convert world direction into an angle.
         float poiAngle =
             Mathf.Atan2(
                 direction.x,
@@ -508,9 +540,41 @@ public class CompassController : MonoBehaviour
             (width * 0.5f);
 
 
+        // ADDED FOR SIGNAL INTERFERENCE:
+        // Adds localized jitter to POI markers without
+        // making the cardinal compass directions unusable.
+        if (signalDisrupted)
+        {
+            // ADDED FOR SIGNAL INTERFERENCE:
+            // Use world position as a stable noise offset.
+            // This avoids deprecated GetInstanceID /
+            // GetEntityId conversions in newer Unity versions.
+            float poiNoiseOffset =
+                (poi.transform.position.x * 0.01f) +
+                (poi.transform.position.z * 0.013f);
+
+
+            float noise =
+                Mathf.PerlinNoise(
+                    Time.time *
+                    signalJitterSpeed,
+
+                    poiNoiseOffset
+                );
+
+
+            float jitter =
+                (noise * 2f - 1f) *
+                signalJitterAmount;
+
+
+            xPosition +=
+                jitter;
+        }
+
+
         RectTransform markerRect =
-            marker.GetComponent<
-                RectTransform>();
+            marker.GetComponent<RectTransform>();
 
 
         Vector2 position =
@@ -538,11 +602,30 @@ public class CompassController : MonoBehaviour
     }
 
 
+    // ADDED FOR SIGNAL INTERFERENCE:
+    // Enemy/environment systems can call:
+    //
+    // SetSignalDisrupted(true)
+    //
+    // when interference begins, and false when it ends.
+    public void SetSignalDisrupted(
+        bool disrupted)
+    {
+        signalDisrupted =
+            disrupted;
+    }
+
+
+    // ADDED:
+    // Useful for debugging or other gameplay systems.
+    public bool IsSignalDisrupted()
+    {
+        return signalDisrupted;
+    }
+
+
     /// <summary>
     /// Converts compass angles into readable labels.
-    ///
-    /// Minor angles return an empty string,
-    /// allowing the tick itself to remain visible.
     /// </summary>
     private string GetDirectionName(
         int angle)
@@ -580,10 +663,7 @@ public class CompassController : MonoBehaviour
 
 
     /// <summary>
-    /// Internal data used for generated compass ticks.
-    ///
-    /// This avoids needing a separate MonoBehaviour
-    /// on every minor tick.
+    /// Internal data for generated compass ticks.
     /// </summary>
     private class CompassTick
     {
