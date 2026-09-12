@@ -56,6 +56,12 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private float attackHitboxDuration = 0.5f;
     [SerializeField] private float attackRetreatDistance = 15f;
 
+    [Header("Audio")]
+    [Range(0, 1)]
+    [SerializeField] float audStepsVol;
+    private AudioManager footstepAudio;
+    bool isPlayingStep;
+
     private enum StalkerState
     {
         Stalking,
@@ -99,6 +105,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
+        footstepAudio = GetComponent<AudioManager>();
 
         if (attackHitbox != null)
         {
@@ -160,6 +167,14 @@ public class EnemyAI : MonoBehaviour, IDamage
         bool playerCanSeeMe = IsPlayerLookingAtMe();
         bool attackPlayer = CanAttack();
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
+        {
+            if (footstepAudio != null)
+            {
+                StartCoroutine(PlayStep());
+            }
+        }
 
         if (attackPlayer)
         {
@@ -524,19 +539,15 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private bool CanAttack()
     {
-        if (attacking) return false;
-
         if (attackTimer > 0) return false;
 
         if (PlayerTransform == null) return false;
 
         float distance = Vector3.Distance(transform.position, PlayerTransform.position);
 
-        if (distance > minStalkDistance) return false;
+        if (distance > minStalkDistance && !attacking) return false;
 
         if (!CheckLineOfSight()) return false;
-
-        if (IsPlayerLookingAtMe()) return false;
 
         return true;
     }
@@ -581,6 +592,24 @@ public class EnemyAI : MonoBehaviour, IDamage
         attacking = false;
     }    
 
+    private IEnumerator PlayStep()
+    {
+        isPlayingStep = true;
+        footstepAudio.PlaySound(audStepsVol);
+
+        switch (currentState)
+        {
+            case StalkerState.Stalking:
+                yield return new WaitForSeconds(0.5f);
+                break;
+            case StalkerState.Hiding:
+            case StalkerState.Attacking:
+                yield return new WaitForSeconds(0.3f);
+                break;
+        }
+        isPlayingStep = false;
+    }
+
     private void FacePlayer()
     {
         if (PlayerTransform == null) return;
@@ -593,17 +622,6 @@ public class EnemyAI : MonoBehaviour, IDamage
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = targetRotation;
         }
-    }
-
-    private void FinishAttack()
-    {
-        if (attackHitbox != null)
-            attackHitbox.SetActive(false);
-
-        attackTimer = attackCooldown;
-        attacking = false;
-        currentState = StalkerState.Hiding;
-        FindHidePosition();
     }
 
     public void takeDamage(int amount)
