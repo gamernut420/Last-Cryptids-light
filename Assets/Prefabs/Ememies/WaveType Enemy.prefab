@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 7995971142281544838}
   - component: {fileID: 1289633720426159657}
   - component: {fileID: 7049393166881706612}
+  - component: {fileID: 894577106106406376}
   - component: {fileID: 6254754168934463905}
   - component: {fileID: 5647786696481377497}
   - component: {fileID: 9100778833965841976}
@@ -286,7 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI_WaveType
   currentType: 0
   model: {fileID: 5647786696481377497}
-  attackHitbox: {fileID: 0}
+  attackHitbox: {fileID: 8765612472509878320}
   playerTag: Player
   attackCooldown: 1.5
   attackRange: 3
@@ -300,9 +301,44 @@ MonoBehaviour:
   maxHP: 0
   currentHP: 0
   currentSpeed: 0
-  audStepsVol: 1
+  audStepsVol: 0.5
   leftEyeRenderer: {fileID: 1567619509603580662}
   rightEyeRenderer: {fileID: 7223063774541147314}
+--- !u!114 &894577106106406376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7938090647407202942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99a5ef772aa178940a49b929b9d9fea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  audioSource: {fileID: 3910353465737770630}
+  audioClips:
+  - {fileID: 8300000, guid: f8c510b47338e104fbf8af2598fb1e76, type: 3}
+  - {fileID: 8300000, guid: 6ea24934917d25b4b950a9f80f176d11, type: 3}
+  - {fileID: 8300000, guid: 7a67928b9a3fc8e4c962f299a484dc6d, type: 3}
+  - {fileID: 8300000, guid: 16bcb7ee56050204e8fbd8613dd77ed1, type: 3}
+  - {fileID: 8300000, guid: cce6943005c9152459d22c0d2368cad8, type: 3}
+  - {fileID: 8300000, guid: ac1a255743a630044a21a3b8bec1704c, type: 3}
+  - {fileID: 8300000, guid: 4326a33e8e8b4a14c864b70e04c2f314, type: 3}
+  - {fileID: 8300000, guid: 68a26f816383434489a734c4470ddc41, type: 3}
+  - {fileID: 8300000, guid: e47c2cc975d73ab4f8805c9cd1552ab2, type: 3}
+  - {fileID: 8300000, guid: 06a47bb66badce14aac5aaffbf3db3e0, type: 3}
+  - {fileID: 8300000, guid: b54e6d1f357cd8345b7ba69e9cca8157, type: 3}
+  - {fileID: 8300000, guid: 35f494e47136add468ffd729824b678a, type: 3}
+  - {fileID: 8300000, guid: b25234a625ea09f4eab53331c5f6908d, type: 3}
+  - {fileID: 8300000, guid: acf74cd4102624248847d3be4504fe44, type: 3}
+  - {fileID: 8300000, guid: ec338aa047bb2d84b8422c30fff3fbb1, type: 3}
+  - {fileID: 8300000, guid: 8ca91242165c7fa4e8e68a66d5cc315a, type: 3}
+  - {fileID: 8300000, guid: aeedcb746d0acbc408718e9b50a841bd, type: 3}
+  - {fileID: 8300000, guid: 229c17f7329ffab4da9b68a4e3f3b544, type: 3}
+  - {fileID: 8300000, guid: 0d6d0a286ce11dc4ca7e0d06bf049181, type: 3}
+  - {fileID: 8300000, guid: 232ae7fb4b4a38f43835442c0e3264fe, type: 3}
+  - {fileID: 8300000, guid: 793f993b62382b14dbce943f8d03881f, type: 3}
 --- !u!195 &6254754168934463905
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -541,7 +577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damage
   type: 1
-  affectedByDifficulty: 0
+  affectedByDifficulty: 1
   rb: {fileID: 3528893264283896394}
   damageAmount: 2
   damageRate: 0
