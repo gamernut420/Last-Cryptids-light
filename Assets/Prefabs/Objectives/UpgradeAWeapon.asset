@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
   m_Name: UpgradeAWeapon
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
+  prerequisiteObjective: {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
+  isUnlocked: 0
   objectiveID: secondary_upgrade_a_weapon
   objectiveTitle: Upgrade A Weapon
   objectiveDescription: Upgrade a weapon at the shop.
