@@ -22,6 +22,9 @@ public class PersistentPlayer : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("Scene loaded: " + scene.name);
+        Debug.Log("Next spawn: " + nextSpawnPoint);
+
         if (string.IsNullOrEmpty(nextSpawnPoint))
             return;
 
@@ -29,8 +32,16 @@ public class PersistentPlayer : MonoBehaviour
 
         if (spawn != null)
         {
+            Debug.Log("Found spawn at: " + spawn.transform.position);
+
             transform.position = spawn.transform.position;
             transform.rotation = spawn.transform.rotation;
+
+            Debug.Log("Player moved to: " + transform.position);
+        }
+        else
+        {
+            Debug.LogError("Spawn not found: " + nextSpawnPoint);
         }
 
         nextSpawnPoint = null;
