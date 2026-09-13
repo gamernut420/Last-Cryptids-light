@@ -6,11 +6,10 @@ public class ObjectiveManager : MonoBehaviour
     public static ObjectiveManager Instance { get; private set; }
 
     [Header("Active Objectives")]
-    public List<ObjectiveData> activeObjectives =
-        new List<ObjectiveData>();
+    public List<ObjectiveData> activeObjectives = new List<ObjectiveData>();
+    public int hideUIin;
 
     public Transform currentCompassTarget;
-
 
     private void Awake()
     {
@@ -20,228 +19,69 @@ public class ObjectiveManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
-    }
+        foreach (var obj in activeObjectives)
+        {
+            if (obj != null)
+            {
+                obj.shouldHideFromUI = false;
+                obj.isCompleted = false;
+                // if it has no prerequisite, unlock it immadiately. Otherwise, lock it.
+                if (obj.prerequisiteObjective == null)
+                    obj.isUnlocked = true;
+                else
+                    obj.isUnlocked = false;
 
+
+            }
+        }
+    }
 
     public void AddObjective(ObjectiveData newObj)
     {
-        if (newObj == null)
-        {
-            return;
-        }
-
-
-        if (!activeObjectives.Contains(newObj))
+        if(!activeObjectives.Contains(newObj))
         {
             activeObjectives.Add(newObj);
-
-
-            // Set the compass target to this new objective
-            // if it has a location.
-            if (newObj.targetLocation != null)
-            {
-                // ADDED FOR COMPASS:
-                SetCurrentCompassTarget(
-                    newObj.targetLocation
-                );
-            }
+            
+            //Set the compass target to this new objecive if it has a location
+            if(newObj.targetLocation != null) currentCompassTarget = newObj.targetLocation;
         }
-    }
 
+    }
 
     public void CompleteObjective(string objectiveID)
     {
-        ObjectiveData targetObjective =
-            activeObjectives.Find(
-                o => o.objectiveID == objectiveID
-            );
-
-
-        if (targetObjective != null &&
-            !targetObjective.isCompleted)
+        ObjectiveData targetObjective = activeObjectives.Find(o => o.objectiveID == objectiveID);
+        if (targetObjective != null && targetObjective.isUnlocked && !targetObjective.isCompleted)
         {
             targetObjective.isCompleted = true;
+            Debug.Log($"Objective Completed: {targetObjective.objectiveTitle}");
 
-            Debug.Log(
-                $"Objective Completed: " +
-                $"{targetObjective.objectiveTitle}"
-            );
+            // Call this right here to unlock any objectives waiting on this one
+            UnlockNextObjective(targetObjective);
+            // Wait x seconds, turn hide it from the UI
+            StartCoroutine(HideObjectiveRoutine(targetObjective, hideUIin));
+        }
+    }
 
+    private System.Collections.IEnumerator HideObjectiveRoutine(ObjectiveData objectiveToHide, float delay)
+    {
+        Debug.Log($"Objective hide in 2 secs: {objectiveToHide.objectiveTitle}");
 
-            // ADDED FOR COMPASS:
-            // If the completed objective was the current
-            // compass target, disable that marker and
-            // look for another unfinished objective.
-            if (targetObjective.targetLocation ==
-                currentCompassTarget)
+        yield return new WaitForSeconds(delay);
+        objectiveToHide.shouldHideFromUI = true;
+    }
+    private void UnlockNextObjective(ObjectiveData completedObjective)
+    {
+        // Loop through your active objectives (or a master list of all game objectives)
+        foreach(var obj in activeObjectives)
+        {
+            if(!obj.isUnlocked && obj.prerequisiteObjective == completedObjective)
             {
-                ClearCurrentCompassTarget();
+                obj.isUnlocked = true;
+                Debug.Log($"Objective Unlocked: { obj.objectiveTitle}");
 
-                SelectNextCompassTarget();
             }
         }
-    }
-
-
-    // ADDED FOR COMPASS:
-    // Changes the objective currently being tracked.
-    private void SetCurrentCompassTarget(
-        Transform newTarget)
-    {
-        // Hide the previous objective-controlled marker.
-        if (currentCompassTarget != null &&
-            currentCompassTarget != newTarget)
-        {
-            SetObjectivePOIState(
-                currentCompassTarget,
-                false
-            );
-        }
-
-
-        currentCompassTarget =
-            newTarget;
-
-
-        if (currentCompassTarget != null)
-        {
-            SetObjectivePOIState(
-                currentCompassTarget,
-                true
-            );
-        }
-    }
-
-
-    // ADDED FOR COMPASS:
-    // Clears the current marker.
-    private void ClearCurrentCompassTarget()
-    {
-        if (currentCompassTarget != null)
-        {
-            SetObjectivePOIState(
-                currentCompassTarget,
-                false
-            );
-        }
-
-
-        currentCompassTarget = null;
-    }
-
-
-    // ADDED FOR COMPASS:
-    // Finds another unfinished objective after the
-    // current objective has been completed.
-    private void SelectNextCompassTarget()
-    {
-        for (int i = 0;
-             i < activeObjectives.Count;
-             i++)
-        {
-            ObjectiveData objective =
-                activeObjectives[i];
-
-
-            if (objective == null)
-            {
-                continue;
-            }
-
-
-            if (objective.isCompleted)
-            {
-                continue;
-            }
-
-
-            if (objective.targetLocation == null)
-            {
-                continue;
-            }
-
-
-            SetCurrentCompassTarget(
-                objective.targetLocation
-            );
-
-            return;
-        }
-
-
-        // No unfinished objective with a location exists.
-        currentCompassTarget = null;
-    }
-
-
-    // ADDED FOR COMPASS:
-    // Finds a CompassPOI attached to the objective target.
-    //
-    // It checks:
-    // 1. The target itself
-    // 2. Its parent
-    // 3. Its children
-    //
-    // This gives your level designers some flexibility
-    // when setting up objective objects.
-    private CompassPOI FindCompassPOI(
-        Transform target)
-    {
-        if (target == null)
-        {
-            return null;
-        }
-
-
-        CompassPOI poi =
-            target.GetComponent<CompassPOI>();
-
-
-        if (poi == null)
-        {
-            poi =
-                target.GetComponentInParent<CompassPOI>();
-        }
-
-
-        if (poi == null)
-        {
-            poi =
-                target.GetComponentInChildren<CompassPOI>();
-        }
-
-
-        return poi;
-    }
-
-
-    // ADDED FOR COMPASS:
-    // Only objective-controlled POIs are automatically
-    // hidden/shown by ObjectiveManager.
-    //
-    // Normal world POIs remain independent.
-    private void SetObjectivePOIState(
-        Transform target,
-        bool active)
-    {
-        CompassPOI poi =
-            FindCompassPOI(target);
-
-
-        if (poi == null)
-        {
-            return;
-        }
-
-
-        if (!poi.ControlledByObjective)
-        {
-            return;
-        }
-
-
-        poi.SetCompassActive(active);
     }
 }

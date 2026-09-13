@@ -1049,6 +1049,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &269164529 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7513145481605942756, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+  m_PrefabInstance: {fileID: 504922119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &269164540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269164529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b91729fd82b51c94a962b41fdf5184a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDodge
+  dodgeKey: 306
+  speedMultiplier: 1.6
+  dodgeDuration: 0.2
+  cooldown: 1
+  requireGrounded: 1
+  invincibilityDuration: 0.4
 --- !u!224 &276736261 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7580967491853547291, guid: 59f417b0b025f7b49a2af548c5c85cd9, type: 3}
@@ -1997,7 +2020,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7513145481605942756, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 269164540}
   m_SourcePrefab: {fileID: 100100000, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
 --- !u!208 &506529258
 NavMeshObstacle:

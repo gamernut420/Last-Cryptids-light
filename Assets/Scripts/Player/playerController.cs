@@ -30,6 +30,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     int activeItemSlot;
     public static System.Action<bool> ShowAmmoUI;
 
+    PlayerDodge dodgeController;
     int jumpCount;
     float currentHP;
     float currentSpeed;
@@ -52,6 +53,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         upgradeManager = GetComponent<PlayerUpgrades>();
 
         upgradeManager.ApplyUpgrades();
+
+        dodgeController = GetComponent<PlayerDodge>();
 
         UpdateWeaponUI();
     }
@@ -83,8 +86,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         GadgetUse();
 
         CheckSwapItem();
- 
-        movement();
+
+        if (dodgeController == null || !dodgeController.IsDodging)
+        {
+            movement();
+        }
         
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -139,6 +145,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void takeDamage(int amount, bool showFlash = true)
     {
+        if (dodgeController != null && dodgeController.IsInvincible)
+        {
+            return;
+        }
+
         currentHP -= amount;
         updatePlayerUI();
         if(showFlash) 
@@ -586,5 +597,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void ModifyPlayerFunds(int ammount)
     {
         points += ammount;
+    }
+
+    public GameObject[] GetPlayerHotbar()
+    {
+        return hotbar;
     }
 }
