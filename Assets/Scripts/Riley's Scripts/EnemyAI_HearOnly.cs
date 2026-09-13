@@ -38,6 +38,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] private float launchAngle = 10f;
     [SerializeField] private float projectileLifetime = 5f;
 
+    private float minProjectileSpeed = 5f;
     private float projectileTimer;
 
     Color colorOrig;
@@ -203,6 +204,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
 
         float totalSpeed = Mathf.Sqrt(velocitySquared);
+        if (totalSpeed < 5f)
+            totalSpeed = 5f;
         float forwardSpeed = totalSpeed * Mathf.Cos(radAngle);
         float verticalSpeed = totalSpeed * Mathf.Sin(radAngle);
 
@@ -263,7 +266,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
             SetEarsAlert(true);
 
-            if (projectileTimer <= 0f && currentState != State.Attack)
+            if (projectileTimer <= 0f && currentState != State.Attack &&  distanceToNoise < 10f)
             {
                 ThrowProjectile(noisePosition);
                 projectileTimer = projectileCooldown;
