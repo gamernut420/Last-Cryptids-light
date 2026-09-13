@@ -4,18 +4,12 @@ public class CraftingTable : MonoBehaviour, IInteract
 {
     [Header("Crafting")]
 
-    // ADDED:
-    // Recipe book containing all recipes available
-    // at this crafting table.
     [SerializeField]
     private RecipeBookSO recipeBook;
 
 
     [Header("Crafting UI")]
 
-    // ADDED:
-    // Reference to the crafting UI that should be opened
-    // when the player interacts with this table.
     [SerializeField]
     private CraftingUIManager craftingUI;
 
@@ -27,14 +21,12 @@ public class CraftingTable : MonoBehaviour, IInteract
         "Use Crafting Table";
 
 
-    // ADDED:
-    // Allows CraftingUIManager to read the recipes
-    // assigned to this crafting table.
     public RecipeBookSO RecipeBook =>
         recipeBook;
 
 
-    public bool Interact(GameObject interactor)
+    public bool Interact(
+        GameObject interactor)
     {
         if (interactor == null)
         {
@@ -63,18 +55,18 @@ public class CraftingTable : MonoBehaviour, IInteract
         }
 
 
-        // ADDED:
-        // Open the crafting UI when the player
-        // interacts with the table.
         if (craftingUI != null)
         {
-            craftingUI.gameObject.SetActive(true);
+            // ADDED FOR CRAFTING UI:
+            craftingUI.ToggleCraftingUI();
         }
         else
         {
             Debug.LogWarning(
                 "CraftingTable does not have a CraftingUIManager assigned."
             );
+
+            return false;
         }
 
 
@@ -82,9 +74,7 @@ public class CraftingTable : MonoBehaviour, IInteract
     }
 
 
-    // ADDED:
-    // Checks whether the player has enough materials
-    // to craft the selected teammate recipe.
+    // ADDED FOR CRAFTING:
     public bool CanCraft(
         CrafatbleItemRecipe recipe,
         PlayerInventory inventory)
@@ -103,13 +93,7 @@ public class CraftingTable : MonoBehaviour, IInteract
     }
 
 
-    // ADDED:
-    // Attempts to craft the selected recipe.
-    //
-    // CraftingSystem handles:
-    // - checking ingredients
-    // - removing ingredients
-    // - adding the finished ScriptableItem
+    // ADDED FOR CRAFTING:
     public bool Craft(
         CrafatbleItemRecipe recipe,
         PlayerInventory inventory)

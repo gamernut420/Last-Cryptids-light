@@ -8,35 +8,94 @@ public class InventoryToggle : MonoBehaviour
     [Header("Input Key")]
     public KeyCode toggleKey;
 
-    
+
     void Start()
     {
-        if(inventoryPanel != null)
+        if (inventoryPanel != null)
         {
             inventoryPanel.SetActive(false);
         }
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (Input.GetKeyDown(toggleKey))
+        {
             ToggleInevntory();
+        }
     }
+
 
     public void ToggleInevntory()
     {
-        bool isActive = !inventoryPanel.activeSelf;
-        inventoryPanel.SetActive(isActive);
+        if (inventoryPanel == null)
+        {
+            return;
+        }
+
+
+        bool isActive =
+            !inventoryPanel.activeSelf;
+
+
+        // ADDED FOR CRAFTING:
+        SetInventoryState(isActive);
+    }
+
+
+    // ADDED FOR CRAFTING:
+    public void OpenInventory()
+    {
+        SetInventoryState(true);
+    }
+
+
+    // ADDED FOR CRAFTING:
+    public void CloseInventory()
+    {
+        SetInventoryState(false);
+    }
+
+
+    // ADDED FOR CRAFTING:
+    public bool IsInventoryOpen()
+    {
+        return inventoryPanel != null &&
+               inventoryPanel.activeSelf;
+    }
+
+
+    // ADDED FOR CRAFTING:
+    private void SetInventoryState(
+        bool isActive)
+    {
+        if (inventoryPanel == null)
+        {
+            return;
+        }
+
+
+        inventoryPanel.SetActive(
+            isActive
+        );
+
+
         if (isActive)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.lockState =
+                CursorLockMode.None;
+
+            Cursor.visible =
+                true;
         }
         else
         {
-            Cursor.lockState= CursorLockMode.Locked;
-            Cursor.visible = false;
+            Cursor.lockState =
+                CursorLockMode.Locked;
+
+            Cursor.visible =
+                false;
         }
     }
 }
