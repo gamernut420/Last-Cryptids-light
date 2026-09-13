@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8178967978416505291}
-  - component: {fileID: 1869938242251848508}
+  - component: {fileID: -8922556951186230642}
   - component: {fileID: 8424814077674648907}
   - component: {fileID: 6748327714640855006}
   - component: {fileID: 4665963047305235029}
@@ -35,7 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1869938242251848508
+--- !u!114 &-8922556951186230642
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,30 +50,21 @@ MonoBehaviour:
   possibleLoot:
   - itemData: {fileID: 11400000, guid: cafa12f9a49d2df4a9a326745f6d7c8d, type: 2}
     minQuantity: 1
-    maxQuantity: 7
+    maxQuantity: 3
   - itemData: {fileID: 11400000, guid: 437edbdf29082e14884a5afb5ff3d1da, type: 2}
     minQuantity: 1
-    maxQuantity: 4
+    maxQuantity: 6
   - itemData: {fileID: 11400000, guid: b739402ac4c814040b554ea0e889075a, type: 2}
-    minQuantity: 1
-    maxQuantity: 7
+    minQuantity: 0
+    maxQuantity: 3
   - itemData: {fileID: 11400000, guid: ce27fe86182e8fc418e0ffd16b9a5531, type: 2}
     minQuantity: 1
-    maxQuantity: 4
-  - itemData: {fileID: 11400000, guid: cb40800478d55fb4a94a7bf6604d86ca, type: 2}
-    minQuantity: 1
-    maxQuantity: 3
-  - itemData: {fileID: 11400000, guid: 519b92053c2c35941a28f6b0da56a08a, type: 2}
-    minQuantity: 1
-    maxQuantity: 3
-  - itemData: {fileID: 11400000, guid: d822cf4bf60fcf743be8497232554fec, type: 2}
-    minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 8
   minUniqueItemsToPull: 1
   maxUniqueItemsToPull: 3
   canBeSearchMultipleTimes: 0
   HoldTimer: 5
-  PromptMessage: E to search
+  PromptMessage: E
 --- !u!33 &8424814077674648907
 MeshFilter:
   m_ObjectHideFlags: 0
