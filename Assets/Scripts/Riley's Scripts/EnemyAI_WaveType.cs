@@ -4,39 +4,25 @@ using UnityEngine.AI;
 
 public class EnemyAI_WaveType : MonoBehaviour, IDamage
 {
-    public enum AIType { Tanky, Fast, Strafer}
+    public enum AIType { Strafer }
     [Tooltip("Leave as is; it will randomize with weights automatically on spawn.")]
     [SerializeField] private AIType currentType;
     [SerializeField] Renderer model;
     private Material modelMat;
 
     [Header("Attack Settings")]
+    [SerializeField] GameObject attackHitbox;
     [SerializeField] private string playerTag = "Player";
-    [SerializeField] private string beaconTag = "Beacon";
     [SerializeField] float attackCooldown = 1.5f;
     [SerializeField] float attackRange = 2f;
-    [SerializeField] int attackDamage = 2;
+    [SerializeField] float attackWindup = 0.2f;
+    [SerializeField] float attackHitboxDuration = 0.5f;
+
+    private bool isAttacking;
+    private float attackTimer;
 
     [Header("Targeting Settings")]
     [SerializeField] float playerAggroRadius = 8f;
-
-    [Header("Spawn Chance Weights")]
-    [Tooltip("Higher numbers increase the chance of this type spawning.")]
-    [SerializeField] public float tankyWeight = 25f;
-    [SerializeField] public float fastWeight = 50f;
-    [SerializeField] public float straferWeight = 25f;
-
-    [Header("Tanky AI Stats")]
-    [SerializeField] private float tankMaxSpeed = 2f;
-    [SerializeField] private float tankMinSpeed = 1f;
-    [SerializeField] private float tankMaxHP = 60f;
-    [SerializeField] private float tankMinHP = 40f;
-
-    [Header("Fast AI Stats")]
-    [SerializeField] private float fastMaxSpeed = 7f;
-    [SerializeField] private float fastMinSpeed = 5f;
-    [SerializeField] private float fastMaxHP = 30f;
-    [SerializeField] private float fastMinHP = 15f;
 
     [Header("Strafer AI Stats")]
     [SerializeField] private float straferMaxSpeed = 4f;
@@ -63,7 +49,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     private float strafeTimer;
     private bool isStunned;
     private float stunTimer;
-    private float attackTimer;
+    
     private bool isPlayingStep;
     private AudioManager footstepAudio;
 
@@ -83,11 +69,14 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        RandomizeEnemyType();
         InitializeStats();
         SetEnemyColor();
         SetEyeColor();
         footstepAudio = GetComponent<AudioManager>();
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -109,10 +98,6 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
 
         switch (currentType)
         {
-            case AIType.Tanky:
-            case AIType.Fast:
-                MoveDirect();
-                break;
             case AIType.Strafer:
                 MoveStrafer();
                 break;
@@ -136,21 +121,8 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             modelMat = model.material;
             modelMat.EnableKeyword("_EMISSION");
             
-            switch (currentType)
-            {
-                case AIType.Tanky:
-                    modelMat.color = Color.green;
-                    modelMat.SetColor("_EmissionColor", Color.green);
-                    break;
-                case AIType.Fast:
-                    modelMat.color = Color.cyan;
-                    modelMat.SetColor("_EmissionColor", Color.cyan);
-                    break;
-                case AIType.Strafer:
-                    modelMat.color = Color.yellow;
-                    modelMat.SetColor("_EmissionColor", Color.yellow);
-                    break;
-            }
+            modelMat.color = Color.yellow;
+            modelMat.SetColor("_EmissionColor", Color.yellow);
 
             colorOrig = modelMat.color;
         }
@@ -192,55 +164,24 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         }
     }
 
-    private void RandomizeEnemyType()
-    {
-        float totalWeight = tankyWeight + fastWeight + straferWeight;
-        float randomRoll = Random.Range(0f, totalWeight);
-
-        if (randomRoll < tankyWeight)
-        {
-            currentType = AIType.Tanky;
-        }
-        else if (randomRoll < tankyWeight + fastWeight)
-        {
-            currentType = AIType.Fast;
-        }
-        else
-        {
-            currentType = AIType.Strafer;
-        }
-    }
-
     private void InitializeStats()
     {
-        switch (currentType)
+        maxHP = Random.Range(straferMinHP, straferMaxHP);
+        currentSpeed = Random.Range(straferMinSpeed, straferMaxSpeed);
+        //added by sean
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
         {
-            case AIType.Tanky:
-                maxHP = Random.Range(tankMinHP, tankMaxHP);
-                currentSpeed = Random.Range(tankMinSpeed, tankMaxSpeed);
-                break;
-            case AIType.Fast:
-                maxHP = Random.Range(fastMinHP, fastMaxHP);
-                currentSpeed = Random.Range(fastMinSpeed, fastMaxSpeed);
-                break;
-            case AIType.Strafer:
-                maxHP = Random.Range(straferMinHP, straferMaxHP);
-                currentSpeed = Random.Range(straferMinSpeed, straferMaxSpeed);
-                break;
+            maxHP = difficultyManager.GetScaledEnemyHealth(maxHP);
+            currentSpeed = difficultyManager.GetScaledEnemySpeed(currentSpeed);
         }
-
+        // end added by sean
         currentHP = maxHP;
 
         if (agent != null)
         {
             agent.speed = currentSpeed;
         }
-    }
-
-    private void MoveDirect()
-    {
-        agent.SetDestination(PlayerTransform.position);
-        agent.stoppingDistance = 2;
     }
 
     private void MoveStrafer()
@@ -267,35 +208,33 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
 
     void Attack()
     {
+        if (isAttacking) return;
+
         if (attackTimer > 0f)
         {
             attackTimer -= Time.deltaTime;
             return;
         }
 
-        float distanceToTarget = Vector3.Distance(transform.position, PlayerTransform.position);
-        if (distanceToTarget <= attackRange)
-        {
-            RaycastHit hit;
-            Vector3 directionToTarget = (PlayerTransform.position - transform.position).normalized;
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
-            if (Physics.Raycast(transform.position, directionToTarget, out hit, attackRange))
-            {
-                if (hit.collider != null && hit.collider.CompareTag(playerTag) || hit.collider.CompareTag(beaconTag))
-                {
-                    ExecuteAttack(hit.collider.gameObject);
-                }
-            }
-        }
+        if (distanceToPlayer > attackRange)
+            return;
+
+        StartCoroutine(AttackRoutine());
     }
 
-    private void ExecuteAttack(GameObject target)
+    private void FacePlayer()
     {
-        attackTimer = attackCooldown;
-        IDamage dmg = target.transform.GetComponent<IDamage>();
-        if (dmg != null)
+        if (PlayerTransform == null) return;
+
+        Vector3 direction = PlayerTransform.position - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude > 0.01f)
         {
-            dmg.takeDamage(attackDamage);
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = targetRotation;
         }
     }
 
@@ -320,6 +259,36 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             gameManager.instance.AddKill();
         }
     }
+
+    private IEnumerator AttackRoutine()
+    {
+        isAttacking = true;
+        agent.isStopped = true;
+
+        FacePlayer();
+
+        yield return new WaitForSeconds(attackWindup);
+
+        if (PlayerTransform != null)
+        {
+            float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+            if (distanceToPlayer <= attackRange)
+            {
+                FacePlayer();
+                if (attackHitbox != null)
+                {
+                    attackHitbox.SetActive(true);
+                    yield return new WaitForSeconds(attackHitboxDuration);
+                    attackHitbox.SetActive(false);
+                }
+            }
+        }
+        attackTimer = attackCooldown;
+        isAttacking = false;
+        agent.isStopped = false;
+    }
+
     IEnumerator flashRed()
     {
         modelMat.color = Color.red;
@@ -334,18 +303,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
         isPlayingStep = true;
         footstepAudio.PlaySound(audStepsVol);
 
-        switch (currentType)
-        {
-            case AIType.Tanky:
-                yield return new WaitForSeconds(0.7f);
-                break;
-            case AIType.Fast:
-                yield return new WaitForSeconds(0.3f);
-                break;
-            case AIType.Strafer:
-                yield return new WaitForSeconds(0.5f);
-                break;
-        }
+        yield return new WaitForSeconds(0.5f);
 
         isPlayingStep = false;
     }

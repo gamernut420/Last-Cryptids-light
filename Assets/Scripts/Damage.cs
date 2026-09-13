@@ -4,6 +4,9 @@ public class Damage : MonoBehaviour
 {
     enum damageType { bullet, enemyAttack, DOT};
     [SerializeField] damageType type;
+
+    [SerializeField] private bool affectedByDifficulty;
+
     [SerializeField] Rigidbody rb;
 
     [SerializeField] int damageAmount;
@@ -15,13 +18,24 @@ public class Damage : MonoBehaviour
     bool hasDamagedPlayer;
     private float damageTimer;
     private IDamage currentTarget;
+    private int baseDamageAmount;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    public void Awake()
+    {
+        baseDamageAmount = damageAmount;
+    }
+    
+
     void Start()
     {
+        ApplyDifficultyScaling();
         if (type == damageType.bullet)
         {
-            rb.linearVelocity = transform.forward * bulletSpeed;
+            if (rb != null)
+            {
+                rb.linearVelocity = transform.forward * bulletSpeed;
+            }
             Destroy(gameObject, bulletDestroyTime);
         }
     }
@@ -39,40 +53,60 @@ public class Damage : MonoBehaviour
         hasDamagedPlayer = false;
         damageTimer = 0f;
         currentTarget = null;
+        if (baseDamageAmount > 0)
+        {
+            ApplyDifficultyScaling();
+        }
+    }
+
+    public void ApplyDifficultyScaling()
+    {
+        damageAmount = baseDamageAmount;
+
+        if (!affectedByDifficulty)
+        {
+            return;
+        }
+
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
+        {
+            damageAmount = difficultyManager.GetScaledEnemyDamage(baseDamageAmount);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.isTrigger)
-            return;
+        { return; }
 
-        IDamage dmg = other.GetComponent<IDamage>();
+        IDamage damageTarget = other.GetComponent<IDamage>();
 
-        if (dmg != null)
+        if (damageTarget != null && type == damageType.DOT)
         {
-            if (type == damageType.DOT)
+            if (currentTarget != null)
             {
-                if (currentTarget != null) return;
-
-                currentTarget = dmg;
-
-                dmg.takeDamage(damageAmount);
-
-                damageTimer = damageRate;
-
                 return;
             }
+
+            currentTarget = damageTarget;
+            damageTarget.takeDamage(damageAmount);
+            damageTimer = damageRate;
+            return;
         }
-        if (dmg != null)
+        if (damageTarget != null)
         {
             if (type == damageType.enemyAttack)
             {
                 if (hasDamagedPlayer)
+                {
                     return;
+                }
 
                 hasDamagedPlayer = true;
             }
-            dmg.takeDamage(damageAmount);
+
+            damageTarget.takeDamage(damageAmount);
         }
 
         if (type == damageType.bullet)
@@ -88,34 +122,41 @@ public class Damage : MonoBehaviour
     // Created for the boss ranged beam attack, but can be used for DOT damage as well
     private void OnTriggerStay(Collider other)
     {
-        if (other.isTrigger) return;
+        if (other.isTrigger)
+        {
+            return;
+        }
 
-        IDamage dmg = other.GetComponentInParent<IDamage>();
-
-        if (dmg == null) return;
+        IDamage damageTarget = other.GetComponentInParent<IDamage>();
+        if (damageTarget == null)
+        {
+            return;
+        }
 
         if (type == damageType.DOT)
         {
-            if (currentTarget != dmg) return;
+            if (currentTarget != damageTarget || damageTimer > 0f)
+            {
+                return;
+            }
 
-            if (damageTimer > 0) return;
-
-            dmg.takeDamage(damageAmount);
+            damageTarget.takeDamage(damageAmount);
             damageTimer = damageRate;
         }
     }
 
+
     private void OnTriggerExit(Collider other)
     {
         if (other.isTrigger)
+        { return; }
+
+        IDamage damageTarget = other.GetComponentInParent<IDamage>();
+
+        if (damageTarget == null)
             return;
 
-        IDamage dmg = other.GetComponentInParent<IDamage>();
-
-        if (dmg == null)
-            return;
-
-        if (type == damageType.DOT && currentTarget == dmg)
+        if (type == damageType.DOT && currentTarget == damageTarget)
         {
             currentTarget = null;
             damageTimer = 0f;

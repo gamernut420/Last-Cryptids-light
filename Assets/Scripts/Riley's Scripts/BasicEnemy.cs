@@ -36,6 +36,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     [Header("Attack")]
     [SerializeField] private GameObject attackHitbox;
     [SerializeField] private float attackRange = 3f;
+    [SerializeField] private float attackSpeed = 6f;
     [SerializeField] private float attackCooldown = 1.5f;
     [SerializeField] private float attackDuration = 0.5f;
     [SerializeField] private float loseAggro = 2f;
@@ -79,6 +80,12 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float currentHP;
     private float speed;
 
+    [Header("Audio")]
+    [Range(0f, 1f)]
+    [SerializeField] private float audStepsVol;
+    private bool isPlayingStep;
+    private AudioManager footstepAudio;
+
     Color colorOrig;
     private bool bossEnemy = false;
 
@@ -116,6 +123,8 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         RandomizeEnemyType();
         SetEnemyColor();
+        footstepAudio = GetComponent<AudioManager>();
+
         if (aiType == AIType.Melee)
         {
             maxHP = meleeMaxHP;
@@ -126,6 +135,15 @@ public class BasicEnemy : MonoBehaviour, IDamage
             maxHP = rangeMaxHP;
             speed = RmoveSpeed;
         }
+        //added by sean
+        DifficultyManager difficultyManager = DifficultyManager.GetInstance();
+        if (difficultyManager != null)
+        {
+            maxHP = difficultyManager.GetScaledEnemyHealth(maxHP);
+            speed = difficultyManager.GetScaledEnemySpeed(speed);
+            attackSpeed = difficultyManager.GetScaledEnemySpeed(attackSpeed);
+        }
+        //end added by sean
 
         currentHP = maxHP;
 
@@ -179,6 +197,14 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             Roam();
         }
+
+        if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
+        {
+            if (footstepAudio != null)
+            {
+                StartCoroutine(PlayStep());
+            }
+        }
     }
 
     void SetEnemyColor()
@@ -192,10 +218,12 @@ public class BasicEnemy : MonoBehaviour, IDamage
             {
                 case AIType.Melee:
                     modelMat.color = Color.blue;
+                    colorOrig = modelMat.color;
                     modelMat.SetColor("_EmissionColor", Color.blue);
                     break;
                 case AIType.Range:
                     modelMat.color = Color.yellow;
+                    colorOrig = modelMat.color;
                     modelMat.SetColor("_EmissionColor", Color.yellow);
                     break;
             }
@@ -208,6 +236,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         if (attacking) return;
 
+        agent.speed = speed;
         agent.isStopped = false;
         roamTimer -= Time.deltaTime;
 
@@ -276,6 +305,8 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         if (attacking) return;
 
+        agent.speed = attackSpeed;
+
         if (distanceToPlayer <= attackRange)
         {
             StopMovement();
@@ -291,14 +322,13 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private void RangedBehavior(float distanceToPlayer)
     {
-        if (attacking) return;
-
         if (distanceToPlayer < minimumRangedDistance)
         {
             BackAwayFromPlayer();
         }
         else if (distanceToPlayer > rangedAttackRange - minimumRangedDistance)
         {
+            agent.isStopped = false;
             agent.SetDestination(PlayerTransform.position);
         }
         else
@@ -508,10 +538,28 @@ public class BasicEnemy : MonoBehaviour, IDamage
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
+    private IEnumerator PlayStep()
+    {
+        isPlayingStep = true;
+        footstepAudio.PlaySound(audStepsVol);
+
+        if (agent.speed == attackSpeed)
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.6f);
+        }
+
+        isPlayingStep = false;
+    }
+
     public void takeDamage(int amount)
     {
         currentHP -= amount;
         Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
+        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -529,6 +577,20 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
 
         Destroy(gameObject);
+
+        if (gameManager.instance != null)
+        {
+            gameManager.instance.AddKill();
+        }
+    }
+
+    IEnumerator flashRed()
+    {
+        modelMat.color = Color.red;
+        modelMat.SetColor("_EmissionColor", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        modelMat.color = colorOrig;
+        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     private void OnDrawGizmosSelected()
