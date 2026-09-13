@@ -10,14 +10,22 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // Stores actual inventory quantities.
+    // Stores ALL actual inventory item amounts.
     [System.NonSerialized]
     public Dictionary<ScriptableItem, int> items =
         new Dictionary<ScriptableItem, int>();
 
 
-    [Header("UI Slots Reference")]
+    [Header("Overall Inventory UI")]
+
+    // Existing large inventory grid.
     public InventorySlotUI[] inventorySlots;
+
+
+    // ADDED FOR CRAFTED ITEMS:
+    // These are the numbered HUD slots 1-4.
+    [Header("Quick Slots 1-4")]
+    public InventorySlotUI[] quickSlots;
 
 
     private void Awake()
@@ -36,30 +44,39 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        // ADDED FOR INVENTORY SLOTS:
-        // Make sure all assigned slots begin empty.
-        if (inventorySlots == null)
+        // ADDED FOR QUICK SLOTS:
+        // Make sure the four hotbar slots begin empty
+        // but remain visible on the HUD.
+        if (quickSlots != null)
         {
-            return;
-        }
-
-
-        foreach (
-            InventorySlotUI slot
-            in inventorySlots)
-        {
-            if (slot != null)
+            foreach (
+                InventorySlotUI slot
+                in quickSlots)
             {
+                if (slot == null)
+                {
+                    continue;
+                }
+
+
                 slot.ClearSlot();
 
-                // Keep the 1–4 slots visible.
-                slot.gameObject.SetActive(true);
+                slot.gameObject.SetActive(
+                    true
+                );
             }
         }
+
+
+        // Refresh the normal inventory display.
+        UpdateUI();
     }
 
 
-    // Adds items.
+    // Adds a normal item to the player's inventory.
+    //
+    // Materials picked up in the world use this.
+    // They do NOT automatically enter slots 1-4.
     public void AddItem(
         ScriptableItem itemData,
         int amount)
@@ -91,28 +108,57 @@ public class PlayerInventory : MonoBehaviour
         );
 
 
-        // ADDED FOR INVENTORY SLOTS:
-        // Update the matching slot or put this item
-        // into the first available slot.
-        AddOrUpdateSlot(
+        // Update the large inventory grid.
+        UpdateUI();
+    }
+
+
+    // ADDED FOR CRAFTING:
+    // Adds a completed crafted item to the normal
+    // inventory AND assigns it to slots 1-4.
+    public void AddCraftedItem(
+        ScriptableItem itemData,
+        int amount)
+    {
+        if (itemData == null ||
+            amount <= 0)
+        {
+            return;
+        }
+
+
+        // First add it to the actual inventory.
+        AddItem(
+            itemData,
+            amount
+        );
+
+
+        // Then display it in the quick-slot system.
+        AddOrUpdateQuickSlot(
             itemData
         );
     }
 
 
-    // Checks for item.
+    // Checks whether the inventory contains an item.
     public bool HasItem(
-        ScriptableItem itemName)
+        ScriptableItem itemData)
     {
+        if (itemData == null)
+        {
+            return false;
+        }
+
+
         return items.ContainsKey(
-            itemName
+            itemData
         );
     }
 
 
     // ADDED FOR CRAFTING:
-    // Checks whether the player has the required
-    // quantity of an item.
+    // Checks whether enough of an item is owned.
     public bool HasItem(
         ScriptableItem itemData,
         int requiredAmount)
@@ -124,12 +170,13 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        return GetAmount(itemData)
-               >= requiredAmount;
+        return GetAmount(
+            itemData
+        ) >= requiredAmount;
     }
 
 
-    // Gets item amount.
+    // Gets the current quantity of an item.
     public int GetAmount(
         ScriptableItem itemData)
     {
@@ -149,8 +196,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // ADDED FOR CRAFTING:
-    // Removes a specified quantity of an item.
+    // Removes a quantity from inventory.
     public bool RemoveItem(
         ScriptableItem itemData,
         int amount)
@@ -173,7 +219,6 @@ public class PlayerInventory : MonoBehaviour
         items[itemData] -= amount;
 
 
-        // ADDED FOR CRAFTING:
         // Remove empty entries completely.
         if (items[itemData] <= 0)
         {
@@ -183,9 +228,14 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // ADDED FOR INVENTORY SLOTS:
-        // Refresh the specific slot containing this item.
-        RefreshSlot(
+        // Update normal inventory.
+        UpdateUI();
+
+
+        // ADDED FOR QUICK SLOTS:
+        // If the consumed item is also present in
+        // slots 1-4, update or clear that slot.
+        RefreshQuickSlot(
             itemData
         );
 
@@ -194,30 +244,37 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // ADDED FOR INVENTORY SLOTS:
-    // If the item is already assigned to a slot,
-    // update its stack count.
+    // ADDED FOR QUICK SLOTS:
+    // If this item is already assigned to a quick slot,
+    // update its displayed stack.
     //
-    // Otherwise use the first empty slot:
-    // 1, then 2, then 3, then 4.
-    private void AddOrUpdateSlot(
+    // Otherwise place it in the first empty slot:
+    // 1 -> 2 -> 3 -> 4.
+    private void AddOrUpdateQuickSlot(
         ScriptableItem itemData)
     {
-        if (inventorySlots == null)
+        if (quickSlots == null ||
+            quickSlots.Length == 0)
         {
+            Debug.LogWarning(
+                "PlayerInventory has no Quick Slots assigned."
+            );
+
             return;
         }
 
 
         int currentAmount =
-            GetAmount(itemData);
+            GetAmount(
+                itemData
+            );
 
 
-        // First check whether this exact item
-        // already occupies one of the slots.
+        // First see whether this exact item is
+        // already in one of the four slots.
         foreach (
             InventorySlotUI slot
-            in inventorySlots)
+            in quickSlots)
         {
             if (slot == null)
             {
@@ -238,12 +295,11 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // ADDED FOR INVENTORY SLOTS:
-        // Item is not currently assigned,
-        // so find the first available slot.
+        // Not already assigned.
+        // Find first empty slot.
         foreach (
             InventorySlotUI slot
-            in inventorySlots)
+            in quickSlots)
         {
             if (slot == null)
             {
@@ -263,23 +319,22 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // ADDED FOR INVENTORY SLOTS:
-        // Inventory still contains the item,
-        // but all four quick slots are occupied.
+        // Inventory still receives the item even
+        // if all four quick slots are occupied.
         Debug.Log(
-            "No empty inventory slot available for " +
-            itemData.itemName
+            "All quick slots are full. " +
+            itemData.itemName +
+            " remains in the normal inventory."
         );
     }
 
 
-    // ADDED FOR INVENTORY SLOTS:
-    // Updates or clears the slot representing
-    // a particular ScriptableItem.
-    private void RefreshSlot(
+    // ADDED FOR QUICK SLOTS:
+    // Called when an item quantity changes.
+    private void RefreshQuickSlot(
         ScriptableItem itemData)
     {
-        if (inventorySlots == null)
+        if (quickSlots == null)
         {
             return;
         }
@@ -287,7 +342,7 @@ public class PlayerInventory : MonoBehaviour
 
         foreach (
             InventorySlotUI slot
-            in inventorySlots)
+            in quickSlots)
         {
             if (slot == null)
             {
@@ -302,19 +357,26 @@ public class PlayerInventory : MonoBehaviour
             }
 
 
-            int amount =
-                GetAmount(itemData);
+            int currentAmount =
+                GetAmount(
+                    itemData
+                );
 
 
-            if (amount <= 0)
+            if (currentAmount <= 0)
             {
                 slot.ClearSlot();
+
+                // Keep the numbered HUD slot visible.
+                slot.gameObject.SetActive(
+                    true
+                );
             }
             else
             {
                 slot.SetItem(
                     itemData,
-                    amount
+                    currentAmount
                 );
             }
 
@@ -324,9 +386,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // ADDED FOR INVENTORY SLOTS:
-    // Full rebuild if another system needs to force
-    // the UI to synchronize with the inventory.
+    // Updates the LARGE inventory grid.
     public void UpdateUI()
     {
         if (inventorySlots == null)
@@ -335,25 +395,66 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        foreach (
-            InventorySlotUI slot
-            in inventorySlots)
-        {
-            if (slot != null)
-            {
-                slot.ClearSlot();
-                slot.gameObject.SetActive(true);
-            }
-        }
+        int i =
+            0;
 
 
         foreach (
             KeyValuePair<ScriptableItem, int> kvp
             in items)
         {
-            AddOrUpdateSlot(
-                kvp.Key
-            );
+            if (i >= inventorySlots.Length)
+            {
+                break;
+            }
+
+
+            if (inventorySlots[i] == null)
+            {
+                i++;
+                continue;
+            }
+
+
+            inventorySlots[i]
+                .gameObject
+                .SetActive(
+                    true
+                );
+
+
+            inventorySlots[i]
+                .SetItem(
+                    kvp.Key,
+                    kvp.Value
+                );
+
+
+            i++;
+        }
+
+
+        // Clear unused large-inventory slots.
+        for (
+            int j = i;
+            j < inventorySlots.Length;
+            j++)
+        {
+            if (inventorySlots[j] == null)
+            {
+                continue;
+            }
+
+
+            inventorySlots[j]
+                .ClearSlot();
+
+
+            inventorySlots[j]
+                .gameObject
+                .SetActive(
+                    false
+                );
         }
     }
 }
