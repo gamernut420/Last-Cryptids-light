@@ -5760,6 +5760,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d4a5e7c88390d04db36022aa3a3b0bf, type: 3}
+--- !u!114 &1425050208 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7614597670657140528, guid: 8d4a5e7c88390d04db36022aa3a3b0bf, type: 3}
+  m_PrefabInstance: {fileID: 1425050207}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85a8a7327bd30e499967522656ea112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingTable
 --- !u!43 &1440054506
 Mesh:
   m_ObjectHideFlags: 0
@@ -6142,6 +6153,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 4526882450218578876, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: craftingTable
+      value: 
+      objectReference: {fileID: 1425050208}
     - target: {fileID: 4591596888218735280, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
