@@ -77,17 +77,22 @@ public class WaveEnemySpawner : MonoBehaviour
         }
         //end added by sean
 
+        NavMeshTriangulation navMeshData = NavMesh.CalculateTriangulation();
+
+        if (navMeshData.indices.Length == 0)
+        {
+            Debug.LogError("No baked NavMesh found in the scene! Cannot spawn wave.");
+            isSpawningActive = false;
+            yield break;
+        }
+
         for (int i = 0; i < currentWaveCount; i++)
         {
-            bool spawned = false;
-
-            while (!spawned)
+            while (true)
             {
-                float angle = Random.Range(0f, Mathf.PI * 2f);
-                Vector3 randomPosition = transform.position + new Vector3(Mathf.Cos(angle) * spawnRadius, 0f, Mathf.Sin(angle) * spawnRadius);
-
+                Vector3 spawnPos = GetRandomPointOnNavMesh(navMeshData);
                 NavMeshHit hit;
-                if (NavMesh.SamplePosition(randomPosition, out hit, navMeshSearchDistance, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(spawnPos, out hit, 5f, NavMesh.AllAreas))
                 {
                     GameObject enemyPrefab = GetRandomEnemyPrefab();
 
@@ -113,14 +118,34 @@ public class WaveEnemySpawner : MonoBehaviour
 
                     if (agent != null)
                     {
-                        agent.Warp(hit.position);
+                        agent.Warp(spawnPos);
                     }
-
-                    spawned = true;
                     yield return new WaitForSeconds(spawnRate);
+                    break;
                 }
+            
             }
+            waveTimer = 0f;
+            isSpawningActive = false;
         }
+    }
+
+    private Vector3 GetRandomPointOnNavMesh(NavMeshTriangulation data)
+    {
+        // Pick a random triangle index from the mesh data
+        int randomTriangleIndex = Random.Range(0, data.indices.Length / 3) * 3;
+
+        // Extract the three vertices that form that specific triangle
+        Vector3 vertexA = data.vertices[data.indices[randomTriangleIndex]];
+        Vector3 vertexB = data.vertices[data.indices[randomTriangleIndex + 1]];
+        Vector3 vertexC = data.vertices[data.indices[randomTriangleIndex + 2]];
+
+        // Generate a uniform random point within that triangle using barycentric coordinates
+        float r1 = Mathf.Sqrt(Random.value);
+        float r2 = Random.value;
+
+        Vector3 randomPoint = (1 - r1) * vertexA + (r1 * (1 - r2)) * vertexB + (r1 * r2) * vertexC;
+        return randomPoint;
     }
 
 
