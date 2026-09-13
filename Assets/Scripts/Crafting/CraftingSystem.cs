@@ -1,21 +1,16 @@
 using UnityEngine;
 
-/// <summary>
-/// Handles crafting logic using the team's existing
-/// CrafatbleItemRecipe and PlayerInventory systems.
-/// </summary>
 public static class CraftingSystem
 {
-    /// <summary>
-    /// Checks whether the player has every item required
-    /// by the selected recipe.
-    /// </summary>
+    // ADDED FOR CRAFTING:
+    // Checks whether the player has every ingredient
+    // required by the selected recipe.
     public static bool CanCraft(
         CrafatbleItemRecipe recipe,
-        PlayerInventory playerInventory)
+        PlayerInventory inventory)
     {
         if (recipe == null ||
-            playerInventory == null)
+            inventory == null)
         {
             return false;
         }
@@ -27,22 +22,18 @@ public static class CraftingSystem
         }
 
 
-        for (int i = 0;
-             i < recipe.ItemsNeeded.Count;
-             i++)
+        foreach (
+            CrafatbleItemRecipe.Item requirement
+            in recipe.ItemsNeeded)
         {
-            CrafatbleItemRecipe.Item ingredient =
-                recipe.ItemsNeeded[i];
-
-
             // ADDED FOR CRAFTING:
-            // Each ingredient must have a ScriptableItem
-            // assigned so PlayerInventory can check it.
-            if (ingredient.itemData == null)
+            // Every ingredient needs a valid ScriptableItem.
+            if (requirement.itemData == null)
             {
                 Debug.LogWarning(
+                    "Recipe " +
                     recipe.name +
-                    " has an ingredient with no ScriptableItem assigned."
+                    " has an ingredient with no Item Data."
                 );
 
                 return false;
@@ -50,23 +41,19 @@ public static class CraftingSystem
 
 
             // ADDED FOR CRAFTING:
-            // Ingredient quantities must be at least 1.
-            if (ingredient.Quantity <= 0)
+            // Ignore zero or negative requirements.
+            if (requirement.Quantity <= 0)
             {
-                Debug.LogWarning(
-                    recipe.name +
-                    " has an ingredient with an invalid quantity."
-                );
-
-                return false;
+                continue;
             }
 
 
             // ADDED FOR CRAFTING:
-            // Check the actual ScriptableItem and required quantity.
-            if (!playerInventory.HasItem(
-                    ingredient.itemData,
-                    ingredient.Quantity))
+            // Make sure the player owns enough
+            // of this exact ScriptableItem.
+            if (!inventory.HasItem(
+                    requirement.itemData,
+                    requirement.Quantity))
             {
                 return false;
             }
@@ -77,70 +64,26 @@ public static class CraftingSystem
     }
 
 
-    /// <summary>
-    /// Removes all required ingredients from the player's inventory.
-    ///
-    /// Only call after CanCraft succeeds.
-    /// </summary>
-    private static void ConsumeIngredients(
-        CrafatbleItemRecipe recipe,
-        PlayerInventory playerInventory)
-    {
-        for (int i = 0;
-             i < recipe.ItemsNeeded.Count;
-             i++)
-        {
-            CrafatbleItemRecipe.Item ingredient =
-                recipe.ItemsNeeded[i];
-
-
-            // ADDED FOR CRAFTING:
-            // Remove the exact ScriptableItem required
-            // by this recipe.
-            playerInventory.RemoveItem(
-                ingredient.itemData,
-                ingredient.Quantity
-            );
-        }
-    }
-
-
-    /// <summary>
-    /// Attempts to craft the selected recipe.
-    ///
-    /// Returns true when crafting succeeds.
-    /// </summary>
+    // ADDED FOR CRAFTING:
+    // Handles the entire crafting transaction.
     public static bool TryCraft(
         CrafatbleItemRecipe recipe,
-        PlayerInventory playerInventory)
+        PlayerInventory inventory)
     {
         if (recipe == null ||
-            playerInventory == null)
+            inventory == null)
         {
             return false;
         }
 
 
         // ADDED FOR CRAFTING:
-        // The recipe should still have a prefab representing
-        // the physical version of the crafted item.
-        if (recipe.itemPrefab == null)
-        {
-            Debug.LogWarning(
-                recipe.name +
-                " does not have an item prefab assigned."
-            );
-
-            return false;
-        }
-
-
-        // ADDED FOR CRAFTING:
-        // This is the ScriptableItem that will actually be
-        // stored inside PlayerInventory.
+        // Make sure the recipe has a finished
+        // ScriptableItem assigned.
         if (recipe.craftedItemData == null)
         {
             Debug.LogWarning(
+                "Recipe " +
                 recipe.name +
                 " does not have Crafted Item Data assigned."
             );
@@ -150,42 +93,70 @@ public static class CraftingSystem
 
 
         // ADDED FOR CRAFTING:
-        // Optional configuration warning.
-        //
-        // ScriptableItem already contains an itemModel field,
-        // so ideally it should point to the same prefab
-        // as recipe.itemPrefab.
-        if (recipe.craftedItemData.itemModel == null)
-        {
-            Debug.LogWarning(
-                recipe.craftedItemData.itemName +
-                " does not have an itemModel assigned."
-            );
-        }
-
-
-        // Check all ingredients before removing anything.
+        // Never consume materials unless the
+        // complete recipe can be crafted.
         if (!CanCraft(
                 recipe,
-                playerInventory))
+                inventory))
         {
+            Debug.Log(
+                "Cannot craft " +
+                recipe.craftedItemData.itemName +
+                ": missing required materials."
+            );
+
             return false;
         }
 
 
-        // Remove recipe ingredients.
-        ConsumeIngredients(
-            recipe,
-            playerInventory
+        // ADDED FOR CRAFTING:
+        // Consume every required ingredient.
+        foreach (
+            CrafatbleItemRecipe.Item requirement
+            in recipe.ItemsNeeded)
+        {
+            if (requirement.itemData == null ||
+                requirement.Quantity <= 0)
+            {
+                continue;
+            }
+
+
+            bool removed =
+                inventory.RemoveItem(
+                    requirement.itemData,
+                    requirement.Quantity
+                );
+
+
+            // ADDED FOR CRAFTING:
+            // This should normally never fail because
+            // CanCraft() already validated everything,
+            // but stop if inventory changes unexpectedly.
+            if (!removed)
+            {
+                Debug.LogWarning(
+                    "Crafting failed while removing " +
+                    requirement.itemData.itemName
+                );
+
+                return false;
+            }
+        }
+
+
+        // CHANGED FOR QUICK SLOTS:
+        // Add the completed item to the normal inventory
+        // and place it into the first available quick slot.
+        inventory.AddCraftedItem(
+            recipe.craftedItemData,
+            1
         );
 
 
-        // ADDED FOR CRAFTING:
-        // Add the crafted ScriptableItem directly
-        // to the team's existing inventory system.
-        playerInventory.AddItem(
-            recipe.craftedItemData,
-            1
+        Debug.Log(
+            "Crafted: " +
+            recipe.craftedItemData.itemName
         );
 
 

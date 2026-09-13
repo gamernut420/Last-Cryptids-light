@@ -15,17 +15,17 @@ public class MissionUI : MonoBehaviour
 
             foreach (ObjectiveData obj in ObjectiveManager.Instance.activeObjectives)
             {
-                if (obj.isUnlocked && !obj.shouldHideFromUI)
+                if (!obj.isCompleted)
                 {
-                    if (!obj.isCompleted)
-                    {
-                        displayText += $"- {obj.objectiveTitle}\n";
-                        hasIncompleteObjs = true;
-                    }
-                    else
-                        displayText += $"<s>- {obj.objectiveTitle} (Complete)</s>\n";
+                    displayText += $"- {obj.objectiveTitle}\n";
+                    hasIncompleteObjs = true;
                 }
+                else
+                    displayText += $"<s>- {obj.objectiveTitle} (Complete)</s>\n";
             }
+            if (!hasIncompleteObjs)
+                displayText += "\nAll Objective Complete! Time to go home!";
+
                 objectiveText.text = displayText;
         }
     }

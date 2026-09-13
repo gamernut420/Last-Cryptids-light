@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7163756607668680691}
   - component: {fileID: 5631303981264313790}
   - component: {fileID: 2624048878072223900}
+  - component: {fileID: -2386494163121766819}
   m_Layer: 0
   m_Name: CopperScrapWiring
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdf1a4ad44fc5eb40b3a6b241edd8d4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
-  itemData: {fileID: 11400000, guid: 437edbdf29082e14884a5afb5ff3d1da, type: 2}
+  itemData: {fileID: 11400000, guid: dd01f433762e8744eb6ce0f63fdce899, type: 2}
   HoldTimer: 0
   PromptMessage: Press E to pick up
 --- !u!33 &7163756607668680691
@@ -128,3 +129,30 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &-2386494163121766819
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437385060387750428}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

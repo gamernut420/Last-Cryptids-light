@@ -1,59 +1,172 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using TMPro;
 
 public class CraftingUIManager : MonoBehaviour
 {
     [Header("Crafting Table")]
 
-    // ADDED:
-    // Reference to the actual crafting table.
-    // The table gives this UI access to its RecipeBookSO.
     [SerializeField]
     private CraftingTable craftingTable;
+
+
+    [Header("UI Toggle")]
+
+    [SerializeField]
+    private GameObject craftingPanel;
+
+
+    [SerializeField]
+    private InventoryToggle inventoryToggle;
 
 
     [Header("UI Elements")]
 
     [SerializeField]
-    Transform requirementsContainer;
+    private Transform requirementsContainer;
 
     [SerializeField]
-    GameObject requirementRowPreFab;
+    private GameObject requirementRowPreFab;
 
     [SerializeField]
-    GameObject buttonPrefab;
+    private GameObject buttonPrefab;
 
     [SerializeField]
-    Transform contentContainer;
+    private Transform contentContainer;
 
     [SerializeField]
-    TextMeshProUGUI itemDecription;
+    private TextMeshProUGUI itemDecription;
 
     [SerializeField]
-    Image itemIcon;
+    private Image itemIcon;
 
 
-    // CHANGED:
-    // This used to store the temporary CraftingRecipe struct.
-    //
-    // It now stores the team's real CrafatbleItemRecipe
-    // ScriptableObject.
+    // ADDED FOR CRAFTING:
     private CrafatbleItemRecipe currentSelectedRecipe;
+
+
+    // ADDED FOR CRAFTING UI:
+    private bool craftingUIOpen;
 
 
     private void Start()
     {
+        craftingUIOpen =
+            false;
+
+
+        if (craftingPanel != null)
+        {
+            craftingPanel.SetActive(
+                false
+            );
+        }
+
+
         PopulateRecipeButtons();
     }
 
 
-    void PopulateRecipeButtons()
+    // ADDED FOR CRAFTING UI:
+    // Escape closes the crafting screen.
+    private void Update()
     {
-        // ADDED:
-        // Make sure the crafting table exists before
-        // attempting to read recipes.
+        if (craftingUIOpen &&
+            Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseCraftingUI();
+        }
+    }
+
+
+    public void ToggleCraftingUI()
+    {
+        if (craftingUIOpen)
+        {
+            CloseCraftingUI();
+        }
+        else
+        {
+            OpenCraftingUI();
+        }
+    }
+
+
+    public void OpenCraftingUI()
+    {
+        craftingUIOpen =
+            true;
+
+
+        if (craftingPanel != null)
+        {
+            craftingPanel.SetActive(
+                true
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "CraftingUIManager does not have a CraftingPanel assigned."
+            );
+        }
+
+
+        // ADDED FOR CRAFTING:
+        // Refresh recipes whenever the table opens.
+        PopulateRecipeButtons();
+
+
+        if (inventoryToggle != null)
+        {
+            inventoryToggle.OpenInventory();
+        }
+
+
+        Cursor.lockState =
+            CursorLockMode.None;
+
+        Cursor.visible =
+            true;
+    }
+
+
+    public void CloseCraftingUI()
+    {
+        craftingUIOpen =
+            false;
+
+
+        if (craftingPanel != null)
+        {
+            craftingPanel.SetActive(
+                false
+            );
+        }
+
+
+        if (inventoryToggle != null)
+        {
+            inventoryToggle.CloseInventory();
+        }
+
+
+        Cursor.lockState =
+            CursorLockMode.Locked;
+
+        Cursor.visible =
+            false;
+    }
+
+
+    public bool IsCraftingUIOpen()
+    {
+        return craftingUIOpen;
+    }
+
+
+    private void PopulateRecipeButtons()
+    {
         if (craftingTable == null)
         {
             Debug.LogWarning(
@@ -64,8 +177,6 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // ADDED:
-        // Make sure the crafting table has a RecipeBookSO.
         if (craftingTable.RecipeBook == null)
         {
             Debug.LogWarning(
@@ -76,19 +187,40 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // ADDED:
-        // Clear existing buttons before rebuilding the list.
-        //
-        // This prevents duplicate buttons if the UI is refreshed.
-        foreach (Transform child in contentContainer)
+        if (contentContainer == null)
         {
-            Destroy(child.gameObject);
+            Debug.LogWarning(
+                "CraftingUIManager does not have a Content Container assigned."
+            );
+
+            return;
         }
 
 
-        // CHANGED:
-        // Instead of looping through temporary mokeRecipe data,
-        // loop through the real RecipeBookSO.
+        if (buttonPrefab == null)
+        {
+            Debug.LogWarning(
+                "CraftingUIManager does not have a Button Prefab assigned."
+            );
+
+            return;
+        }
+
+
+        // ADDED FOR CRAFTING:
+        // Remove old generated recipe buttons.
+        foreach (
+            Transform child
+            in contentContainer)
+        {
+            Destroy(
+                child.gameObject
+            );
+        }
+
+
+        // ADDED FOR CRAFTING:
+        // Display every recipe in the recipe book.
         foreach (
             CrafatbleItemRecipe recipe
             in craftingTable.RecipeBook.Recipes)
@@ -110,22 +242,14 @@ public class CraftingUIManager : MonoBehaviour
                 newButton.GetComponentInChildren<TMP_Text>();
 
 
+            // CHANGED FOR CRAFTING:
+            // Use Crafted Item Data directly.
             if (buttonText != null)
             {
-                // ADDED:
-                // Try to get the crafted item's proper inventory name.
-                //
-                // If the prefab is missing the CraftedItem component,
-                // fall back to the recipe asset's name.
-                CraftedItem craftedItem =
-                    GetCraftedItem(recipe);
-
-
-                if (craftedItem != null &&
-                    craftedItem.InventoryItem != null)
+                if (recipe.craftedItemData != null)
                 {
                     buttonText.text =
-                        craftedItem.InventoryItem.itemName;
+                        recipe.craftedItemData.itemName;
                 }
                 else
                 {
@@ -141,26 +265,38 @@ public class CraftingUIManager : MonoBehaviour
 
             if (btnComponent != null)
             {
-                // ADDED:
-                // Store a local copy so each generated button
-                // correctly remembers its own recipe.
                 CrafatbleItemRecipe recipeCopy =
                     recipe;
 
 
+                // ADDED FOR CRAFTING:
+                // Recipes stay selectable even when
+                // materials are missing so requirements
+                // can still be inspected.
+                btnComponent.interactable =
+                    true;
+
+
                 btnComponent.onClick.AddListener(
-                    () => OnSelectedRecipe(recipeCopy)
+                    () =>
+                        OnSelectedRecipe(
+                            recipeCopy
+                        )
                 );
             }
         }
     }
 
 
-    // CHANGED:
-    // Uses the actual CrafatbleItemRecipe asset.
     public void OnSelectedRecipe(
         CrafatbleItemRecipe selectedRecipe)
     {
+        if (selectedRecipe == null)
+        {
+            return;
+        }
+
+
         currentSelectedRecipe =
             selectedRecipe;
 
@@ -171,8 +307,6 @@ public class CraftingUIManager : MonoBehaviour
     }
 
 
-    // CHANGED:
-    // Reads requirements directly from the team's recipe.
     private void UpdateRequirementUI(
         CrafatbleItemRecipe selectedRecipe)
     {
@@ -182,7 +316,18 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // Clear old recipe requirement rows.
+        if (requirementsContainer == null)
+        {
+            Debug.LogWarning(
+                "CraftingUIManager does not have a Requirements Container assigned."
+            );
+
+            return;
+        }
+
+
+        // ADDED FOR CRAFTING:
+        // Clear previous requirement rows.
         foreach (
             Transform child
             in requirementsContainer)
@@ -193,12 +338,18 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // ADDED:
-        // Build a requirement row for every actual ingredient.
+        // ADDED FOR CRAFTING:
+        // Build ingredient display rows.
         foreach (
             CrafatbleItemRecipe.Item requirement
             in selectedRecipe.ItemsNeeded)
         {
+            if (requirementRowPreFab == null)
+            {
+                continue;
+            }
+
+
             GameObject row =
                 Instantiate(
                     requirementRowPreFab,
@@ -212,12 +363,10 @@ public class CraftingUIManager : MonoBehaviour
 
             if (rowText != null)
             {
-                int playerHasAmount = 0;
+                int playerHasAmount =
+                    0;
 
 
-                // ADDED:
-                // Check how many of this ScriptableItem
-                // the player currently owns.
                 if (PlayerInventory.Instance != null &&
                     requirement.itemData != null)
                 {
@@ -228,22 +377,12 @@ public class CraftingUIManager : MonoBehaviour
                 }
 
 
-                // ADDED:
-                // Prefer the ScriptableItem's display name.
-                // Fall back to the teammate's existing ID
-                // when itemData has not been assigned yet.
                 string displayName =
                     requirement.itemData != null
                         ? requirement.itemData.itemName
                         : requirement.ID;
 
 
-                // CHANGED:
-                // Show:
-                //
-                // Copper Scrap: 3 / 5
-                //
-                // Required / Owned
                 rowText.text =
                     displayName +
                     ": " +
@@ -254,78 +393,64 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // ADDED:
-        // Get information about the item produced
-        // by this recipe.
-        CraftedItem craftedItem =
-            GetCraftedItem(
-                selectedRecipe
-            );
+        // CHANGED FOR CRAFTING:
+        // Read selected item information directly
+        // from Crafted Item Data.
+        ScriptableItem craftedItemData =
+            selectedRecipe.craftedItemData;
 
 
-        if (craftedItem != null &&
-            craftedItem.InventoryItem != null)
+        if (craftedItemData != null)
         {
-            ScriptableItem itemData =
-                craftedItem.InventoryItem;
-
-
-            // ADDED:
-            // Use the inventory item's icon for the
-            // selected recipe display.
-            if (itemIcon != null)
-            {
-                itemIcon.sprite =
-                    itemData.itemIcon;
-            }
-
-
-            // ADDED:
-            // The current ScriptableItem fields we know about
-            // include itemName and itemIcon.
-            //
-            // Until ScriptableItem exposes a description,
-            // display the item's name rather than guessing
-            // at another field that may not exist.
             if (itemDecription != null)
             {
                 itemDecription.text =
-                    itemData.itemName;
+                    craftedItemData.itemDescription;
+            }
+
+
+            if (itemIcon != null)
+            {
+                itemIcon.sprite =
+                    craftedItemData.itemIcon;
+
+
+                itemIcon.enabled =
+                    craftedItemData.itemIcon != null;
             }
         }
         else
         {
-            // ADDED:
-            // Avoid displaying the previous recipe's icon
-            // if this prefab is configured incorrectly.
-            if (itemIcon != null)
-            {
-                itemIcon.sprite =
-                    null;
-            }
-
-
             if (itemDecription != null)
             {
                 itemDecription.text =
                     selectedRecipe.name;
             }
+
+
+            if (itemIcon != null)
+            {
+                itemIcon.sprite =
+                    null;
+
+                itemIcon.enabled =
+                    false;
+            }
         }
     }
 
 
+    // ADDED FOR CRAFTING:
+    // Hook the CRAFT button's OnClick event
+    // to this function.
     public void OnClickCraftButton()
     {
-        // ADDED:
-        // Do nothing until a recipe has actually been selected.
         if (currentSelectedRecipe == null)
         {
             return;
         }
 
 
-        // ADDED:
-        // Make sure all required systems exist.
         if (craftingTable == null ||
             PlayerInventory.Instance == null)
         {
@@ -333,14 +458,28 @@ public class CraftingUIManager : MonoBehaviour
         }
 
 
-        // ADDED:
-        // Send the selected recipe through:
-        //
-        // CraftingTable
-        //      ↓
-        // CraftingSystem
-        //      ↓
-        // PlayerInventory
+        // ADDED FOR CRAFTING:
+        // Prevent crafting unless all ingredients exist.
+        if (!craftingTable.CanCraft(
+                currentSelectedRecipe,
+                PlayerInventory.Instance))
+        {
+            Debug.Log(
+                "Cannot craft " +
+                currentSelectedRecipe.name +
+                ": missing required materials."
+            );
+
+
+            UpdateRequirementUI(
+                currentSelectedRecipe
+            );
+
+
+            return;
+        }
+
+
         bool craftedSuccessfully =
             craftingTable.Craft(
                 currentSelectedRecipe,
@@ -350,37 +489,17 @@ public class CraftingUIManager : MonoBehaviour
 
         if (craftedSuccessfully)
         {
-            // ADDED:
-            // Refresh the ingredient amounts after crafting.
-            //
-            // Example:
-            //
-            // Copper Scrap: 3 / 5
-            //
-            // becomes:
-            //
-            // Copper Scrap: 3 / 2
+            // ADDED FOR CRAFTING:
+            // Update requirement counts after materials
+            // have been consumed.
             UpdateRequirementUI(
                 currentSelectedRecipe
             );
+
+
+            // ADDED FOR CRAFTING:
+            // Refresh recipe list after inventory changes.
+            PopulateRecipeButtons();
         }
-    }
-
-
-    // ADDED:
-    // Helper function used by the UI to retrieve the
-    // CraftedItem component from a recipe's result prefab.
-    private CraftedItem GetCraftedItem(
-        CrafatbleItemRecipe recipe)
-    {
-        if (recipe == null ||
-            recipe.itemPrefab == null)
-        {
-            return null;
-        }
-
-
-        return recipe.itemPrefab
-            .GetComponent<CraftedItem>();
     }
 }

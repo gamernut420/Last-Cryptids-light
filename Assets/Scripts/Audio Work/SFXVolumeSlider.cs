@@ -52,7 +52,6 @@ public class SFXVolumeSlider : MonoBehaviour
         PlayerPrefs.SetFloat(SFXVolumeKey, volume);
         PlayerPrefs.Save();
         ApplyVolumeToMixer(volume);
-        UISoundPlayer.Instance?.PlaySliderFeedback();
     }
 
     private void ApplyVolumeToMixer(float volume)
