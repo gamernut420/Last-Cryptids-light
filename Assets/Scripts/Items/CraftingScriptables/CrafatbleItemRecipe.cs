@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-
 public class CrafatbleItemRecipe : ScriptableObject
 {
     [Serializable]
     public struct Item
     {
-        public string ID;
-
+        public ScriptableItem itemData;
         public int Quantity;
     }
 
+    public ScriptableItem craftedItemData;
+
     public GameObject itemPrefab;
 
-    
-    [SerializeField] public List<Item> ItemsNeeded;
+    [SerializeField]
+    public List<Item> ItemsNeeded;
 }

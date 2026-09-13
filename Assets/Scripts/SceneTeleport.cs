@@ -14,4 +14,5 @@ public class SceneTeleport : MonoBehaviour
             SceneManager.LoadScene(sceneName);
         }
     }
+
 }
