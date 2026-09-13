@@ -32,10 +32,16 @@ public class PersistentPlayer : MonoBehaviour
 
         if (spawn != null)
         {
-            Debug.Log("Found spawn at: " + spawn.transform.position);
+            CharacterController controller = GetComponent<CharacterController>();
+
+            if (controller != null)
+                controller.enabled = false;
 
             transform.position = spawn.transform.position;
             transform.rotation = spawn.transform.rotation;
+
+            if (controller != null)
+                controller.enabled = true;
 
             Debug.Log("Player moved to: " + transform.position);
         }

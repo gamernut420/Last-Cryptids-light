@@ -41,6 +41,7 @@ public class CraftingUIManager : MonoBehaviour
     [SerializeField] Transform contentContainer;
     [SerializeField] TextMeshProUGUI itemDecription;
     [SerializeField] Image itemIcon;
+    [SerializeField] GameObject craftingPanel;
 
     private CraftingRecipe currentSelectedRecipe; // Needs the Recipe book
 
@@ -96,12 +97,10 @@ public class CraftingUIManager : MonoBehaviour
         }
     }
 
-    public void OnClickCraftButton()
+    public void ToggleCraftingUI()
     {
-        //if (currentSelectedRecipe != null && craftingTable != null)
-        //{
-        //    craftingTable.craftItem(currentSelectedRecipe);
-        //}
+        craftingPanel.SetActive(!craftingPanel.activeSelf);
     }
+
 
 }

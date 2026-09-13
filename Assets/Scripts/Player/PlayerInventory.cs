@@ -78,4 +78,46 @@ public class PlayerInventory : MonoBehaviour
         }
        
     }
+
+    // Checks if player has enough items
+    public bool HasItem(ScriptableItem itemData, int amount)
+    {
+        if (itemData == null)
+        {
+            return false;
+        }
+
+        if (!items.ContainsKey(itemData))
+        {
+            return false;
+        }
+
+        return items[itemData] >= amount;
+    }
+
+    // Removes items from inventory
+    public bool RemoveItem(ScriptableItem itemData, int amount)
+    {
+        if (!HasItem(itemData, amount))
+        {
+            return false;
+        }
+
+        items[itemData] -= amount;
+
+        if (items[itemData] <= 0)
+        {
+            items.Remove(itemData);
+        }
+
+        UpdateUI();
+
+        return true;
+    }
+
+    // Adds a crafted item
+    public void AddCraftedItem(ScriptableItem itemData, int amount)
+    {
+        AddItem(itemData, amount);
+    }
 }
