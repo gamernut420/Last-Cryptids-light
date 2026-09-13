@@ -6,7 +6,7 @@ public class InventoryToggle : MonoBehaviour
     public GameObject inventoryPanel;
 
     [Header("Input Key")]
-    public KeyCode toggleKey;
+    public KeyCode toggleKey = KeyCode.I;
 
     
     void Start()

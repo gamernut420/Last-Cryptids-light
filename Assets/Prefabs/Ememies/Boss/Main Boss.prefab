@@ -78,6 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damage
   type: 1
+  affectedByDifficulty: 0
   rb: {fileID: 5798064649856347173}
   damageAmount: 2
   damageRate: 0
@@ -214,7 +215,7 @@ MonoBehaviour:
   attackCooldown: 2
   meleeHitboxDuration: 0.5
   meleeHitbox: {fileID: 4946616175608351945}
-  projectile: {fileID: 990492548886493971, guid: fb67545a5a4c3454c9153f560e007b6d, type: 3}
+  projectile: {fileID: 8978288815753249729, guid: d934b053601c0e34890d56bbf35b8c26, type: 3}
   projectileSpawnPoint: {fileID: 3639657572453321960}
   rangedAttackCooldown: 15
   rangedAttackChargeTime: 1
@@ -235,16 +236,10 @@ MonoBehaviour:
   teleportNearPlayerDistance: 8
   teleportCooldown: 20
   energyFieldPrefab: {fileID: 7060007482161181010, guid: a28a77c5071645041a88169ee8ddfa67, type: 3}
-  energyFieldSpawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  energyFieldSpawnPoints: []
   energyFieldsPerAttack: 2
   energyFieldCooldown: 10
   energyFieldDuration: 6
-  bossKilled: 0
 --- !u!33 &581006470254560512
 MeshFilter:
   m_ObjectHideFlags: 0
