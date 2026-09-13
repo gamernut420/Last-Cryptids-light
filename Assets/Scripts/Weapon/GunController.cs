@@ -133,6 +133,11 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         }
     }
 
+    private void Awake()
+    {
+        FireRate = 1 / (FireRate / 60);
+    }
+
     private void Start()
     {
         CheckComponents();
@@ -142,8 +147,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
         currentAmmo = MagSize;
         currentReserveAmmo = MaxReserveAmmo;
         canShoot = true;
-
-        FireRate = 1 / (FireRate / 60);
 
         isAiming = false;
 
