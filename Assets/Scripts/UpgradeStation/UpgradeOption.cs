@@ -16,13 +16,12 @@ public class UpgradeOption : MonoBehaviour
 
     [SerializeField] Button UpgradeButton;
 
-    UnityAction<int> PurchaseFNC;
-
-    Func<int> UpgradeCountFNC;
-    Func<int> PriceGetFNC;
+    UpgradeFuncs FunctionCalls;
 
     public struct UpgradeFuncs
     {
+        public UnityAction<int> PurchaseFNC;
+
         public UnityAction<int> Modifier;
 
         public Func<int> CountGetter;
@@ -30,29 +29,41 @@ public class UpgradeOption : MonoBehaviour
         public Func<int> PriceGetter;
     }
 
-    public void Bind(string name, UnityAction<int> purchaseFunc, Func<int> upgraderCounter = null, Func<int> priceGetter = null)
+    public void Bind(string name, UnityAction<int> purchaseFunc, UpgradeFuncs functions)
     {
         UpgradeName.text = name;
 
-        PurchaseFNC = purchaseFunc;
+        FunctionCalls = functions;
 
-        UpgradeCountFNC = upgraderCounter;
-        PriceGetFNC = priceGetter;
+        FunctionCalls.PurchaseFNC = purchaseFunc;
 
         Refresh();
     }
 
     void Refresh()
     {
-        if(UpgradeCountFNC != null)
+        if(FunctionCalls.CountGetter != null)
         {
-            UpgradeCounter.text = UpgradeCountFNC.Invoke().ToString();
+            UpgradeCounter.text = FunctionCalls.CountGetter.Invoke().ToString();
 
-            if (PriceGetFNC != null)
+            if (FunctionCalls.PriceGetter != null)
             {
-                Price.text = $"Price: {(PriceGetFNC() + (UpgradeCountFNC.Invoke() * PriceGetFNC()))}";
+                
+                Price.text = $"Price: {GetPrice()}";
             }
         }
+    }
+
+    public int GetPrice()
+    {
+        int cost = 1;
+
+        if (FunctionCalls.CountGetter != null && FunctionCalls.PriceGetter != null)
+        {
+            cost = (FunctionCalls.PriceGetter() + (FunctionCalls.CountGetter.Invoke() * FunctionCalls.PriceGetter()));
+        }
+
+        return cost;
     }
 
     public void SetBuyable(bool buyable)
@@ -64,9 +75,11 @@ public class UpgradeOption : MonoBehaviour
 
     public void OnClicked()
     {
-        if(PurchaseFNC != null)
+        if(FunctionCalls.Modifier != null && FunctionCalls.PurchaseFNC != null)
         {
-            PurchaseFNC.Invoke(1);
+            FunctionCalls.PurchaseFNC(GetPrice());
+
+            FunctionCalls.Modifier.Invoke(1);
         }
 
         Refresh();

@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7af8eff3f4c6ed6468634e9b718c4694, type: 3}
   m_Name: CraftableHerbalPotion
   m_EditorClassIdentifier: Assembly-CSharp::CrafatbleItemRecipe
-  itemPrefab: {fileID: 0}
-  ItemsNeeded: []
+  itemPrefab: {fileID: 3925307161651897562, guid: 4ebedcbce83dc9442a7804da22a3f81d, type: 3}
+  craftedItemData: {fileID: 11400000, guid: cce611005dfc573499693479a5a95bf8, type: 2}
+  ItemsNeeded:
+  - ID: Spore Pod
+    Quantity: 1
+    itemData: {fileID: 11400000, guid: c7e1e042bed84aa4fb588d507351c310, type: 2}
+  - ID: Tox-Away Root
+    Quantity: 1
+    itemData: {fileID: 11400000, guid: 9075fc52d10c50449b1f52b01980976c, type: 2}

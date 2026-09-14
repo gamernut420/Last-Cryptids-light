@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
   m_Name: BuyANewWeapon
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
+  prerequisiteObjective: {fileID: 11400000, guid: ca5f08c396c98ec4394337b57108168a, type: 2}
+  isUnlocked: 0
   objectiveID: secondary_buy_a_new_weapon
   objectiveTitle: BuyANewWeapon
   objectiveDescription: Buy a weapon at the shop

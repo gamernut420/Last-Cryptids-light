@@ -74,11 +74,9 @@ public class EnemyAI : MonoBehaviour, IDamage
     private Vector3 currentStalkPosition;
     private float positionTimer = 0f;
     private float attackTimer = 0f;
-    private float attemptHide = 0f;
 
     private bool attacking = false;
     private bool hasStalkPosition;
-    private bool isFleeing = false;
 
     private Transform PlayerTransform
     {
@@ -203,11 +201,6 @@ public class EnemyAI : MonoBehaviour, IDamage
             {
                 EnterHiding();
             }
-
-            if (isFleeing && attemptHide <= 0f)
-            {
-                EnterHiding();
-            }
             
             wasVisible = true;
             agent.isStopped = false;
@@ -239,9 +232,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         if (positionTimer > 0f)
             positionTimer -= Time.deltaTime;
-
-        if (attemptHide > 0f)
-            attemptHide -= Time.deltaTime;
     }
 
     private void HandleStalking(bool playerIsMoving)
@@ -360,7 +350,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private void MoveAwayFromPlayer()
     {
-        isFleeing = true;
         Vector3 direction = transform.position - PlayerTransform.position;
         direction.y = 0f;
         if (direction.sqrMagnitude < 0.01f)
@@ -378,7 +367,6 @@ public class EnemyAI : MonoBehaviour, IDamage
             agent.isStopped = false;
             agent.SetDestination(currentStalkPosition);
         }
-        attemptHide = 1f;
     }
 
     private void EnterHiding()
@@ -467,10 +455,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         else
         {
             if (!attacking)
-            {
                 MoveAwayFromPlayer();
-                attemptHide = 1f;
-            }
         }
     }
 
@@ -669,11 +654,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         StopAllCoroutines();
         Destroy(gameObject);
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance.AddKill();
-        }
     }
 
     private void OnDrawGizmosSelected()

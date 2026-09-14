@@ -218,12 +218,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
             {
                 case AIType.Melee:
                     modelMat.color = Color.blue;
-                    colorOrig = modelMat.color;
                     modelMat.SetColor("_EmissionColor", Color.blue);
                     break;
                 case AIType.Range:
                     modelMat.color = Color.yellow;
-                    colorOrig = modelMat.color;
                     modelMat.SetColor("_EmissionColor", Color.yellow);
                     break;
             }
@@ -322,13 +320,14 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private void RangedBehavior(float distanceToPlayer)
     {
+        if (attacking) return;
+
         if (distanceToPlayer < minimumRangedDistance)
         {
             BackAwayFromPlayer();
         }
         else if (distanceToPlayer > rangedAttackRange - minimumRangedDistance)
         {
-            agent.isStopped = false;
             agent.SetDestination(PlayerTransform.position);
         }
         else
@@ -559,7 +558,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         currentHP -= amount;
         Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
-        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -577,20 +575,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
 
         Destroy(gameObject);
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance.AddKill();
-        }
-    }
-
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     private void OnDrawGizmosSelected()

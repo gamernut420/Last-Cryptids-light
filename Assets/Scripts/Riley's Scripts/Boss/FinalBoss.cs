@@ -75,7 +75,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [SerializeField] private float projectileWidth = 2f;
     [SerializeField] private float projectileHeight = 2f;
-    [SerializeField] private float hitboxExtendSpeed = 40f;
+    [SerializeField] private float hitboxExtendSpeed = 20f;
 
     bool isShooting = false;
     private float rangedTimer = 5f;
@@ -879,76 +879,195 @@ public class FinalBoss : MonoBehaviour, IDamage
         isShooting = true;
         chargingRangedAttack = true;
 
-        Debug.Log("Boss is charging ranged attack!");
+
+        Debug.Log(
+            "Boss is charging ranged attack!"
+        );
+
 
         agent.isStopped = true;
+
+
         float chargeTime = 0f;
+
 
         if (PlayerTransform == null)
         {
             agent.isStopped = false;
             chargingRangedAttack = false;
             isShooting = false;
+
             yield break;
         }
 
-        while (chargeTime < rangedAttackChargeTime)
+
+        while (chargeTime <
+               rangedAttackChargeTime)
         {
             FacePlayer();
-            chargeTime += Time.deltaTime;
+
+            chargeTime +=
+                Time.deltaTime;
+
             yield return null;
         }
 
+
         FacePlayer();
+
 
         yield return null;
 
-        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
-        GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-        BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
-        Transform projectileVisual = newProjectile.transform.Find("RiftBeam Visual");
-        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
+
+        Vector3 direction =
+            (
+                PlayerTransform.position -
+                projectileSpawnPoint.position
+            ).normalized;
+
+
+        GameObject newProjectile =
+            Instantiate(
+                projectile,
+                projectileSpawnPoint.position,
+                Quaternion.LookRotation(
+                    direction
+                )
+            );
+
+
+        BoxCollider hitboxCollider =
+            newProjectile
+                .GetComponent<BoxCollider>();
+
+
+        Transform projectileVisual =
+            newProjectile.transform.Find(
+                "RiftBeam Visual"
+            );
+
+
+        BossProjectileCollision sonicBoom =
+            newProjectile
+                .GetComponent<
+                    BossProjectileCollision>();
+
 
         if (hitboxCollider == null)
         {
-            Debug.LogError("Projectile needs a Box Collider!");
-            Destroy(newProjectile);
+            Debug.LogError(
+                "Projectile needs a Box Collider!"
+            );
+
+
+            Destroy(
+                newProjectile
+            );
+
 
             agent.isStopped = false;
             chargingRangedAttack = false;
             isShooting = false;
+
             yield break;
         }
 
+
         float newLength = 0.1f;
 
-        hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
-        hitboxCollider.center = new Vector3(projectileWidth, projectileHeight, newLength / 2f);
-        projectileVisual.localScale = new Vector3(projectileWidth, projectileHeight, newLength);
-        projectileVisual.localPosition = new Vector3(projectileWidth, projectileHeight, newLength / 2f);
+
+        hitboxCollider.size =
+            new Vector3(
+                projectileWidth,
+                projectileHeight,
+                newLength
+            );
+
+
+        hitboxCollider.center =
+            new Vector3(
+                projectileWidth,
+                projectileHeight,
+                newLength / 2f
+            );
+
+
+        projectileVisual.localScale =
+            new Vector3(
+                projectileWidth,
+                projectileHeight,
+                newLength
+            );
+
+
+        projectileVisual.localPosition =
+            new Vector3(
+                projectileWidth,
+                projectileHeight,
+                newLength / 2f
+            );
+
+
         float attackTime = 0f;
 
-        while (attackTime < rangedAttackDuration)
+
+        while (attackTime <
+               rangedAttackDuration)
         {
-            //Extends hitbox with the projectile's forward direction
-            newLength += hitboxExtendSpeed * Time.deltaTime;
+            // Extends hitbox with the projectile's
+            // forward direction.
+            newLength +=
+                hitboxExtendSpeed *
+                Time.deltaTime;
 
-            hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
-            hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
 
-            //Extends visual cube
+            hitboxCollider.size =
+                new Vector3(
+                    projectileWidth,
+                    projectileHeight,
+                    newLength
+                );
+
+
+            hitboxCollider.center =
+                new Vector3(
+                    0f,
+                    0f,
+                    newLength / 2f
+                );
+
+
+            // Extends visual cube.
             if (projectileVisual != null)
             {
-                projectileVisual.localScale = new Vector3(projectileWidth, projectileHeight, newLength);
-                projectileVisual.localPosition = new Vector3(0f, 0f, newLength / 2f);
+                projectileVisual.localScale =
+                    new Vector3(
+                        projectileWidth,
+                        projectileHeight,
+                        newLength
+                    );
+
+
+                projectileVisual.localPosition =
+                    new Vector3(
+                        0f,
+                        0f,
+                        newLength / 2f
+                    );
             }
 
-            attackTime += Time.deltaTime;
+
+            attackTime +=
+                Time.deltaTime;
+
 
             yield return null;
         }
 
-        Debug.Log("Sonic Boom ended");
+
+        Debug.Log(
+            "Sonic Boom ended"
+        );
 
 
         if (sonicBoom != null)
@@ -956,10 +1075,21 @@ public class FinalBoss : MonoBehaviour, IDamage
             sonicBoom.StartMoving();
         }
 
-        rangedTimer = rangedAttackCooldown;
-        agent.isStopped = false;
-        chargingRangedAttack = false;
-        isShooting = false;
+
+        rangedTimer =
+            rangedAttackCooldown;
+
+
+        agent.isStopped =
+            false;
+
+
+        chargingRangedAttack =
+            false;
+
+
+        isShooting =
+            false;
     }
 
 

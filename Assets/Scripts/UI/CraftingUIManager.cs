@@ -378,9 +378,9 @@ public class CraftingUIManager : MonoBehaviour
 
 
                 string displayName =
-    requirement.itemData != null
-        ? requirement.itemData.itemName
-        : "Missing Item";
+                    requirement.itemData != null
+                        ? requirement.itemData.itemName
+                        : requirement.ID;
 
 
                 rowText.text =

@@ -23,9 +23,9 @@ public class ItemSpawner : MonoBehaviour
 
         Vector3 ranPos = Random.insideUnitSphere * spawnDist;
         ranPos += transform.position;
-        ranPos.y = 25;
+        ranPos.y = 6;
 
-        Instantiate(itemToSpawn, ranPos, Quaternion.Euler(3, Random.Range(0, 360), 0));
+        Instantiate(itemToSpawn, ranPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
     }
 
 }

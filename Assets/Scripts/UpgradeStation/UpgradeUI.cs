@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using UnityEngine.UI;
 
 public class UpgradeUI : MonoBehaviour
 {
@@ -15,17 +14,39 @@ public class UpgradeUI : MonoBehaviour
     PlayerUpgrades PlayerUpgrader;
     WeaponUpgrades WeaponUpgrader;
 
-    List<UpgradeOption> Upgrades = new List<UpgradeOption>();
+    List<UpgradeOption> Upgrades;
 
     GameObject Player;
+    IPlayer playerInterface;
 
     private void OnEnable()
     {
         Player = gameManager.instance.player;
 
+        playerInterface = Player.GetComponent<IPlayer>();
+
+        Upgrades = new List<UpgradeOption>();
+
         ClearUI_Upgrades();
 
         RefreshUI_Categories();
+    }
+
+    void RefreshUI_General()
+    {
+        if(playerInterface != null)
+        {
+            Funds.text = $"Funds: {playerInterface.GetPlayerFunds()}";
+
+            if (Upgrades.Count > 0)
+            {
+                foreach (UpgradeOption upgrade in Upgrades)
+                {
+                    upgrade.SetBuyable(playerInterface.GetPlayerFunds() >= upgrade.GetPrice());
+                }
+            }
+        }
+        
     }
 
     public void RefreshUI_Categories()
@@ -39,9 +60,7 @@ public class UpgradeUI : MonoBehaviour
 
         categoryUI.Bind(Player, OnCatergorySelected);
 
-        IPlayer playerInterface;
-
-        if(Player.TryGetComponent<IPlayer>(out playerInterface))
+        if(playerInterface != null)
         {
             GameObject[] weapons = playerInterface.GetPlayerHotbar();
 
@@ -81,7 +100,7 @@ public class UpgradeUI : MonoBehaviour
 
                 UpgradeOption option = Instantiate(UpgradeUIPrefab, UpgradeUIRoot).GetComponent<UpgradeOption>();
 
-                option.Bind(stat.Key, stat.Value.Modifier, stat.Value.CountGetter, stat.Value.PriceGetter);
+                option.Bind(stat.Key, OnPurchase, stat.Value);
 
                 Upgrades.Add(option);
             }
@@ -92,11 +111,20 @@ public class UpgradeUI : MonoBehaviour
             {
                 UpgradeOption option = Instantiate(UpgradeUIPrefab, UpgradeUIRoot).GetComponent<UpgradeOption>();
 
-                option.Bind(stat.Key, stat.Value.Modifier, stat.Value.CountGetter, stat.Value.PriceGetter);
+                option.Bind(stat.Key, OnPurchase, stat.Value);
 
                 Upgrades.Add(option);
             }
         }
+
+        RefreshUI_General();
+    }
+
+    public void OnPurchase(int price)
+    {
+        Player.GetComponent<IPlayer>().ModifyPlayerFunds(-price);
+
+        RefreshUI_General();
     }
 
     public void OnExit()
