@@ -135,7 +135,10 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     private void Awake()
     {
-        FireRate = 1 / (FireRate / 60);
+        if(FireRate > 0)
+        {
+            FireRate = 1 / (FireRate / 60);
+        }
     }
 
     private void Start()
@@ -266,10 +269,14 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
                 spreadMod -= spreadMod * Bullet.projectileData.SpreadReduction;
             }
 
-            float yaw = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.x;
-            float pitch = Random.Range(-spreadMod, spreadMod) + bulletRotation.eulerAngles.y;
+            Vector2 circlePoint = Random.insideUnitCircle;
 
-            bulletRotation = Quaternion.Euler(yaw, pitch, bulletRotation.eulerAngles.z);
+            float xSpread = circlePoint.x * SpreadAmmount;
+            float ySpread = circlePoint.y * SpreadAmmount;
+
+            Quaternion spreadRotation = Quaternion.Euler(xSpread, ySpread, 0f);
+
+            bulletRotation = bulletRotation * spreadRotation;
 
             projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Damage, BulletSpeed, Bullet.projectileData);
         }
