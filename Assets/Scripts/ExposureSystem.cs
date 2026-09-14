@@ -29,7 +29,10 @@ public class ExposureSystem : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if(exposureVolume != null && exposureVolume.profile != null)
+        GameObject tempEffect = GameObject.FindGameObjectWithTag("ExposureEffect");
+        exposureVolume = tempEffect.GetComponent<Volume>();
+
+        if (exposureVolume != null && exposureVolume.profile != null)
             exposureVolume.profile.TryGet(out vignette);
         SetOutsideStatus(false);
     }
