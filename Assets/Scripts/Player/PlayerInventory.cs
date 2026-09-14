@@ -17,14 +17,15 @@ public class PlayerInventory : MonoBehaviour
 
 
     [Header("Overall Inventory UI")]
-
-    // Existing slots inside the large inventory screen.
     public InventorySlotUI[] inventorySlots;
 
 
     // ADDED FOR CRAFTING QUICK SLOTS:
-    // These are specifically:
-    // InvSlot1, InvSlot2, InvSlot3, InvSlot4.
+    // Expected order:
+    // Element 0 = Slot 1
+    // Element 1 = Slot 2
+    // Element 2 = Slot 3
+    // Element 3 = Slot 4
     [Header("Quick Slots 1-4")]
     public InventorySlotUI[] quickSlots;
 
@@ -45,14 +46,17 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        // ADDED FOR CRAFTING QUICK SLOTS:
-        // Keep the four HUD slots visible but empty.
+        // CHANGED FOR CRAFTED QUICK SLOTS:
+        // Only initialize slots 3 and 4.
+        // Slots 1 and 2 are left alone for other systems.
         if (quickSlots != null)
         {
-            foreach (
-                InventorySlotUI slot
-                in quickSlots)
+            for (int i = 2; i < quickSlots.Length && i <= 3; i++)
             {
+                InventorySlotUI slot =
+                    quickSlots[i];
+
+
                 if (slot == null)
                 {
                     continue;
@@ -65,15 +69,11 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // Refresh normal inventory.
         UpdateUI();
     }
 
 
-    // Adds a normal inventory item.
-    //
-    // World materials use this method.
-    // They do NOT automatically enter slots 1-4.
+    // Normal pickups go only into the main inventory.
     public void AddItem(
         ScriptableItem itemData,
         int amount)
@@ -110,8 +110,8 @@ public class PlayerInventory : MonoBehaviour
 
 
     // ADDED FOR CRAFTING:
-    // Adds a finished craft to normal inventory
-    // AND assigns it to the first available quick slot.
+    // Finished crafted items go into normal inventory
+    // and then slots 3 or 4.
     public void AddCraftedItem(
         ScriptableItem itemData,
         int amount)
@@ -123,21 +123,18 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // Add to real inventory first.
         AddItem(
             itemData,
             amount
         );
 
 
-        // Then place/update it in slots 1-4.
-        AddOrUpdateQuickSlot(
+        AddOrUpdateCraftedQuickSlot(
             itemData
         );
     }
 
 
-    // Checks whether an item exists at all.
     public bool HasItem(
         ScriptableItem itemData)
     {
@@ -153,8 +150,6 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // ADDED FOR CRAFTING:
-    // Checks whether enough of an item is owned.
     public bool HasItem(
         ScriptableItem itemData,
         int requiredAmount)
@@ -171,7 +166,6 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // Gets owned quantity.
     public int GetAmount(
         ScriptableItem itemData)
     {
@@ -191,7 +185,6 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // Removes inventory quantity.
     public bool RemoveItem(
         ScriptableItem itemData,
         int amount)
@@ -222,14 +215,12 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // Update main inventory.
         UpdateUI();
 
 
-        // ADDED FOR CRAFTING QUICK SLOTS:
-        // If this item is also currently on the hotbar,
-        // update or clear that slot.
-        RefreshQuickSlot(
+        // CHANGED FOR CRAFTED QUICK SLOTS:
+        // Only checks slots 3 and 4.
+        RefreshCraftedQuickSlot(
             itemData
         );
 
@@ -239,18 +230,15 @@ public class PlayerInventory : MonoBehaviour
 
 
     // ADDED FOR CRAFTING QUICK SLOTS:
-    // Updates an existing slot for the same item,
-    // otherwise finds the first empty slot:
-    //
-    // 1 -> 2 -> 3 -> 4
-    private void AddOrUpdateQuickSlot(
+    // Crafted items may ONLY occupy Slot 3 or Slot 4.
+    private void AddOrUpdateCraftedQuickSlot(
         ScriptableItem itemData)
     {
         if (quickSlots == null ||
-            quickSlots.Length == 0)
+            quickSlots.Length < 4)
         {
             Debug.LogWarning(
-                "PlayerInventory has no Quick Slots assigned."
+                "PlayerInventory needs 4 Quick Slots assigned."
             );
 
             return;
@@ -263,12 +251,14 @@ public class PlayerInventory : MonoBehaviour
             );
 
 
-        // First see whether this item is
-        // already assigned to a quick slot.
-        foreach (
-            InventorySlotUI slot
-            in quickSlots)
+        // First check if this crafted item is already
+        // assigned to Slot 3 or Slot 4.
+        for (int i = 2; i <= 3; i++)
         {
+            InventorySlotUI slot =
+                quickSlots[i];
+
+
             if (slot == null)
             {
                 continue;
@@ -288,11 +278,14 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // Otherwise find the first empty slot.
-        foreach (
-            InventorySlotUI slot
-            in quickSlots)
+        // Then find the first empty crafted-item slot.
+        // Slot 3 is preferred, then Slot 4.
+        for (int i = 2; i <= 3; i++)
         {
+            InventorySlotUI slot =
+                quickSlots[i];
+
+
             if (slot == null)
             {
                 continue;
@@ -311,10 +304,9 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // The item is still safely stored in the main
-        // inventory even if all quick slots are full.
+        // Main inventory still keeps the crafted item.
         Debug.Log(
-            "All quick slots are full. " +
+            "Crafted quick slots 3 and 4 are full. " +
             itemData.itemName +
             " remains in the normal inventory."
         );
@@ -322,21 +314,23 @@ public class PlayerInventory : MonoBehaviour
 
 
     // ADDED FOR CRAFTING QUICK SLOTS:
-    // Refresh or clear a quick slot if the item's
-    // inventory quantity changes.
-    private void RefreshQuickSlot(
+    // Updates only Slot 3 or Slot 4.
+    private void RefreshCraftedQuickSlot(
         ScriptableItem itemData)
     {
-        if (quickSlots == null)
+        if (quickSlots == null ||
+            quickSlots.Length < 4)
         {
             return;
         }
 
 
-        foreach (
-            InventorySlotUI slot
-            in quickSlots)
+        for (int i = 2; i <= 3; i++)
         {
+            InventorySlotUI slot =
+                quickSlots[i];
+
+
             if (slot == null)
             {
                 continue;
@@ -359,8 +353,6 @@ public class PlayerInventory : MonoBehaviour
             if (amount <= 0)
             {
                 slot.ClearSlot();
-
-                // Keep numbered HUD box visible.
                 slot.gameObject.SetActive(true);
             }
             else
@@ -377,7 +369,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    // Updates the LARGE inventory grid only.
+    // Updates only the large inventory grid.
     public void UpdateUI()
     {
         if (inventorySlots == null)
@@ -423,7 +415,6 @@ public class PlayerInventory : MonoBehaviour
         }
 
 
-        // Clear unused main-inventory slots.
         for (
             int j = i;
             j < inventorySlots.Length;
