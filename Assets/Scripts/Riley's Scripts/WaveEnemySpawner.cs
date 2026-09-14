@@ -5,68 +5,32 @@ using System.Collections;
 public class WaveEnemySpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    [SerializeField] GameObject straferEnemyPrefab;
-    [SerializeField] GameObject basicEnemyPrefab;
-
-    [SerializeField] private float spawnRadius = 30f;
-    [SerializeField] private float navMeshSearchDistance = 5f;
+    [SerializeField] GameObject enemyWavePrefab;
     [SerializeField] int spawnCount = 5;
     [SerializeField] private int extraEnemiesPerWave = 2;
     [SerializeField] private float timeBetweenWaves = 60f;
-    [SerializeField] private float spawnRate = 0.5f;
-
-    [Header("Enemy Spawn Weights")]
-    [Range(0f, 100f)]
-    [SerializeField] private float basicEnemyChance = 70f;
-    [Range(0f, 100f)]
-    [SerializeField] private float straferEnemyChance = 30;
-
-    [Header("Trigger Settings")]
-    [SerializeField] private bool onlyTriggerOnce = true;
+    [SerializeField] private float spawnRate = .5f;
 
     private float waveTimer;
     private float totalElapsedTime;
     private bool isSpawningActive = false;
-    private bool hasBeenTriggered = false;
 
     void Start()
     {
-        waveTimer = 0f;
-        totalElapsedTime = 0f;
-        isSpawningActive = false;
+        waveTimer = timeBetweenWaves;
     }
 
     void Update()
     {
-        if (!isSpawningActive) return;
-
-        totalElapsedTime += Time.deltaTime;
-        waveTimer += Time.deltaTime;
-
-        if (waveTimer >= timeBetweenWaves)
+        if (gameManager.instance != null && gameManager.instance.beacon != null)
         {
-            StartCoroutine(SpawnWaveRoutine());
+            
         }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.CompareTag("Player"))
-            return;
-
-        if (onlyTriggerOnce && hasBeenTriggered)
-            return;
-
-        hasBeenTriggered = true;
-        isSpawningActive = true;
-
-        waveTimer = timeBetweenWaves;
     }
 
     IEnumerator SpawnWaveRoutine()
     {
-        waveTimer = 0f;
-
+        isSpawningActive = true;
         int timePassed = Mathf.FloorToInt(totalElapsedTime / timeBetweenWaves);
         int currentWaveCount = spawnCount + (timePassed * extraEnemiesPerWave);
         //added by sean
@@ -76,7 +40,6 @@ public class WaveEnemySpawner : MonoBehaviour
             currentWaveCount = difficultyManager.GetScaledEnemyCount(currentWaveCount);
         }
         //end added by sean
-
         NavMeshTriangulation navMeshData = NavMesh.CalculateTriangulation();
 
         if (navMeshData.indices.Length == 0)
@@ -94,40 +57,22 @@ public class WaveEnemySpawner : MonoBehaviour
                 NavMeshHit hit;
                 if (NavMesh.SamplePosition(spawnPos, out hit, 5f, NavMesh.AllAreas))
                 {
-                    GameObject enemyPrefab = GetRandomEnemyPrefab();
-
-                    if (enemyPrefab == null)
-                    {
-                        Debug.LogError("No enemy prefabs assigned to WaveEnemySpawner.");
-                        isSpawningActive = false;
-                        yield break;
-                    }
-
-                    GameObject enemy = Instantiate(enemyPrefab, hit.position, Quaternion.identity);
-
-                    if (enemyPrefab == basicEnemyPrefab)
-                    {
-                        BasicEnemy enemyAI = enemy.GetComponent<BasicEnemy>();
-                        if (enemyAI != null)
-                        {
-                            enemyAI.SetBossEnemy();
-                        }
-                    }
+                    GameObject enemy = Instantiate(enemyWavePrefab, spawnPos, Quaternion.identity);
 
                     NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
-
                     if (agent != null)
                     {
                         agent.Warp(spawnPos);
                     }
+
                     yield return new WaitForSeconds(spawnRate);
                     break;
                 }
-            
             }
-            waveTimer = 0f;
-            isSpawningActive = false;
         }
+
+        waveTimer = 0f;
+        isSpawningActive = false;
     }
 
     private Vector3 GetRandomPointOnNavMesh(NavMeshTriangulation data)
@@ -145,24 +90,8 @@ public class WaveEnemySpawner : MonoBehaviour
         float r2 = Random.value;
 
         Vector3 randomPoint = (1 - r1) * vertexA + (r1 * (1 - r2)) * vertexB + (r1 * r2) * vertexC;
+
         return randomPoint;
     }
 
-
-    private GameObject GetRandomEnemyPrefab()
-    {
-        float totalWeight = basicEnemyChance + straferEnemyChance;
-
-        if (totalWeight <= 0f)
-            return null;
-
-        float randomValue = Random.Range(0f, totalWeight);
-
-        if (randomValue < basicEnemyChance)
-        {
-            return basicEnemyPrefab;
-        }
-
-        return straferEnemyPrefab;
-    }
 }

@@ -41,7 +41,7 @@ public static class CraftingSystem
 
 
             // ADDED FOR CRAFTING:
-            // Ignore zero or negative requirements.
+            // Ignore incorrectly configured zero/negative amounts.
             if (requirement.Quantity <= 0)
             {
                 continue;
@@ -49,8 +49,7 @@ public static class CraftingSystem
 
 
             // ADDED FOR CRAFTING:
-            // Make sure the player owns enough
-            // of this exact ScriptableItem.
+            // Check that the player owns enough of this item.
             if (!inventory.HasItem(
                     requirement.itemData,
                     requirement.Quantity))
@@ -65,7 +64,7 @@ public static class CraftingSystem
 
 
     // ADDED FOR CRAFTING:
-    // Handles the entire crafting transaction.
+    // Performs the complete crafting transaction.
     public static bool TryCraft(
         CrafatbleItemRecipe recipe,
         PlayerInventory inventory)
@@ -78,8 +77,7 @@ public static class CraftingSystem
 
 
         // ADDED FOR CRAFTING:
-        // Make sure the recipe has a finished
-        // ScriptableItem assigned.
+        // Recipe needs a valid finished inventory item.
         if (recipe.craftedItemData == null)
         {
             Debug.LogWarning(
@@ -93,8 +91,8 @@ public static class CraftingSystem
 
 
         // ADDED FOR CRAFTING:
-        // Never consume materials unless the
-        // complete recipe can be crafted.
+        // Never consume ingredients unless every
+        // requirement can be satisfied first.
         if (!CanCraft(
                 recipe,
                 inventory))
@@ -110,7 +108,7 @@ public static class CraftingSystem
 
 
         // ADDED FOR CRAFTING:
-        // Consume every required ingredient.
+        // Consume all required ingredients.
         foreach (
             CrafatbleItemRecipe.Item requirement
             in recipe.ItemsNeeded)
@@ -122,33 +120,16 @@ public static class CraftingSystem
             }
 
 
-            bool removed =
-                inventory.RemoveItem(
-                    requirement.itemData,
-                    requirement.Quantity
-                );
-
-
-            // ADDED FOR CRAFTING:
-            // This should normally never fail because
-            // CanCraft() already validated everything,
-            // but stop if inventory changes unexpectedly.
-            if (!removed)
-            {
-                Debug.LogWarning(
-                    "Crafting failed while removing " +
-                    requirement.itemData.itemName
-                );
-
-                return false;
-            }
+            inventory.RemoveItem(
+                requirement.itemData,
+                requirement.Quantity
+            );
         }
 
 
-        // CHANGED FOR QUICK SLOTS:
-        // Add the completed item to the normal inventory
-        // and place it into the first available quick slot.
-        inventory.AddCraftedItem(
+        // ADDED FOR CRAFTING:
+        // Add one completed item to the player's inventory.
+        inventory.AddItem(
             recipe.craftedItemData,
             1
         );

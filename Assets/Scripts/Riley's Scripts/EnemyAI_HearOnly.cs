@@ -7,10 +7,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] Renderer model;
     private Material modelMat;
 
-    [Header("Health")]
-    [SerializeField] private int maxHP = 50;
-    private int currentHP;
-
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
@@ -38,7 +34,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] private float launchAngle = 10f;
     [SerializeField] private float projectileLifetime = 5f;
 
-    private float minProjectileSpeed = 5f;
     private float projectileTimer;
 
     Color colorOrig;
@@ -90,7 +85,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        currentHP = maxHP;
 
         CheckEnemyMaterial();
         MoveToRandomPoint();
@@ -204,8 +198,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
 
         float totalSpeed = Mathf.Sqrt(velocitySquared);
-        if (totalSpeed < 5f)
-            totalSpeed = 5f;
         float forwardSpeed = totalSpeed * Mathf.Cos(radAngle);
         float verticalSpeed = totalSpeed * Mathf.Sin(radAngle);
 
@@ -266,7 +258,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
             SetEarsAlert(true);
 
-            if (projectileTimer <= 0f && currentState != State.Attack &&  distanceToNoise < 10f)
+            if (projectileTimer <= 0f && currentState != State.Attack)
             {
                 ThrowProjectile(noisePosition);
                 projectileTimer = projectileCooldown;
@@ -403,49 +395,13 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
-        if (currentHP <= 0) return;
-
-        currentHP -= amount;
-        Debug.Log("Blind Enemy Health: " + currentHP + "/" + maxHP);
-        StartCoroutine(flashRed());
-
-        if (currentHP <= 0)
-        {
-            Die();
-        }
-
         if (currentState != State.Attack && PlayerTransform != null)
         {
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
-            AttackLogic();
             SetEarsAlert(true);
         }    
-    }
-
-    private void Die()
-    {
-        if (attackHitbox != null)
-        {
-            attackHitbox.SetActive(false);
-        }
-
-        Destroy(gameObject);
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance.AddKill();
-        }
-    }
-
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     IEnumerator PlayStep()
