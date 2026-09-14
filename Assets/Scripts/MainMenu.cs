@@ -6,7 +6,7 @@ public class MainMenu : MonoBehaviour
     public void StartGame()
     {
         Destroy(gameObject);
-        SceneManager.LoadScene("MainBase");
+        SceneManager.LoadScene("Showcase");
     }
 
     public void ExitGame()
