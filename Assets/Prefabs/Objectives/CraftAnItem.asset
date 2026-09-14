@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
   m_Name: CraftAnItem
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
+  prerequisiteObjective: {fileID: 11400000, guid: 4097ffa16b4a332418c217bc65a3b367, type: 2}
+  isUnlocked: 0
+  shouldHideFromUI: 0
   objectiveID: secondary_craft_an_item
   objectiveTitle: Craft an Item
   objectiveDescription: Use the crafting bench and craft your first item
