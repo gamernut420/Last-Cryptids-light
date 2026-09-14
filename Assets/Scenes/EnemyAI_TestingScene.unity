@@ -828,7 +828,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &502451627
@@ -1601,7 +1601,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 129.06721
+      value: 128.18063
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1609,23 +1609,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 169.34299
+      value: 170.83582
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.043664396
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.99904627
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1633,7 +1633,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 185.005
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1773,23 +1773,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fb1b292ae748342ab3a6c680115e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RescueBeacon
-  interactRange: 4
-  holdDuration: 3
-  playerCamera: {fileID: 0}
-  interactionPromptText: {fileID: 737972617}
-  PromptMessage: Press E to repair
-  playerInventory: {fileID: 0}
-  extractionCountdown: {fileID: 0}
-  requiredParts:
-  - itemPrefab: {fileID: 5054650243004817939, guid: 9c6e940008efb184cb76f79d987eab35, type: 3}
-    itemName: Battery
-    requiredAmount: 1
-  - itemPrefab: {fileID: 1106961051365225370, guid: af85966c1f7d6674d8ee2c792ebc7721, type: 3}
-    itemName: Fuel
-    requiredAmount: 1
-  - itemPrefab: {fileID: 4318161315796766228, guid: 9b39be0082efc504aa4245b35f3accb7, type: 3}
-    itemName: Radio Tube
-    requiredAmount: 1
 --- !u!1001 &1157430890
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2118,6 +2101,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 6588628485093113106, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: affectedByDifficulty
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -2371,6 +2358,7 @@ MonoBehaviour:
   playerScript: {fileID: 0}
   cameraScript: {fileID: 0}
   ambiencePlaylist: {fileID: 0}
+  pauseMenuMusic: {fileID: 0}
   isPaused: 0
   isExtracting: 0
 --- !u!1 &2067859276
