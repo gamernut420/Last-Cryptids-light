@@ -328,6 +328,7 @@ public class EnemyAI_WaveType : MonoBehaviour, IDamage
             gameManager.instance.AddKill();
         }
     }
+
     IEnumerator flashRed()
     {
         modelMat.color = Color.red;

@@ -947,10 +947,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        BossProjectileCollision sonicBoom =
+        ProjectileCollision sonicBoom =
             newProjectile
                 .GetComponent<
-                    BossProjectileCollision>();
+                    ProjectileCollision>();
 
 
         if (hitboxCollider == null)
