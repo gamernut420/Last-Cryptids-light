@@ -30,6 +30,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
+    [SerializeField] private Animator animator;
 
 
     [Header("Objective")]
@@ -59,7 +60,6 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [Header("Melee Attack")]
     [SerializeField] private float attackCooldown = 2f;
-    [SerializeField] private float meleeHitboxDuration = 0.5f;
     [SerializeField] private GameObject meleeHitbox;
 
     private float meleeTimer;
@@ -116,7 +116,6 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private float energyFieldTimer;
 
-
     private Transform PlayerTransform
     {
         get
@@ -168,6 +167,20 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (PlayerTransform == null) return;
 
         if (currentPhase == BossPhase.Dead) return;
+
+        if (animator != null && agent != null)
+        {
+            if (meleeTimer <= attackCooldown / 2)
+            {
+                animator.SetFloat("Walk", 1f);
+                agent.isStopped = false;
+            }
+            else
+            {
+                agent.isStopped = true;
+                animator.SetFloat("Walk", 0);
+            }
+        }
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
@@ -473,23 +486,34 @@ public class FinalBoss : MonoBehaviour, IDamage
     // MELEE ATTACK
     private void MeleeAttack()
     {
-        if (meleeTimer > 0) return;
+        if (meleeTimer > 0f) return;
 
+        Debug.Log("Boss Melee Attack");
 
-        Debug.Log(
-            "Boss Melee Attack!"
-        );
+        if (agent != null)
+            agent.isStopped = true;
 
-
-        StartCoroutine(
-            MeleeAttackRoutine()
-        );
-
-
-        meleeTimer =
-            attackCooldown;
+        animator.SetTrigger("Hit2");
+        meleeTimer = attackCooldown;
     }
 
+    public void MeleeHit()
+    {
+        if (currentPhase == BossPhase.Dead)
+            return;
+
+        if (meleeHitbox != null)
+            meleeHitbox.SetActive(true);
+    }
+
+    public void EndMeleeHit()
+    {
+        if (meleeHitbox != null)
+            meleeHitbox.SetActive(false);
+
+        if (agent != null)
+            agent.isStopped = false;
+    }
 
     // RANGED ATTACK
     private void RangedAttack()
@@ -849,30 +873,6 @@ public class FinalBoss : MonoBehaviour, IDamage
             3f
         );
     }
-
-
-    private IEnumerator MeleeAttackRoutine()
-    {
-        yield return new WaitForSeconds(
-            0.3f
-        );
-
-
-        meleeHitbox.SetActive(
-            true
-        );
-
-
-        yield return new WaitForSeconds(
-            meleeHitboxDuration
-        );
-
-
-        meleeHitbox.SetActive(
-            false
-        );
-    }
-
 
     private IEnumerator RangedAttackRoutine()
     {
