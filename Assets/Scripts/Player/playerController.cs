@@ -62,21 +62,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            upgradeManager.ModifyHPUpgrades(1);
-
-            updatePlayerUI();
-        }
-        else if (Input.GetKeyDown(KeyCode.I))
-        {
-            upgradeManager.ModifySpeedUpgrades(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.O))
-        {
-            upgradeManager.ModifyStaminaUpgrades(1);
-        }
-
         sprint();
 
         if (gameManager.instance.isPaused) return;
@@ -383,7 +368,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
                 if (gadget != null)
                 {
-                    if (gadget.UseGadget(this))
+                    if (gadget.UseGadget(gameObject))
                     {
                         ActiveItem.transform.SetParent(null);
                         ActiveItem = null;

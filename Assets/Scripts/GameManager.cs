@@ -332,13 +332,27 @@ public class gameManager : MonoBehaviour
 
                     if(gadget != null)
                     {
-                        if (i == slotInUse)
+                        if(gadget.GetItemInfo()  != null)
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                            if (i == slotInUse)
+                            {
+                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.darkRed);
+                            }
+                            else
+                            {
+                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.gray2);
+                            }
                         }
                         else
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                            if (i == slotInUse)
+                            {
+                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                            }
+                            else
+                            {
+                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                            }
                         }
                     }
                 }

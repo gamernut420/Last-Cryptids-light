@@ -248,10 +248,6 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
             if (tryingShoot && canShoot && projectileManager != null)
             {
                 StartCoroutine(ShootGun());
-                if (Input.GetKey(KeyCode.Mouse0))
-                {
-                    NoiseManager.MakeNoise(transform.position, gunshotHearingRadius);
-                }
             }
         }
     }
@@ -280,6 +276,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             projectileManager.ShootProjectile(Muzzle.transform.position, bulletRotation, Damage, BulletSpeed, Bullet.projectileData);
         }
+
+        NoiseManager.MakeNoise(transform.position, gunshotHearingRadius);
 
         if (gunAudio != null && gunShootSound != null)
         {

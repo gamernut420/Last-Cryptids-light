@@ -59,8 +59,8 @@ public class InventorySlot : MonoBehaviour
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount, Color color)
     {
-        UpdateSlot(_itemImage, _itemText, _itemCount);
-
         UpdateSlotColor(color);
+
+        UpdateSlot(_itemImage, _itemText, _itemCount);
     }
 }
