@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7765711836460996787}
+  - component: {fileID: 688988021533002954}
   - component: {fileID: 5304048304751445153}
   - component: {fileID: 428799167776009951}
   - component: {fileID: 3195109324750277159}
   m_Layer: 0
-  m_Name: CraftableMicro-Beacon
+  m_Name: PDA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,6 +35,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &688988021533002954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5420749214116403623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b2eeb6fef333947ae4b4316e07fcc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PDAGadget
+  GadgetName: PDA
+  EffectDuration: 5
+  EffectSize: 10
 --- !u!33 &5304048304751445153
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41,7 +57,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5420749214116403623}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -6124165927289977641, guid: b15578da4278d8d46a94c7c3904545b4, type: 3}
 --- !u!23 &428799167776009951
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -67,7 +83,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -2946909119510663856, guid: b15578da4278d8d46a94c7c3904545b4, type: 3}
+  - {fileID: -6688044371343769500, guid: b15578da4278d8d46a94c7c3904545b4, type: 3}
+  - {fileID: 3970780018453305475, guid: b15578da4278d8d46a94c7c3904545b4, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,5 +128,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.5724019, y: 0.8576547, z: 0.5706161}
+  m_Center: {x: 0, y: 0.021172643, z: 0}
