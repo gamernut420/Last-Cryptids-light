@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3925307161651897562
+--- !u!1 &6677770282436106594
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,63 +8,66 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4200895232427963860}
-  - component: {fileID: 634926725078525869}
-  - component: {fileID: 2230511389889773946}
-  - component: {fileID: 5465737205762130237}
-  - component: {fileID: 1561795086492849029}
+  - component: {fileID: 5423661646757189067}
+  - component: {fileID: 6007516837154757063}
+  - component: {fileID: 1255349110995154587}
+  - component: {fileID: 7773751007750035680}
+  - component: {fileID: 8343414293763498196}
   m_Layer: 0
-  m_Name: CraftableHerbalPotion
+  m_Name: DecoyGadget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4200895232427963860
+--- !u!4 &5423661646757189067
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3925307161651897562}
+  m_GameObject: {fileID: 6677770282436106594}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 48.527, y: 0.602, z: 14.571}
+  m_LocalPosition: {x: 9.78464, y: -0, z: 8.89715}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &634926725078525869
+--- !u!114 &6007516837154757063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3925307161651897562}
+  m_GameObject: {fileID: 6677770282436106594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fc4f3f0dcc48e34cb451c2b70ade2e3, type: 3}
+  m_Script: {fileID: 11500000, guid: cddabfc213c37ac48815607c9a1fbbd8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealingGadget
-  GadgetName: Herbal Potion
-  HealAmmount: 50
-  OverHeal: 0
---- !u!33 &2230511389889773946
+  m_EditorClassIdentifier: Assembly-CSharp::NoiseLure
+  GadgetName: Decoy Grenade
+  ThrowSpeed: 50
+  Gravity: 1
+  LifeTime: 10
+  EffectDuration: 5
+  EffectRange: 174.2
+--- !u!33 &1255349110995154587
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3925307161651897562}
-  m_Mesh: {fileID: 7554840166635553880, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
---- !u!23 &5465737205762130237
+  m_GameObject: {fileID: 6677770282436106594}
+  m_Mesh: {fileID: 3480990375432046035, guid: 59320ae9f1536a24ba6c16e449f00bb0, type: 3}
+--- !u!23 &7773751007750035680
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3925307161651897562}
+  m_GameObject: {fileID: 6677770282436106594}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -83,8 +86,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8556262120643298411, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
-  - {fileID: -40635325021332067, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
+  - {fileID: 6315474486402408558, guid: 59320ae9f1536a24ba6c16e449f00bb0, type: 3}
+  - {fileID: -4878012316165530854, guid: 59320ae9f1536a24ba6c16e449f00bb0, type: 3}
+  - {fileID: -707466170372115250, guid: 59320ae9f1536a24ba6c16e449f00bb0, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,13 +112,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1561795086492849029
+--- !u!65 &8343414293763498196
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3925307161651897562}
+  m_GameObject: {fileID: 6677770282436106594}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -127,5 +131,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.19999999, y: 0.32999995, z: 0.19999999}
-  m_Center: {x: 0, y: 0.16499998, z: 0}
+  m_Size: {x: 0.20000005, y: 0.26325783, z: 0.20000005}
+  m_Center: {x: 0, y: 0.13162892, z: 0}
