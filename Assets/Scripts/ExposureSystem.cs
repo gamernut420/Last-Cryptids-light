@@ -26,6 +26,8 @@ public class ExposureSystem : MonoBehaviour
     [SerializeField] private Volume exposureVolume;
     private Vignette vignette;
 
+    bool blockExposure;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -43,7 +45,7 @@ public class ExposureSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isOutside)
+        if(isOutside && !blockExposure)
         {
             // Drain player health over time
             ApplyExposureDamage(exposureRate * Time.deltaTime);
@@ -89,6 +91,11 @@ public class ExposureSystem : MonoBehaviour
    public void SetOutsideStatus(bool other)
     {
         isOutside = other;
+    }
+
+    public void SetBlockingStatus(bool enable)
+    {
+        blockExposure = enable;
     }
 
     void HandleHealing(float daltaTime)

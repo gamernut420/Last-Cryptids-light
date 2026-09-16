@@ -4,5 +4,5 @@ public interface IGadget
 {
     public string GetGadgetName();
 
-    public bool UseGadget(IPlayer player);
+    public bool UseGadget(GameObject player);
 }

@@ -17,5 +17,5 @@ public abstract class GadgetBase : MonoBehaviour, IGadget, IInteract
         return $"Pickup {GadgetName}";
     }
 
-    public abstract bool UseGadget(IPlayer player);
+    public abstract bool UseGadget(GameObject player);
 }
