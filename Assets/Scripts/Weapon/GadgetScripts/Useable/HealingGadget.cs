@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HealingGadget : UseableGadget
 {
-    [SerializeField][Min(0)] int HealAmmount = 5;
+    [SerializeField][Min(0)] int HealAmmount = 25;
     [SerializeField] bool OverHeal = false;
 
     public override bool UseGadget(IPlayer player)

@@ -30,7 +30,10 @@ public class ExposureSystem : MonoBehaviour
     void Start()
     {
         GameObject tempEffect = GameObject.FindGameObjectWithTag("ExposureEffect");
-        exposureVolume = tempEffect.GetComponent<Volume>();
+        if(tempEffect != null)
+        {
+            exposureVolume = tempEffect.GetComponent<Volume>();
+        }
 
         if (exposureVolume != null && exposureVolume.profile != null)
             exposureVolume.profile.TryGet(out vignette);

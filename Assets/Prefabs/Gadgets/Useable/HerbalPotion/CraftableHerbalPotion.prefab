@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4200895232427963860}
+  - component: {fileID: 634926725078525869}
   - component: {fileID: 2230511389889773946}
   - component: {fileID: 5465737205762130237}
   - component: {fileID: 1561795086492849029}
@@ -29,11 +30,26 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 48.527, y: 0.602, z: 14.571}
-  m_LocalScale: {x: 0.17724316, y: 1, z: 0.23315634}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &634926725078525869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3925307161651897562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc4f3f0dcc48e34cb451c2b70ade2e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealingGadget
+  GadgetName: Herbal Potion
+  HealAmmount: 50
+  OverHeal: 0
 --- !u!33 &2230511389889773946
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -41,7 +57,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3925307161651897562}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 7554840166635553880, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
 --- !u!23 &5465737205762130237
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -67,7 +83,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 8556262120643298411, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
+  - {fileID: -40635325021332067, guid: 5a496e01e62609d4a8e9ad3b9d4ba763, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,5 +127,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.4, y: 0.7, z: 0.4}
+  m_Center: {x: 0, y: 0.35, z: 0}
