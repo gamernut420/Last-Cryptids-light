@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -26,6 +27,7 @@ public class ExposureSystem : MonoBehaviour
     [SerializeField] private Volume exposureVolume;
     private Vignette vignette;
 
+    List<Collider> safeZones = new List<Collider>(); 
     bool blockExposure;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -42,10 +44,50 @@ public class ExposureSystem : MonoBehaviour
         SetOutsideStatus(false);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("SafeZone"))
+        {
+            safeZones.Add(other);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log($"Exited: {other}");
+
+        if (other.CompareTag("SafeZone"))
+        {
+            safeZones.Remove(other);
+        }
+    }
+
+    void CheckSafeZones()
+    {
+        for(int i = safeZones.Count - 1; i >= 0; i--)
+        {
+            if(safeZones[i] == null)
+            {
+                safeZones.RemoveAt(i);
+            }
+        }
+
+        bool outsideCheck = isOutside;
+
+        isOutside = safeZones.Count == 0;
+
+        if(isOutside == true && isOutside != outsideCheck)
+        {
+            gameManager.instance.ShowExposurePrompt();
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(isOutside && !blockExposure)
+        CheckSafeZones();
+
+        if (isOutside && !blockExposure)
         {
             // Drain player health over time
             ApplyExposureDamage(exposureRate * Time.deltaTime);

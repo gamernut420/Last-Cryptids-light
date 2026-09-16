@@ -21,8 +21,6 @@ public class PDAGadget : PlaceableGadget
 
     IEnumerator CreateSafeZone()
     {
-        gameObject.AddComponent<SafeZoneTrigger>();
-
         NavMeshObstacle obstacle = gameObject.AddComponent<NavMeshObstacle>();
 
         obstacle.shape = NavMeshObstacleShape.Capsule;
@@ -36,6 +34,8 @@ public class PDAGadget : PlaceableGadget
         safeZone.radius = EffectSize;
 
         yield return new WaitForSeconds(EffectDuration);
+
+        gameObject.SetActive(false);
 
         Destroy(gameObject);
     }
