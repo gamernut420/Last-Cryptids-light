@@ -31,6 +31,8 @@ public class InventorySlot : MonoBehaviour
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount)
     {
+        Debug.Log(_itemImage);
+
         if(_itemImage != null)
         {
             itemImage.enabled = true;
@@ -59,8 +61,8 @@ public class InventorySlot : MonoBehaviour
 
     public void UpdateSlot(Sprite _itemImage, string _itemText, int _itemCount, Color color)
     {
-        UpdateSlot(_itemImage, _itemText, _itemCount);
-
         UpdateSlotColor(color);
+
+        UpdateSlot(_itemImage, _itemText, _itemCount);
     }
 }

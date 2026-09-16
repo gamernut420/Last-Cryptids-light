@@ -1024,6 +1024,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6007516837154757063, guid: a3190733dcf65934bb8a3283bd0cb32f, type: 3}
+      propertyPath: ItemInfo
+      value: 
+      objectReference: {fileID: 11400000, guid: 709c74d1a375fd049a714364df5842eb, type: 2}
     - target: {fileID: 6677770282436106594, guid: a3190733dcf65934bb8a3283bd0cb32f, type: 3}
       propertyPath: m_Name
       value: DecoyGadget
@@ -1568,10 +1572,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 688988021533002954, guid: b4dc97e1ca28f6f4191681354820d389, type: 3}
-      propertyPath: ItemInfo
-      value: 
-      objectReference: {fileID: 11400000, guid: 281f4b6647fa28843a48395340817b6b, type: 2}
     - target: {fileID: 5420749214116403623, guid: b4dc97e1ca28f6f4191681354820d389, type: 3}
       propertyPath: m_Name
       value: PDA
@@ -2575,6 +2575,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -310
       objectReference: {fileID: 0}
+    - target: {fileID: 7047294676199311566, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7061544933570352164, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7122077364250542329, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7125841674792999955, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d9eda74d2b29e97418f43a130d822916, type: 3}
     - target: {fileID: 7298098104826578963, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -2697,21 +2713,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1235236262952483538, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
       propertyPath: m_Name
       value: BaseBubble
-      objectReference: {fileID: 0}
-    - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
-      propertyPath: m_TagString
-      value: SafeZone
       objectReference: {fileID: 0}
     - target: {fileID: 5905560745762175377, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2753,8 +2757,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 847431464785462607, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
