@@ -39,10 +39,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     float currentSpeed;
     float currentStamina;
     float currentStamCoolDown;
+    bool isStimed;
+    float stimMult;
     bool isSprinting;
 
     //Set for testing this will be used alongside kills
-    int points = 12345;
+    int points = 0;
 
     Vector3 moveDir;
     Vector3 playerVel;
@@ -122,12 +124,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void CheckStamina(bool isMoving)
     {
-        if (isMoving && isSprinting)
+        if (isMoving && isSprinting && !isStimed)
         {
             currentStamCoolDown = StaminaCoolDown;
             currentStamina -= Time.deltaTime;
         }
-        else if (currentStamCoolDown > 0)
+        else if (currentStamCoolDown > 0 && !isStimed)
         {
             currentStamCoolDown -= Time.deltaTime;
         }
@@ -151,12 +153,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 isSprinting = true;
-                currentSpeed = MaxSpeed;
+                currentSpeed = MaxSpeed * (isStimed ? stimMult : 1);
             }
             else if (Input.GetKeyUp(KeyCode.LeftShift))
             {
                 isSprinting = false;
-                currentSpeed = BaseSpeed;
+                currentSpeed = BaseSpeed * (isStimed ? stimMult : 1);
             }
         }
         else
@@ -623,6 +625,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void SetMaxStamina(float ammount)
     {
         MaxStamina = ammount;
+    }
+
+    public void SetStimulantMode(bool active, float speedMult)
+    {
+        isStimed = active;
+
+        stimMult = speedMult;
+
+        stimMult = Mathf.Clamp(stimMult, 0, float.MaxValue);
+
+        currentSpeed *= stimMult;
     }
 
     public void SetMaxJumps(int jumps)

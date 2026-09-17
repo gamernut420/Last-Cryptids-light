@@ -30,6 +30,8 @@ public class UpgradeUI : MonoBehaviour
         ClearUI_Upgrades();
 
         RefreshUI_Categories();
+
+        RefreshUI_General();
     }
 
     void RefreshUI_General()

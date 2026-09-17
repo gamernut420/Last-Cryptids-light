@@ -288,6 +288,7 @@ public class gameManager : MonoBehaviour
    public void AddKill()
     {
         killCount++;
+
         UpateKillUI();
     }
 

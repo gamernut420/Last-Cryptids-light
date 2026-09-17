@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1173370892454430300}
+  - component: {fileID: 8089195825861857418}
   - component: {fileID: 1807917691809456170}
   - component: {fileID: 1070521483567076223}
   - component: {fileID: 3592431618320610468}
@@ -34,6 +35,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8089195825861857418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5241735495043368768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8470bfb6af1e45b47a3f8d0909987b14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdrenalineStim
+  ItemInfo: {fileID: 0}
+  GadgetName: Stim Shot
+  EffectDuration: 5
+  SpeedMult: 1.5
 --- !u!33 &1807917691809456170
 MeshFilter:
   m_ObjectHideFlags: 0
