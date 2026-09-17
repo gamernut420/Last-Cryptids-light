@@ -44,7 +44,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     bool isSprinting;
 
     //Set for testing this will be used alongside kills
-    int points = 0;
+    int points;
 
     Vector3 moveDir;
     Vector3 playerVel;
@@ -69,6 +69,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         upgradeManager.ApplyUpgrades();
 
         dodgeController = GetComponent<PlayerDodge>();
+
+        points = 10;
 
         UpdateWeaponUI();
     }
@@ -635,7 +637,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         stimMult = Mathf.Clamp(stimMult, 0, float.MaxValue);
 
-        currentSpeed *= stimMult;
+        if (!active)
+        {
+            currentSpeed = isSprinting ? MaxSpeed : BaseSpeed;
+        }
+        else
+        {
+            currentSpeed *= stimMult;
+        }
     }
 
     public void SetMaxJumps(int jumps)
