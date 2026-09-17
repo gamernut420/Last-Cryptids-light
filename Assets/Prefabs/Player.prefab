@@ -252,8 +252,10 @@ MonoBehaviour:
   MaxHP: 100
   BaseSpeed: 5
   MaxSpeed: 15
+  MaxStamina: 5
+  StaminaCoolDown: 2
+  StaminaChargeRate: 5
   jumpSpeed: 9
-  jumpMax: 2
   gravity: 35
   Inventory: {fileID: 4824105635487887755}
   walkHearingRadius: 10
@@ -274,10 +276,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrades
   HPIncrease: 5
   HPPrice: 5
+  HPMax: 100
   StaminaIncrease: 5
-  StaminaPrice: 2
+  StaminaPrice: 5
+  StaminaMax: 10
   SpeedIncrease: 5
   SpeedPrice: 10
+  SpeedMax: 100
+  JumpPrice: 1
+  MaxJumpUpgrades: 1
 --- !u!114 &4824105635487887755
 MonoBehaviour:
   m_ObjectHideFlags: 0

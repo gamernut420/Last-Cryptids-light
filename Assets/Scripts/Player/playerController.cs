@@ -9,6 +9,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField][Min(1f)] float MaxHP = 100;
     [SerializeField] float BaseSpeed = 5;
     [SerializeField] float MaxSpeed = 15;
+    [SerializeField] float MaxStamina = 5;
+    [SerializeField] float StaminaCoolDown = 2;
+    [SerializeField] float StaminaChargeRate = 5;
     [Range(8, 15)][SerializeField] int jumpSpeed = 10;
     [Range(15, 45)][SerializeField] int gravity = 35;
 
@@ -34,6 +37,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     int jumpCount;
     float currentHP;
     float currentSpeed;
+    float currentStamina;
+    float currentStamCoolDown;
+    bool isSprinting;
 
     //Set for testing this will be used alongside kills
     int points = 12345;
@@ -49,6 +55,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         currentHP = MaxHP;
         currentSpeed = BaseSpeed;
+
+        currentStamina = MaxStamina;
+
+        currentStamCoolDown = StaminaCoolDown;
+
+        isSprinting = false;
 
         upgradeManager = GetComponent<PlayerUpgrades>();
 
@@ -95,22 +107,61 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             playerVel.y = 0;
         }
 
-        moveDir = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        moveDir = horizontal * transform.right + vertical * transform.forward;
         controller.Move(moveDir * currentSpeed * Time.deltaTime);
+
+        CheckStamina(horizontal != 0 || vertical != 0);
 
         jump();
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
     }
 
+    void CheckStamina(bool isMoving)
+    {
+        if (isMoving && isSprinting)
+        {
+            currentStamCoolDown = StaminaCoolDown;
+            currentStamina -= Time.deltaTime;
+        }
+        else if (currentStamCoolDown > 0)
+        {
+            currentStamCoolDown -= Time.deltaTime;
+        }
+        else if (currentStamina < MaxStamina)
+        {
+            float regenRate = MaxStamina / StaminaChargeRate;
+
+            currentStamina += regenRate * Time.deltaTime;
+        }
+
+        currentStamina = Mathf.Clamp(currentStamina, 0, MaxStamina);
+        currentStamCoolDown = Mathf.Clamp(currentStamCoolDown, 0, StaminaCoolDown);
+
+        gameManager.instance.UpdateStaminaBar(currentStamina / MaxStamina, currentStamina < MaxStamina);
+    }
+
     void sprint()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if(currentStamina > 0)
         {
-            currentSpeed = MaxSpeed;
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                isSprinting = true;
+                currentSpeed = MaxSpeed;
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                isSprinting = false;
+                currentSpeed = BaseSpeed;
+            }
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        else
         {
+            isSprinting = false;
             currentSpeed = BaseSpeed;
         }
     }
@@ -566,12 +617,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     //Stamina getters and setters
     public float GetMaxStamina()
     {
-        return 1;
+        return MaxStamina;
     }
 
     public void SetMaxStamina(float ammount)
     {
-        //set max stamina
+        MaxStamina = ammount;
     }
 
     public void SetMaxJumps(int jumps)
