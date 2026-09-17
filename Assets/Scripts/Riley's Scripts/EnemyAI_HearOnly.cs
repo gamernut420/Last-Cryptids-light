@@ -14,6 +14,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [Header("Audio")]
     [Range(0, 1)][SerializeField] float audStepsVol;
 
+    [Header("Health")]
+    [SerializeField] private int maxHP = 50;
+    private int currentHP;
+
     [Header("Movement & Combat")]
     public float attackSpeed = 10f;
     public float patrolSpeed = 2f;
@@ -395,6 +399,16 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
+        if (currentHP <= 0) return;
+
+        currentHP -= amount;
+        StartCoroutine(flashRed());
+
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+
         if (currentState != State.Attack && PlayerTransform != null)
         {
             lastHeardPosition = PlayerTransform.position;
@@ -402,6 +416,25 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             currentState = State.InvestigateSound;
             SetEarsAlert(true);
         }    
+    }
+
+    private void Die()
+    {
+        Debug.Log("Blind Enemy Defeated!");
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+        }
+        Destroy(gameObject);
+    }
+
+    IEnumerator flashRed()
+    {
+        modelMat.color = Color.red;
+        modelMat.SetColor("_EmissionColor", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        modelMat.color = colorOrig;
+        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     IEnumerator PlayStep()

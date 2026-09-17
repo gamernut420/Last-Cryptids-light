@@ -45,11 +45,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 990492548886493971}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 861c03d7357b6534684636f879f6ec13, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c95a0bf53444de4f8b26642e111c358, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileCollision
   speed: 20
   lifetime: 5
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  impactEffect: {fileID: 0}
 --- !u!114 &990274322314338296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,6 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damage
   type: 2
+  affectedByDifficulty: 0
   rb: {fileID: 306876458269599873}
   damageAmount: 2
   damageRate: 1

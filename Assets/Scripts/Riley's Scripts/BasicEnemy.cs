@@ -558,6 +558,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         currentHP -= amount;
         Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
+        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -575,6 +576,15 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
 
         Destroy(gameObject);
+    }
+
+    IEnumerator flashRed()
+    {
+        modelMat.color = Color.red;
+        modelMat.SetColor("_EmissionColor", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        modelMat.color = colorOrig;
+        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     private void OnDrawGizmosSelected()
