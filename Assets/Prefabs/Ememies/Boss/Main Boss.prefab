@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7402294804179798902}
   - component: {fileID: 2449555058554257867}
-  - component: {fileID: 5021858229239306824}
   - component: {fileID: 1121224804465807655}
+  - component: {fileID: 6264389424718430997}
   m_Layer: 0
   m_Name: meleeHitbox
   m_TagString: Untagged
@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 674892976246991542}
   serializedVersion: 2
   m_LocalRotation: {x: 0.34590724, y: 0.31520396, z: -0.6421963, w: 0.60710675}
-  m_LocalPosition: {x: 0.079, y: -0.031, z: -0.038}
-  m_LocalScale: {x: 0.2310984, y: 0.46254912, z: 0.17645843}
+  m_LocalPosition: {x: -0.037, y: -0.023, z: -0.04}
+  m_LocalScale: {x: 0.30746734, y: 0.3704417, z: 0.3007615}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8312031679973131206}
@@ -49,34 +49,11 @@ MonoBehaviour:
   type: 1
   affectedByDifficulty: 0
   rb: {fileID: 1121224804465807655}
-  damageAmount: 4
+  damageAmount: 8
   damageRate: 0
   bulletSpeed: 0
   bulletDestroyTime: 0
   hitEffect: {fileID: 0}
---- !u!136 &5021858229239306824
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 674892976246991542}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.75
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0.0000000020265285, y: 0.000000004868367, z: -0.042049482}
 --- !u!54 &1121224804465807655
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -104,6 +81,161 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &6264389424718430997
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674892976246991542}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &946006901868029483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3629165960916894894}
+  - component: {fileID: 1291663918487506261}
+  - component: {fileID: 6899103842961761353}
+  m_Layer: 0
+  m_Name: HeadHitBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3629165960916894894
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946006901868029483}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000000933665, y: -0.000000041099685, z: -0.15670697, w: 0.98764515}
+  m_LocalPosition: {x: 0.131, y: -0.024, z: -0}
+  m_LocalScale: {x: 0.2167693, y: 0.26477903, z: 0.21716172}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131212}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -18.032}
+--- !u!114 &1291663918487506261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946006901868029483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!65 &6899103842961761353
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946006901868029483}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1338992671485747231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2811431758407641100}
+  - component: {fileID: 6663553471375270811}
+  - component: {fileID: 4977660425434599598}
+  m_Layer: 0
+  m_Name: LeftArmHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2811431758407641100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338992671485747231}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5763843, y: -0.47656193, z: 0.39320007, w: -0.5348491}
+  m_LocalPosition: {x: -0.24600029, y: 0.024000227, z: 0.049999565}
+  m_LocalScale: {x: 0.18757354, y: 0.5417184, z: 0.1964985}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131222}
+  m_LocalEulerAnglesHint: {x: 82.448, y: 154.535, z: 78.435}
+--- !u!114 &6663553471375270811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338992671485747231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &4977660425434599598
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338992671485747231}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.43
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1593808992458422086
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +267,380 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8312031679973131220}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2569938087377377556
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8853875130405995938}
+  - component: {fileID: 22711890282029567}
+  - component: {fileID: 606819457644015982}
+  m_Layer: 0
+  m_Name: RightForearmHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8853875130405995938
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2569938087377377556}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.31690845, y: 0.21131717, z: -0.63403165, w: 0.67299175}
+  m_LocalPosition: {x: 0.195, y: -0.0242, z: -0.0145}
+  m_LocalScale: {x: 0.18757391, y: 0.23274672, z: 0.21840802}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131206}
+  m_LocalEulerAnglesHint: {x: 43.989, y: -9.394, z: -90.387}
+--- !u!114 &22711890282029567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2569938087377377556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &606819457644015982
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2569938087377377556}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.42
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &2820380390695226588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6669457956444511356}
+  - component: {fileID: 6155298194697719365}
+  - component: {fileID: 2615949905675678877}
+  m_Layer: 0
+  m_Name: RightLegHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6669457956444511356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820380390695226588}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.051446427, y: 0.07092873, z: 0.67650855, w: -0.73120356}
+  m_LocalPosition: {x: -0.022, y: 0.008, z: 0.021}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131236}
+  m_LocalEulerAnglesHint: {x: -9.858, y: -1.985, z: -85.379}
+--- !u!114 &6155298194697719365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820380390695226588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &2615949905675678877
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820380390695226588}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.07
+  m_Height: 0.36
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3089769775438701602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3211678184476968097}
+  - component: {fileID: 2923378351781635039}
+  - component: {fileID: 4923993185918670634}
+  - component: {fileID: 7367912938235395916}
+  m_Layer: 0
+  m_Name: meleeAttackHeavy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3211678184476968097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089769775438701602}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.296, y: 0.162, z: 0}
+  m_LocalScale: {x: 0.29240748, y: 0.34387663, z: 0.42853245}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131216}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2923378351781635039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089769775438701602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d964c87fe21cb9548997822e39bb60be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damage
+  type: 1
+  affectedByDifficulty: 0
+  rb: {fileID: 7367912938235395916}
+  damageAmount: 16
+  damageRate: 0
+  bulletSpeed: 0
+  bulletDestroyTime: 0
+  hitEffect: {fileID: 0}
+--- !u!65 &4923993185918670634
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089769775438701602}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &7367912938235395916
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3089769775438701602}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!1 &3454332136749549208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3405467091943377632}
+  - component: {fileID: 6398158101378975715}
+  - component: {fileID: 5418321956712229584}
+  m_Layer: 0
+  m_Name: LeftForearmHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3405467091943377632
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3454332136749549208}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.37779737, y: -0.3575589, z: 0.60100937, w: -0.60680187}
+  m_LocalPosition: {x: 0.15280111, y: 0.021419745, z: -0.0059555545}
+  m_LocalScale: {x: 0.18757334, y: 0.34068665, z: 0.2184084}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131204}
+  m_LocalEulerAnglesHint: {x: 22.61, y: 66.156, z: -52.622}
+--- !u!114 &6398158101378975715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3454332136749549208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &5418321956712229584
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3454332136749549208}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.42
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &4241145478415425456
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6285648238419670360}
+  - component: {fileID: 4915427645099558223}
+  - component: {fileID: 9124747565583736233}
+  m_Layer: 0
+  m_Name: RightArmHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6285648238419670360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4241145478415425456}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.42957556, y: 0.3143886, z: -0.56306964, w: 0.6321212}
+  m_LocalPosition: {x: -0.29943168, y: -0.002096124, z: 0.034711853}
+  m_LocalScale: {x: 0.18757391, y: 0.54171836, z: 0.19649842}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131224}
+  m_LocalEulerAnglesHint: {x: 41.449, y: 12.867, z: -14.409}
+--- !u!114 &4915427645099558223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4241145478415425456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &9124747565583736233
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4241145478415425456}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.43
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5331241819255924531
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,7 +651,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3035572959994920918}
   - component: {fileID: 7543238301187523072}
-  - component: {fileID: 734373867681881422}
+  - component: {fileID: 8247278831405509372}
   m_Layer: 6
   m_Name: Main Boss
   m_TagString: Untagged
@@ -183,7 +689,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 4
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -191,7 +697,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &734373867681881422
+--- !u!114 &8247278831405509372
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -215,12 +721,14 @@ MonoBehaviour:
   phase3HP: 200
   phase2TransitionDelay: 5
   agent: {fileID: 0}
-  phase1Speed: 3.5
-  phase2Speed: 5
-  phase3Speed: 7
+  phase1Speed: 5
+  phase2Speed: 7
+  phase3Speed: 10
   attackCooldown: 2
   meleeRange: 4
   meleeHitbox: {fileID: 674892976246991542}
+  meleeHitboxHeavy: {fileID: 3089769775438701602}
+  lightAttackChance: 70
   projectile: {fileID: 990492548886493971, guid: fb67545a5a4c3454c9153f560e007b6d, type: 3}
   projectileSpawnPoint: {fileID: 3639657572453321960}
   rangedAttackCooldown: 15
@@ -229,6 +737,8 @@ MonoBehaviour:
   projectileWidth: 2
   projectileHeight: 2
   hitboxExtendSpeed: 20
+  rangeAnimationName: Rage
+  rangePauseTime: 2
   enemyPrefab: {fileID: 0}
   spawnRadius: 30
   minSpawnDistance: 5
@@ -246,6 +756,140 @@ MonoBehaviour:
   energyFieldsPerAttack: 2
   energyFieldCooldown: 10
   energyFieldDuration: 6
+--- !u!1 &7132874650241705418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4426599473283438534}
+  - component: {fileID: 429971846186942876}
+  - component: {fileID: 9062068615664243901}
+  m_Layer: 0
+  m_Name: LeftLegHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4426599473283438534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7132874650241705418}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.03811808, y: -0.07889749, z: -0.7405689, w: 0.66624326}
+  m_LocalPosition: {x: -0.0207, y: -0.001, z: 0.0179}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131234}
+  m_LocalEulerAnglesHint: {x: -9.651, y: -2.83, z: -95.81}
+--- !u!114 &429971846186942876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7132874650241705418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!136 &9062068615664243901
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7132874650241705418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.07
+  m_Height: 0.36
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &7312721716540519766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7896099253558973123}
+  - component: {fileID: 749906346669126599}
+  - component: {fileID: 3024418133820436914}
+  m_Layer: 0
+  m_Name: DamageHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7896099253558973123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7312721716540519766}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000085471804, y: 0.000000051832227, z: -0.82849646, w: 0.5599943}
+  m_LocalPosition: {x: 0.095, y: -0.274, z: -0}
+  m_LocalScale: {x: 0.73228, y: 0.4271288, z: 0.44992}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131216}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -111.889}
+--- !u!114 &749906346669126599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7312721716540519766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+--- !u!65 &3024418133820436914
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7312721716540519766}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &8312031679972743488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -325,12 +969,39 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 400016, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 7896099253558973123}
+    - targetCorrespondingSourceObject: {fileID: 400016, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 3211678184476968097}
+    - targetCorrespondingSourceObject: {fileID: 400012, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3629165960916894894}
     - targetCorrespondingSourceObject: {fileID: 400020, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3639657572453321960}
+    - targetCorrespondingSourceObject: {fileID: 400022, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 2811431758407641100}
+    - targetCorrespondingSourceObject: {fileID: 400004, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3405467091943377632}
+    - targetCorrespondingSourceObject: {fileID: 400024, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 6285648238419670360}
     - targetCorrespondingSourceObject: {fileID: 400006, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7402294804179798902}
+    - targetCorrespondingSourceObject: {fileID: 400006, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8853875130405995938}
+    - targetCorrespondingSourceObject: {fileID: 400034, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4426599473283438534}
+    - targetCorrespondingSourceObject: {fileID: 400036, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 6669457956444511356}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 100038, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
       insertIndex: -1
@@ -353,14 +1024,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e99fe5d9e7d677a409e51af7e12f3935, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossAnimationEvents
+--- !u!4 &8312031679973131204 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400004, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8312031679973131206 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400006, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
   m_PrefabInstance: {fileID: 8312031679972743488}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131212 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400012, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131216 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400016, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8312031679973131220 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400020, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131222 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400022, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131224 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400024, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131234 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400034, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+  m_PrefabInstance: {fileID: 8312031679972743488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8312031679973131236 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400036, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
   m_PrefabInstance: {fileID: 8312031679972743488}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8312031679973131238 stripped
