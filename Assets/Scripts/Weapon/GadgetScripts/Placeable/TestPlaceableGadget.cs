@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TestPlaceableGadget : PlaceableGadget
 {
-    public override bool UseGadget(IPlayer player)
+    public override bool UseGadget(GameObject player)
     {
         if (PlaceGadget())
         {

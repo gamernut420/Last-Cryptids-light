@@ -10,11 +10,13 @@ public abstract class ThrowableGadget : GadgetBase, IProjectile
 
     ProjectileManager projectileManager;
 
-    public override bool UseGadget(IPlayer player)
+    public override bool UseGadget(GameObject player)
     {
+        IPlayer pInterface = player.GetComponent<IPlayer>();
+
         if(player != null)
         {
-            projectileManager = player.GetProjectileManager();
+            projectileManager = pInterface.GetProjectileManager();
 
             if(projectileManager == null)
             {
