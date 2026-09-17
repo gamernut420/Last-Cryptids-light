@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class gameManager : MonoBehaviour
 {
@@ -400,7 +401,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void ShowShopUI(bool show, Vector3 _spawnLocation)
+    public void ShowShopUI(bool show, List<ShopItem> items, Vector3 _spawnLocation)
     {
         if (show)
         {
@@ -413,7 +414,7 @@ public class gameManager : MonoBehaviour
 
         ShopUI.SetActive(show);
 
-        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), items, _spawnLocation);
     }
 
     public void ShowUpgradeUI(bool show)

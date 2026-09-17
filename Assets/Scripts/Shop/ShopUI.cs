@@ -13,7 +13,7 @@ public class ShopUI : MonoBehaviour
     [SerializeField] GameObject CategoryUIPrefab;
     [SerializeField] GameObject ItemUIPrefab;
 
-    [SerializeField] List<ShopItem> AvailableItems;
+    List<ShopItem> AvailableItems;
 
     ItemCatagory SelectedCategory;
     ShopItem SelectedItem;
@@ -34,9 +34,12 @@ public class ShopUI : MonoBehaviour
         RefreshUI_Categories();
     }
 
-    public void SetStation(IPlayer _player, Vector3 _spawnLocation)
+    public void SetStation(IPlayer _player, List<ShopItem> items, Vector3 _spawnLocation)
     {
         Player = _player;
+
+        AvailableItems = items;
+
         SpawnLocation = _spawnLocation;
     }
 
@@ -192,6 +195,6 @@ public class ShopUI : MonoBehaviour
 
     public void OnClickedExit()
     {
-        gameManager.instance.ShowShopUI(false, Vector3.zero);
+        gameManager.instance.ShowShopUI(false, null, Vector3.zero);
     }
 }
