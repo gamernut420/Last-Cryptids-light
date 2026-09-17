@@ -10,9 +10,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField] float BaseSpeed = 5;
     [SerializeField] float MaxSpeed = 15;
     [Range(8, 15)][SerializeField] int jumpSpeed = 10;
-    [Range(1, 3)][SerializeField] int jumpMax = 2;
     [Range(15, 45)][SerializeField] int gravity = 35;
 
+    int jumpMax = 1;
     PlayerUpgrades upgradeManager;
 
     [Header("Inventory")]
@@ -572,6 +572,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void SetMaxStamina(float ammount)
     {
         //set max stamina
+    }
+
+    public void SetMaxJumps(int jumps)
+    {
+        jumpMax = jumps;
     }
 
     public int GetPlayerFunds()

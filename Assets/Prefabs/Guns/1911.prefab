@@ -104,6 +104,7 @@ MonoBehaviour:
   SwayAmmount: 10
   gunAudio: {fileID: 5471764789682750917}
   gunShootSound: {fileID: 8300000, guid: f9ab20b4342184a46921955b3300481d, type: 3}
+  gunReloadSound: {fileID: 8300000, guid: cd3acc5bf4430ce46bfdadcdcbdce7c2, type: 3}
   gunshotHearingRadius: 20
 --- !u!114 &-7158833625466464080
 MonoBehaviour:
@@ -119,14 +120,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponUpgrades
   DamageIncrease: 10
   DamagePrice: 1
+  DamageMax: 100
   VelocityIncrease: 25
   VelocityPrice: 1
+  VelocityMax: 100
   FireRateIncrease: 2.5
   FireRatePrice: 1
   MaxAmmoIncrease: 5
   MaxAmmoPrice: 1
+  MaxAmmoMax: 100
   MagSizeIncrease: 5
   MagSizePrice: 1
+  MagSizeMax: 100
 --- !u!82 &5471764789682750917
 AudioSource:
   m_ObjectHideFlags: 0

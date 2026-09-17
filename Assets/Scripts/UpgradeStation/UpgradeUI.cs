@@ -96,8 +96,6 @@ public class UpgradeUI : MonoBehaviour
         {
             foreach(var stat in PlayerUpgrader.GetStatMap())
             {
-                Debug.Log(stat);
-
                 UpgradeOption option = Instantiate(UpgradeUIPrefab, UpgradeUIRoot).GetComponent<UpgradeOption>();
 
                 option.Bind(stat.Key, OnPurchase, stat.Value);

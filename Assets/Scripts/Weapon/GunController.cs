@@ -38,6 +38,7 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     [Header("----- Audio -----")]
     [SerializeField] AudioSource gunAudio;
     [SerializeField] AudioClip gunShootSound;
+    [SerializeField] AudioClip gunReloadSound;
     public float gunshotHearingRadius = 20f;
 
     //Event speakers
@@ -267,8 +268,8 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
             Vector2 circlePoint = Random.insideUnitCircle;
 
-            float xSpread = circlePoint.x * SpreadAmmount;
-            float ySpread = circlePoint.y * SpreadAmmount;
+            float xSpread = circlePoint.x * spreadMod;
+            float ySpread = circlePoint.y * spreadMod;
 
             Quaternion spreadRotation = Quaternion.Euler(xSpread, ySpread, 0f);
 
@@ -325,6 +326,13 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 
     void Reload()
     {
+        if (gunAudio != null && gunReloadSound != null)
+        {
+            gunAudio.PlayOneShot(gunReloadSound);
+        }
+
+        tryingShoot = false;
+
         int ammoNeeded = MagSize - currentAmmo;
 
         if (ammoNeeded < currentReserveAmmo)
