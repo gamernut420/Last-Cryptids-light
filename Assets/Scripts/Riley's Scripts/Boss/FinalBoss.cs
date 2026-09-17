@@ -60,6 +60,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [Header("Melee Attack")]
     [SerializeField] private float attackCooldown = 2f;
+    [SerializeField] private int meleeRange = 4;
     [SerializeField] private GameObject meleeHitbox;
 
     private float meleeTimer;
@@ -144,6 +145,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             maxHP
         );
 
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
 
         if (agent == null)
         {
@@ -158,6 +163,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         agent.speed = phase1Speed;
+        agent.stoppingDistance = meleeRange;
     }
 
 
@@ -170,16 +176,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (animator != null && agent != null)
         {
-            if (meleeTimer <= attackCooldown / 2)
-            {
+            if (agent.velocity.magnitude > 0.05f)
                 animator.SetFloat("Walk", 1f);
-                agent.isStopped = false;
-            }
             else
-            {
-                agent.isStopped = true;
-                animator.SetFloat("Walk", 0);
-            }
+                animator.SetFloat("Walk", 0f);
         }
 
         meleeTimer -= Time.deltaTime;
@@ -218,12 +218,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
-        Vector3 direction =
-            (PlayerTransform.position -
-             projectileSpawnPoint.position).normalized;
+        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
 
         direction.y = 0;
-
 
         if (direction.sqrMagnitude <= 0.01f) return;
 
@@ -307,11 +304,11 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer <= meleeRange)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -405,11 +402,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer <= meleeRange)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -460,11 +457,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer <= meleeRange)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -476,10 +473,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
+        agent.stoppingDistance = meleeRange;
 
-        agent.SetDestination(
-            PlayerTransform.position
-        );
+        agent.SetDestination(PlayerTransform.position);
     }
 
 
@@ -487,7 +483,13 @@ public class FinalBoss : MonoBehaviour, IDamage
     private void MeleeAttack()
     {
         if (meleeTimer > 0f) return;
+        FacePlayer();
+        Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
+        directionToPlayer.y = 0;
+        float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
+        if (angle > 3f) return;
+        
         Debug.Log("Boss Melee Attack");
 
         if (agent != null)
