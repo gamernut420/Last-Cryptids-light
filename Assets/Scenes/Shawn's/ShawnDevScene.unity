@@ -1024,10 +1024,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6007516837154757063, guid: a3190733dcf65934bb8a3283bd0cb32f, type: 3}
-      propertyPath: ItemInfo
-      value: 
-      objectReference: {fileID: 11400000, guid: 709c74d1a375fd049a714364df5842eb, type: 2}
     - target: {fileID: 6677770282436106594, guid: a3190733dcf65934bb8a3283bd0cb32f, type: 3}
       propertyPath: m_Name
       value: DecoyGadget
@@ -1885,6 +1881,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7276194454710308247, guid: 5b9b87dae2a73464dab9955cca7ce581, type: 3}
+      propertyPath: DamageMax
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2713,6 +2713,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2163794302333853067, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
       propertyPath: m_Name
       value: BaseBubble
