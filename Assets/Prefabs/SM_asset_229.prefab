@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1072698337139902348
+--- !u!1 &3525059178752139134
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,47 +8,31 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1173541640369840569}
-  - component: {fileID: 7120185494672612617}
+  - component: {fileID: 2567786628697212953}
   m_Layer: 0
-  m_Name: SporePod
+  m_Name: SM_asset_229
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1173541640369840569
+--- !u!4 &2567786628697212953
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1072698337139902348}
-  serializedVersion: 2
+  m_GameObject: {fileID: 3525059178752139134}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 473.11, y: 3.9591062, z: 217.44}
-  m_LocalScale: {x: 2.3849876, y: 2.3849876, z: 2.3849876}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7571859800691134369}
+  - {fileID: 6774355133964578243}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7120185494672612617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1072698337139902348}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdf1a4ad44fc5eb40b3a6b241edd8d4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScavengeItem
-  itemData: {fileID: 11400000, guid: 519b92053c2c35941a28f6b0da56a08a, type: 2}
-  HoldTimer: 0
-  PromptMessage: Spore Pod
---- !u!1 &8234189309743301140
+--- !u!1 &7659682737316704581
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,9 +40,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7571859800691134369}
-  - component: {fileID: 5973849336740497720}
-  - component: {fileID: 7418752926053552962}
+  - component: {fileID: 6774355133964578243}
+  - component: {fileID: 2398204835280077282}
+  - component: {fileID: 3312687107266270294}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -66,36 +50,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7571859800691134369
+--- !u!4 &6774355133964578243
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8234189309743301140}
-  serializedVersion: 2
+  m_GameObject: {fileID: 7659682737316704581}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1173541640369840569}
+  m_Father: {fileID: 2567786628697212953}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5973849336740497720
+--- !u!33 &2398204835280077282
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8234189309743301140}
-  m_Mesh: {fileID: -3236744550647719313, guid: d9d90579583f7d34d93a1fa17559119f, type: 3}
---- !u!23 &7418752926053552962
+  m_GameObject: {fileID: 7659682737316704581}
+  m_Mesh: {fileID: 6693640151072240809, guid: d9d90579583f7d34d93a1fa17559119f, type: 3}
+--- !u!23 &3312687107266270294
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8234189309743301140}
+  m_GameObject: {fileID: 7659682737316704581}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -106,15 +90,10 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c246d2b4e20ff034ca4dfa465c64a046, type: 2}
+  - {fileID: 2100000, guid: e99880c07a546a44b8d85728fd0b7f63, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -132,9 +111,7 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
