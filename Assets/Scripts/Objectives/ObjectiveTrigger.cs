@@ -2,20 +2,52 @@ using UnityEngine;
 
 public class ObjectiveTrigger : MonoBehaviour
 {
+    [Header("Objective")]
     public ObjectiveData targetObjective;
-    public bool isCompeletionTrigger = false;
 
-    private void OnTriggerEnter(Collider other)
+
+    [Header("Trigger Type")]
+    public bool isCompletionTrigger =
+        false;
+
+
+    private void OnTriggerEnter(
+        Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag(
+                "Player"))
         {
-            if (isCompeletionTrigger)
-                ObjectiveManager.Instance.CompleteObjective(targetObjective.objectiveID);
-            else
-                ObjectiveManager.Instance.AddObjective(targetObjective);
-
-            // Disable trigger so it only fires once
-           gameObject.SetActive(false);
+            return;
         }
+
+
+        if (targetObjective == null ||
+            ObjectiveManager.Instance ==
+            null)
+        {
+            return;
+        }
+
+
+        if (isCompletionTrigger)
+        {
+            ObjectiveManager.Instance
+                .CompleteObjective(
+                    targetObjective
+                        .objectiveID
+                );
+        }
+        else
+        {
+            ObjectiveManager.Instance
+                .AddObjective(
+                    targetObjective
+                );
+        }
+
+
+        gameObject.SetActive(
+            false
+        );
     }
 }
