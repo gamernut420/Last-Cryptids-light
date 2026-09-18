@@ -17,7 +17,6 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
     [SerializeField] GameObject ItemHotbar;
-    [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
     [SerializeField] GameObject ShopUI;
     [SerializeField] GameObject UpgradeUI;
@@ -358,11 +357,6 @@ public class gameManager : MonoBehaviour
                 slots[i].UpdateSlot(null, null, 0, Color.gray2);
             }
         }
-    }
-
-    public void UpdateActiveWep(string text)
-    {
-        ActiveWeaponText.text = text;
     }
 
     public void ShowReloadPrompt(bool show)

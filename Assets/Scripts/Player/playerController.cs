@@ -444,8 +444,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
             if (wep != null)
             {
-                gameManager.instance.UpdateActiveWep(wep.GetWeaponName());
-
                 ShowAmmoUI?.Invoke(true);
             }
             else
@@ -454,8 +452,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
                 if (gadget != null)
                 {
-                    gameManager.instance.UpdateActiveWep(gadget.GetGadgetName());
-
                     ShowAmmoUI?.Invoke(false);
                 }
             }
@@ -464,7 +460,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         {
             activeItemSlot = -1;
             gameManager.instance.ShowReloadPrompt(false);
-            gameManager.instance.UpdateActiveWep("None");
             ShowAmmoUI?.Invoke(false);
         }
 
