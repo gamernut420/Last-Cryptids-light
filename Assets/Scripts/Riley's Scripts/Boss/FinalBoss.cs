@@ -72,6 +72,10 @@ public class FinalBoss : MonoBehaviour, IDamage
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform projectileSpawnPoint;
+    //[SerializeField] private Transform beamCore;
+    [SerializeField] private ParticleSystem energyBeam;
+    [SerializeField] private ParticleSystem energyParticles;
+    [SerializeField] private ParticleSystem sparks;
 
     [SerializeField] private float rangedAttackCooldown = 15f;
     [SerializeField] private float rangedAttackChargeTime = 1f;
@@ -187,7 +191,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (currentPhase == BossPhase.Dead) return;
 
-        if (animator != null && agent != null)
+        if (animator != null && agent != null && !chargingRangedAttack)
         {
             if (agent.velocity.magnitude > 0.05f)
                 animator.SetFloat("Walk", 1f);
@@ -589,7 +593,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         beamFired = true;
 
         SpawnBeam();
-
         PauseRangeAnimation();
     }
 
@@ -603,8 +606,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
         GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
         BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
-        Transform projectileVisual = newProjectile.transform.Find("RiftBeam Visual");
         ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
+        //Transform core = newProjectile.transform.Find("Beam Core");
+        ParticleSystem core = newProjectile.transform.Find("Beam Particle")?.GetComponent<ParticleSystem>();
+        ParticleSystem energy = newProjectile.transform.Find("Beam Energy")?.GetComponent<ParticleSystem>();
+        ParticleSystem sparkEffect = newProjectile.transform.Find("Beam Sparks")?.GetComponent<ParticleSystem>();
 
         if (hitboxCollider == null)
         {
@@ -614,18 +620,13 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
         float newLength = 0.1f;
+        hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
         hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
 
-        if (projectileVisual != null)
-        {
-            projectileVisual.localScale = new Vector3(projectileWidth, projectileHeight, newLength);
-            projectileVisual.localPosition = new Vector3(0f, 0f, newLength / 2f);
-        }
-
-        StartCoroutine(ExtendBeam(newProjectile, hitboxCollider, projectileVisual, sonicBoom));
+        StartCoroutine(ExtendBeam(newProjectile, hitboxCollider, core, energy, sparkEffect, sonicBoom));
     }
 
-    private IEnumerator ExtendBeam(GameObject beam, BoxCollider hitboxCollider, Transform projectileVisual, ProjectileCollision sonicBoom)
+    private IEnumerator ExtendBeam(GameObject beam, BoxCollider hitboxCollider, ParticleSystem core, ParticleSystem energy, ParticleSystem sparks, ProjectileCollision sonicBoom)
     {
         float newLength = 0.1f;
         float attackTime = 0f;
@@ -642,10 +643,25 @@ public class FinalBoss : MonoBehaviour, IDamage
             hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
             hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
             
-            if (projectileVisual != null)
+            if (core != null)
             {
-                projectileVisual.localScale = new Vector3(projectileWidth, projectileHeight, newLength);
-                projectileVisual.localPosition = new Vector3(0f, 0f, newLength / 2f);
+                ParticleSystem.ShapeModule shape = core.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                core.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+            }
+
+            if (energy != null)
+            {
+                ParticleSystem.ShapeModule shape = energy.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                energy.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+            }
+
+            if (sparks != null)
+            {
+                ParticleSystem.ShapeModule shape = sparks.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                sparks.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
             }
 
             attackTime += Time.deltaTime;
@@ -657,8 +673,8 @@ public class FinalBoss : MonoBehaviour, IDamage
             sonicBoom.StartMoving();
 
         agent.isStopped = false;
-        ResumeRangeAnimation();
         chargingRangedAttack = false;
+        ResumeRangeAnimation();
     }
 
     // RANGED ATTACK
