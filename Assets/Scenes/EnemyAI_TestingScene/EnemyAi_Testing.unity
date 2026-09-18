@@ -745,7 +745,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 121.59988
+      value: 104.69
       objectReference: {fileID: 0}
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalPosition.y
@@ -753,7 +753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 131.73871
+      value: 113.07
       objectReference: {fileID: 0}
     - target: {fileID: 5541302583373663112, guid: 59060216d06166c4c9df52de3464d830, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1815,9 +1815,41 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 7071000206556148062, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
       propertyPath: rangedAttackChargeTime
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: energyFieldSpawnPoints.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 510332094}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1286103878}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1449904352}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[3]'
+      value: 
+      objectReference: {fileID: 665220741}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1524105264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

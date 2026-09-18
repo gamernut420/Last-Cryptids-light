@@ -369,7 +369,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         meleeTimer = 0f;
-        rangedTimer = 0f;
+        rangedTimer = 10f;
         energyFieldTimer = 0f;
         teleportTimer = teleportCooldown;
 
@@ -1002,20 +1002,47 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private void Die()
     {
-        currentPhase =
-            BossPhase.Dead;
+        currentPhase = BossPhase.Dead;
 
+        chargingRangedAttack = false;
+        isShooting = false;
+        beamFired = true;
 
-        agent.isStopped =
-            true;
+        if (agent != null)
+            agent.isStopped = true;
 
+        if (meleeHitbox != null)
+            meleeHitbox.SetActive(false);
+
+        if (meleeHitboxHeavy != null)
+            meleeHitboxHeavy.SetActive(false);
+
+        if (energyBeam != null)
+            energyBeam.Stop();
+
+        if (energyParticles != null)
+            energyParticles.Stop();
+
+        if (sparks != null)
+            sparks.Stop();
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+
+            animator.ResetTrigger("Die");
+            animator.SetTrigger("Die");
+
+            StartCoroutine(FreezeDeathAnimation());
+        }
+        else
+        {
+            Destroy(gameObject, 3f);
+        }
 
         if (bossObjective != null)
         {
-            ObjectiveManager.Instance
-                .CompleteObjective(
-                    bossObjective.objectiveID
-                );
+            ObjectiveManager.Instance.CompleteObjective(bossObjective.objectiveID);
         }
 
 
@@ -1023,16 +1050,32 @@ public class FinalBoss : MonoBehaviour, IDamage
         // Hide the HUD when the boss dies.
         BossDefeated?.Invoke();
 
+        Debug.Log("Rift Boss Defeated!");
 
-        Debug.Log(
-            "Rift Boss Defeated!"
-        );
+        Destroy(gameObject, 3f);
+    }
 
+    private IEnumerator FreezeDeathAnimation()
+    {
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die"));
 
-        Destroy(
-            gameObject,
-            3f
-        );
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= .2f);
+
+        yield return new WaitUntil(() =>
+        {
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            return currentState.IsName("Die") && currentState.normalizedTime >= 0.20f;
+        });
+
+        animator.Play("Die", 0, 1f);
+
+        animator.speed = 0f;
+
+        Debug.Log("Boss death animation finished and is frozen.");
+
+        yield return new WaitForSeconds(3f);
+
+        Destroy(gameObject);
     }
 
     private IEnumerator RangedAttackRoutine()
@@ -1052,9 +1095,28 @@ public class FinalBoss : MonoBehaviour, IDamage
             yield break;
         }
 
+        FacePlayer();
         StartRangeAnimation();
+        
+        //yield return new WaitUntil(() => !chargingRangedAttack);
 
-        yield return new WaitUntil(() => !chargingRangedAttack);
+        while (chargingRangedAttack)
+        {
+            if (currentPhase == BossPhase.Dead)
+            {
+                Debug.Log("Ranged attack cancelled because boss died.");
+
+                chargingRangedAttack = false;
+                isShooting = false;
+
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        if (currentPhase == BossPhase.Dead)
+            yield break;
 
         if (agent != null)
             agent.isStopped = false;
