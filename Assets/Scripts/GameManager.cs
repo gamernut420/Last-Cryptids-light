@@ -21,103 +21,184 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject ShopUI;
     [SerializeField] GameObject UpgradeUI;
 
+
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
-    [SerializeField] private GameObject exposurePromptObject;
-    [SerializeField] private float promptDuration;
+
+    [SerializeField]
+    private GameObject exposurePromptObject;
+
+    [SerializeField]
+    private float promptDuration;
+
     private float promptTimer = 0f;
+
     private bool isShowingPrompt = false;
 
 
-    [HideInInspector] public int killCount = 0;
+    // ADDED:
+    // Uses the same weapon sprites configured
+    // in the bottom-right weapon HUD.
+    [Header("Weapon HUD")]
+    [SerializeField]
+    private WeaponHUDController weaponHUDController;
+
+
+    [HideInInspector]
+    public int killCount = 0;
+
 
     [Header("Checkpoint")]
-    [SerializeField] private CheckpointManager checkpointManager;
+    [SerializeField]
+    private CheckpointManager checkpointManager;
+
 
     [Header("Player")]
     public Image playerHPBar;
+
     public GameObject damageFlashPanel;
 
+
     [Header("Stamina")]
-   // [SerializeField] GameObject staminaUI;
-    [SerializeField] Image staminaBar;
+    // [SerializeField] GameObject staminaUI;
+    [SerializeField]
+    Image staminaBar;
+
 
     [Header("Auto Set Variables (No need to touch)")]
     public GameObject beacon;
+
     public GameObject player;
+
     public PlayerInventory playerInventory;
+
     public playerController playerScript;
+
     public cameraController cameraScript;
+
+
     [Header("Audio")]
-    [SerializeField] private AmbiencePlaylist ambiencePlaylist;
-    [SerializeField] private PauseMenuMusic pauseMenuMusic;
+    [SerializeField]
+    private AmbiencePlaylist ambiencePlaylist;
+
+    [SerializeField]
+    private PauseMenuMusic pauseMenuMusic;
+
 
     public bool isPaused;
+
     public bool isExtracting;
+
 
     int enemiesRemaining = 0;
 
     float timeScaleOrig;
-    
 
     int waveCounter;
 
 
-    // Sets up references
     void Awake()
     {
         instance = this;
-        timeScaleOrig = Time.timeScale;
 
-        Transform ui = transform.parent;
+        timeScaleOrig =
+            Time.timeScale;
+
+
+        Transform ui =
+            transform.parent;
 
 
         if (hud != null)
         {
-            Transform hpBar = hud.transform.Find("Player HP Bar");
+            Transform hpBar =
+                hud.transform.Find(
+                    "Player HP Bar"
+                );
+
 
             if (hpBar != null)
             {
-                playerHPBar = hpBar.GetComponent<Image>();
-                playerHPBar.fillAmount = 1f;
+                playerHPBar =
+                    hpBar.GetComponent<Image>();
+
+                playerHPBar.fillAmount =
+                    1f;
             }
         }
 
-        countdownText = ui.Find("Countdown")?.gameObject;
-        damageFlashPanel = ui.Find("FlashDamage")?.gameObject;
-        
-        beacon = GameObject.FindWithTag("Beacon");
-        player = GameObject.FindWithTag("Player");
+
+        countdownText =
+            ui.Find("Countdown")
+                ?.gameObject;
+
+
+        damageFlashPanel =
+            ui.Find("FlashDamage")
+                ?.gameObject;
+
+
+        beacon =
+            GameObject.FindWithTag(
+                "Beacon"
+            );
+
+
+        player =
+            GameObject.FindWithTag(
+                "Player"
+            );
+
 
         if (player != null)
         {
-            playerInventory = player.GetComponent<PlayerInventory>();
-            playerScript = player.GetComponent<playerController>();
-            cameraScript = player.GetComponentInChildren<cameraController>();
+            playerInventory =
+                player.GetComponent<PlayerInventory>();
+
+
+            playerScript =
+                player.GetComponent<playerController>();
+
+
+            cameraScript =
+                player.GetComponentInChildren<
+                    cameraController
+                >();
         }
         else
         {
-            Debug.LogError("GameManager: No GameObject found with the tag 'Player'!");
+            Debug.LogError(
+                "GameManager: No GameObject found with the tag 'Player'!"
+            );
         }
+
 
         if (countdownText != null)
         {
             countdownText.SetActive(false);
         }
 
+
         if (ambiencePlaylist == null)
         {
-            ambiencePlaylist = GetComponent<AmbiencePlaylist>();
+            ambiencePlaylist =
+                GetComponent<AmbiencePlaylist>();
         }
+
+
         if (pauseMenuMusic == null)
         {
-            pauseMenuMusic = GetComponentInChildren<PauseMenuMusic>(true);
+            pauseMenuMusic =
+                GetComponentInChildren<
+                    PauseMenuMusic
+                >(true);
         }
 
 
         if (checkpointManager == null)
         {
-            checkpointManager = GetComponent<CheckpointManager>();
+            checkpointManager =
+                GetComponent<CheckpointManager>();
         }
     }
 
@@ -125,27 +206,45 @@ public class gameManager : MonoBehaviour
     void Start()
     {
         UpateKillUI();
-        Debug.Log("HUD: " + hud);
-        Debug.Log("HP BAR: " + playerHPBar);
+
+
+        Debug.Log(
+            "HUD: " + hud
+        );
+
+
+        Debug.Log(
+            "HP BAR: " + playerHPBar
+        );
+
 
         if (playerHPBar != null)
         {
-            playerHPBar.fillAmount = 1f;
+            playerHPBar.fillAmount =
+                1f;
         }
+
 
         if (ambiencePlaylist != null)
         {
-            ambiencePlaylist.StartPlaylist();
+            ambiencePlaylist
+                .StartPlaylist();
         }
+
 
         ShowReloadPrompt(false);
 
+
         if (checkpointManager != null)
         {
-            checkpointManager.RestoreCheckpointIfNeeded(player, playerInventory);
+            checkpointManager
+                .RestoreCheckpointIfNeeded(
+                    player,
+                    playerInventory
+                );
         }
-
     }
+
 
     void Update()
     {
@@ -153,14 +252,20 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
             {
-                // stateUnpause(); //Removed to move down, trust - Sean
-                // pause the game
                 statePause();
+
+
                 if (pauseMenuMusic != null)
                 {
-                    pauseMenuMusic.PlayPauseMusic();
+                    pauseMenuMusic
+                        .PlayPauseMusic();
                 }
-                menuActive = menuPause;
+
+
+                menuActive =
+                    menuPause;
+
+
                 menuActive.SetActive(true);
             }
             else if (menuActive == menuPause)
@@ -169,184 +274,369 @@ public class gameManager : MonoBehaviour
             }
         }
 
+
         if (isShowingPrompt)
         {
-            promptTimer -= Time.deltaTime;
+            promptTimer -=
+                Time.deltaTime;
+
+
             if (promptTimer <= 0f)
             {
-                isShowingPrompt = false;
+                isShowingPrompt =
+                    false;
+
+
                 if (exposurePromptObject != null)
                 {
-                    exposurePromptObject.SetActive(false);
+                    exposurePromptObject
+                        .SetActive(false);
                 }
             }
         }
     }
 
-    // Pauses the game
+
     public void statePause()
     {
         isPaused = true;
+
         Time.timeScale = 0;
+
 
         if (ambiencePlaylist != null)
         {
-            ambiencePlaylist.PausePlaylist();
+            ambiencePlaylist
+                .PausePlaylist();
         }
 
-        cameraScript.enabled = false;
+
+        cameraScript.enabled =
+            false;
+
+
         hud.SetActive(false);
 
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+
+        Cursor.visible =
+            true;
+
+
+        Cursor.lockState =
+            CursorLockMode.None;
     }
 
 
-    // Unpauses the game
     public void stateUnpause()
     {
         isPaused = false;
-        Time.timeScale = timeScaleOrig;
+
+        Time.timeScale =
+            timeScaleOrig;
+
+
         if (pauseMenuMusic != null)
         {
-            pauseMenuMusic.StopPauseMusic();
-        }
-        if (ambiencePlaylist != null)
-        {
-            ambiencePlaylist.ResumePlaylist();
+            pauseMenuMusic
+                .StopPauseMusic();
         }
 
-        cameraScript.enabled = true;
+
+        if (ambiencePlaylist != null)
+        {
+            ambiencePlaylist
+                .ResumePlaylist();
+        }
+
+
+        cameraScript.enabled =
+            true;
+
+
         hud.SetActive(true);
-        
+
+
         if (menuActive != null)
         {
             menuActive.SetActive(false);
+
             menuActive = null;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+
+        Cursor.visible =
+            false;
+
+
+        Cursor.lockState =
+            CursorLockMode.Locked;
     }
+
 
     public void updateGameGoal(int amount)
     {
-        // Update number of waver till you win
-        waveCounter += amount;
+        waveCounter +=
+            amount;
+
 
         if (waveCounter <= 0)
         {
-            // You Win!!
             statePause();
-            menuActive = menuWin;
+
+            menuActive =
+                menuWin;
+
             menuActive.SetActive(true);
         }
     }
+
 
     public void StartExtraction(float time)
     {
         countdownText.SetActive(true);
 
-        ExtractionCountdown Timer = countdownText.GetComponent<ExtractionCountdown>();
+
+        ExtractionCountdown Timer =
+            countdownText
+                .GetComponent<
+                    ExtractionCountdown
+                >();
+
 
         Timer.SetTimer(time);
 
-        isExtracting = true;
+
+        isExtracting =
+            true;
     }
 
-    // completed beacon to win
+
     public void extractionWin()
     {
         statePause();
+
+
         hud.SetActive(false);
-        menuActive = menuExtractionWin;
+
+
+        menuActive =
+            menuExtractionWin;
+
+
         menuActive.SetActive(true);
     }
+
 
     public void youLose()
     {
         statePause();
-        menuActive = menuLose;
+
+
+        menuActive =
+            menuLose;
+
+
         hud.SetActive(false);
+
+
         menuActive.SetActive(true);
     }
 
-    // killed all ai to win
+
     public void ModifyEnemyCount(int ammount)
     {
-        enemiesRemaining += ammount;
+        enemiesRemaining +=
+            ammount;
+
 
         if (enemiesRemaining <= 0)
         {
             statePause();
-            menuActive = menuWin;
+
+
+            menuActive =
+                menuWin;
+
+
             hud.SetActive(false);
+
+
             menuActive.SetActive(true);
         }
     }
-   public void AddKill()
+
+
+    public void AddKill()
     {
         killCount++;
+
 
         UpateKillUI();
     }
 
+
     void UpateKillUI()
     {
-        if(killCounterText != null)
+        if (killCounterText != null)
         {
-            killCounterText.text = $"Kills: {killCount}";
-
+            killCounterText.text =
+                $"Kills: {killCount}";
         }
     }
 
-    public void UpdateWeaponInv(GameObject[] inv, int slotInUse)
+
+    public void UpdateWeaponInv(
+        GameObject[] inv,
+        int slotInUse)
     {
-        InventorySlot[] slots = ItemHotbar.GetComponentsInChildren<InventorySlot>();
-        
-        for (int i = 0; i < slots.Length; i++)
+        if (ItemHotbar == null)
         {
-            if(inv[i] != null)
+            return;
+        }
+
+
+        InventorySlot[] slots =
+            ItemHotbar
+                .GetComponentsInChildren<
+                    InventorySlot
+                >();
+
+
+        for (int i = 0;
+             i < slots.Length;
+             i++)
+        {
+            // ADDED:
+            // Prevents a fifth visual HUD slot from
+            // trying to read beyond the current
+            // gameplay hotbar array.
+            if (i >= inv.Length)
             {
-                IWeapon wep = inv[i].GetComponent<IWeapon>();
+                slots[i].UpdateSlot(
+                    null,
+                    null,
+                    0,
+                    Color.gray2
+                );
+
+                continue;
+            }
+
+
+            if (inv[i] != null)
+            {
+                IWeapon wep =
+                    inv[i]
+                        .GetComponent<IWeapon>();
+
 
                 if (wep != null)
                 {
-                    if(i == slotInUse)
+                    // ADDED:
+                    // Ask WeaponHUDController for the
+                    // icon matching this weapon.
+                    Sprite weaponSprite =
+                        null;
+
+
+                    if (weaponHUDController != null)
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
+                        weaponSprite =
+                            weaponHUDController
+                                .GetWeaponSprite(
+                                    wep.GetWeaponName()
+                                );
+                    }
+
+
+                    if (i == slotInUse)
+                    {
+                        slots[i].UpdateSlot(
+                            weaponSprite,
+                            wep.GetWeaponName(),
+                            1,
+                            Color.darkRed
+                        );
                     }
                     else
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
+                        slots[i].UpdateSlot(
+                            weaponSprite,
+                            wep.GetWeaponName(),
+                            1,
+                            Color.gray2
+                        );
                     }
                 }
                 else
                 {
-                    IGadget gadget = inv[i].GetComponent<IGadget>();
+                    IGadget gadget =
+                        inv[i]
+                            .GetComponent<IGadget>();
 
-                    if(gadget != null)
+
+                    if (gadget != null)
                     {
-                        if(gadget.GetItemInfo()  != null)
+                        if (gadget.GetItemInfo() != null)
                         {
                             if (i == slotInUse)
                             {
-                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.darkRed);
+                                slots[i].UpdateSlot(
+                                    gadget
+                                        .GetItemInfo()
+                                        .itemIcon,
+
+                                    gadget
+                                        .GetGadgetName(),
+
+                                    1,
+
+                                    Color.darkRed
+                                );
                             }
                             else
                             {
-                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.gray2);
+                                slots[i].UpdateSlot(
+                                    gadget
+                                        .GetItemInfo()
+                                        .itemIcon,
+
+                                    gadget
+                                        .GetGadgetName(),
+
+                                    1,
+
+                                    Color.gray2
+                                );
                             }
                         }
                         else
                         {
                             if (i == slotInUse)
                             {
-                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                                slots[i].UpdateSlot(
+                                    null,
+
+                                    gadget
+                                        .GetGadgetName(),
+
+                                    1,
+
+                                    Color.darkRed
+                                );
                             }
                             else
                             {
-                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                                slots[i].UpdateSlot(
+                                    null,
+
+                                    gadget
+                                        .GetGadgetName(),
+
+                                    1,
+
+                                    Color.gray2
+                                );
                             }
                         }
                     }
@@ -354,43 +644,69 @@ public class gameManager : MonoBehaviour
             }
             else
             {
-                slots[i].UpdateSlot(null, null, 0, Color.gray2);
+                slots[i].UpdateSlot(
+                    null,
+                    null,
+                    0,
+                    Color.gray2
+                );
             }
         }
     }
+
 
     public void ShowReloadPrompt(bool show)
     {
         ReloadPrompt.SetActive(show);
     }
 
-    public void SaveCheckpoint(Transform respawnPoint)
+
+    public void SaveCheckpoint(
+        Transform respawnPoint)
     {
         if (checkpointManager != null)
         {
-            checkpointManager.SaveCheckpoint(respawnPoint, playerInventory);
+            checkpointManager
+                .SaveCheckpoint(
+                    respawnPoint,
+                    playerInventory
+                );
         }
     }
+
 
     public void LoadCheckpoint()
     {
         if (checkpointManager != null)
         {
-            checkpointManager.LoadCheckpoint();
+            checkpointManager
+                .LoadCheckpoint();
         }
     }
+
 
     public void ShowExposurePrompt()
     {
-        if(exposurePromptObject != null)
+        if (exposurePromptObject != null)
         {
-            exposurePromptObject.SetActive(true);
-            promptTimer = promptDuration;
-            isShowingPrompt = true;
+            exposurePromptObject
+                .SetActive(true);
+
+
+            promptTimer =
+                promptDuration;
+
+
+            isShowingPrompt =
+                true;
         }
     }
 
-    public void ShowShopUI(bool show, List<ShopItem> items, Vector3 _spawnLocation)
+
+    public void ShowShopUI(
+        bool show,
+        List<ShopItem> items,
+        Vector3 _spawnLocation)
     {
         if (show)
         {
@@ -401,10 +717,19 @@ public class gameManager : MonoBehaviour
             stateUnpause();
         }
 
+
         ShopUI.SetActive(show);
 
-        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), items, _spawnLocation);
+
+        ShopUI
+            .GetComponent<ShopUI>()
+            .SetStation(
+                player.GetComponent<IPlayer>(),
+                items,
+                _spawnLocation
+            );
     }
+
 
     public void ShowUpgradeUI(bool show)
     {
@@ -417,13 +742,18 @@ public class gameManager : MonoBehaviour
             stateUnpause();
         }
 
+
         UpgradeUI.SetActive(show);
     }
 
-    public void UpdateStaminaBar(float ammount, bool show)
-    {
-       // staminaUI.SetActive(show);
 
-        staminaBar.fillAmount = ammount;
+    public void UpdateStaminaBar(
+        float ammount,
+        bool show)
+    {
+        // staminaUI.SetActive(show);
+
+        staminaBar.fillAmount =
+            ammount;
     }
 }

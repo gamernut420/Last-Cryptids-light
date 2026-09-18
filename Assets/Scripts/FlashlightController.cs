@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI; // ADDED - needed for the new flashlight meter Images
 
 public class FlashlightController : MonoBehaviour
 {
@@ -22,31 +23,53 @@ public class FlashlightController : MonoBehaviour
     [Header("UI Reference")]
     [SerializeField] TextMeshProUGUI batteryText;
 
+    // ADDED - four sections of the new vertical flashlight meter
+    [Header("Flashlight HUD Meter")]
+    [SerializeField] private Image segment1; // Bottom
+    [SerializeField] private Image segment2;
+    [SerializeField] private Image segment3;
+    [SerializeField] private Image segment4; // Top
+
+    // ADDED - meter colors
+    [SerializeField] private Color normalColor = new Color32(244, 251, 255, 255);
+    [SerializeField] private Color warningColor = new Color32(255, 200, 61, 255);
+    [SerializeField] private Color criticalColor = new Color32(255, 59, 48, 255);
+    [SerializeField] private Color emptyColor = new Color32(8, 11, 13, 255);
+
     private bool isOn = false;
     private bool isLockedOut = false;
-    
-    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentBattery = maxBattery;
-        if (flashlightLight != null) flashlightLight.enabled = false;
 
-        if(batteryText == null)
+        if (flashlightLight != null)
+            flashlightLight.enabled = false;
+
+        if (batteryText == null)
         {
-            batteryText = GameObject.Find("BatteryData").GetComponent<TextMeshProUGUI>();
+            GameObject batteryObject = GameObject.Find("BatteryData");
+
+            if (batteryObject != null)
+            {
+                batteryText = batteryObject.GetComponent<TextMeshProUGUI>();
+            }
         }
 
+        // ADDED - make sure both battery displays start correctly
+        UpdateBatteryUI();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Toggle input (Press 'F' 
-        if (Input.GetKeyDown(KeyCode.F)) ToggleFlashlight();
-        // Handle battery drian when active
-        if(isOn)
+        // Toggle input (Press 'F')
+        if (Input.GetKeyDown(KeyCode.F))
+            ToggleFlashlight();
+
+        // Handle battery drain when active
+        if (isOn)
         {
             CheckForEnemy();
 
@@ -58,32 +81,36 @@ public class FlashlightController : MonoBehaviour
             Debug.Log("Battery: " + currentBattery);
 
             // Auto-shutdown if battery hits 0
-
             if (currentBattery <= 0f)
             {
                 TurnOffFlashLigh();
                 isLockedOut = true;
+
                 Debug.Log("Flashlight dead and lock out!");
             }
         }
 
-        ////////////// Testing RechargeBattery(); Pree key 'B' to test
-
-        if (Input.GetKeyDown(KeyCode.B)) RechargeBattery(maxBattery);
-
+        ////////////// Testing RechargeBattery(); Press key 'B' to test
+        if (Input.GetKeyDown(KeyCode.B))
+            RechargeBattery(maxBattery);
     }
+
     void ToggleFlashlight()
     {
         NoiseManager.MakeNoise(transform.position, toggleHearingRadius);
-        // If it's locked out because battery is dead, prevent turning it back on
+
+        // If it's locked out because battery is dead,
+        // prevent turning it back on
         if (isLockedOut && currentBattery <= 0f)
         {
-            Debug.Log("Bettery is dead! Find a battery to recharge.");
+            Debug.Log("Battery is dead! Find a battery to recharge.");
             return;
-
         }
+
         isOn = !isOn;
-        if (flashlightLight != null) flashlightLight.enabled = isOn;
+
+        if (flashlightLight != null)
+            flashlightLight.enabled = isOn;
 
         if (flashlightAudio != null)
         {
@@ -98,30 +125,95 @@ public class FlashlightController : MonoBehaviour
         }
     }
 
-
     void TurnOffFlashLigh()
     {
         isOn = false;
-        if (flashlightLight != null) flashlightLight.enabled = false; 
+
+        if (flashlightLight != null)
+            flashlightLight.enabled = false;
+
         if (flashlightAudio != null && soundOff != null)
             flashlightAudio.PlayOneShot(soundOff);
     }
 
     void UpdateBatteryUI()
     {
-        if(batteryText != null)
+        if (batteryText != null)
         {
             // Displays rounded battery percentage on screen
-           batteryText.text = Mathf.Round(currentBattery) + "%";
+            batteryText.text = Mathf.Round(currentBattery) + "%";
         }
+
+        // ADDED - updates the new four-section flashlight HUD meter
+        UpdateFlashlightMeter();
+    }
+
+    // ADDED
+    void UpdateFlashlightMeter()
+    {
+        if (maxBattery <= 0f)
+            return;
+
+        float batteryPercent = currentBattery / maxBattery;
+
+        int activeSegments;
+        Color activeColor;
+
+        // 76% - 100%
+        if (batteryPercent > 0.75f)
+        {
+            activeSegments = 4;
+            activeColor = normalColor;
+        }
+        // 51% - 75%
+        else if (batteryPercent > 0.50f)
+        {
+            activeSegments = 3;
+            activeColor = normalColor;
+        }
+        // 26% - 50%
+        else if (batteryPercent > 0.25f)
+        {
+            activeSegments = 2;
+            activeColor = warningColor;
+        }
+        // 1% - 25%
+        else if (batteryPercent > 0f)
+        {
+            activeSegments = 1;
+            activeColor = criticalColor;
+        }
+        // 0%
+        else
+        {
+            activeSegments = 0;
+            activeColor = emptyColor;
+        }
+
+        SetSegment(segment1, activeSegments >= 1, activeColor);
+        SetSegment(segment2, activeSegments >= 2, activeColor);
+        SetSegment(segment3, activeSegments >= 3, activeColor);
+        SetSegment(segment4, activeSegments >= 4, activeColor);
+    }
+
+    // ADDED
+    void SetSegment(Image segment, bool active, Color activeColor)
+    {
+        if (segment == null)
+            return;
+
+        segment.color = active ? activeColor : emptyColor;
     }
 
     public void RechargeBattery(float amount)
     {
         currentBattery += amount;
         currentBattery = Mathf.Clamp(currentBattery, 0f, maxBattery);
-        if (currentBattery > 0f) isLockedOut = false; // Remove lockout once recharged
-        UpdateBatteryUI(); 
+
+        if (currentBattery > 0f)
+            isLockedOut = false;
+
+        UpdateBatteryUI();
     }
 
     void CheckForEnemy()
@@ -129,14 +221,20 @@ public class FlashlightController : MonoBehaviour
         RaycastHit hit;
         Vector3 forward = transform.forward;
 
-        if (Physics.Raycast(transform.position, forward, out hit, raycastRange, enemyLayer))
+        if (Physics.Raycast(
+            transform.position,
+            forward,
+            out hit,
+            raycastRange,
+            enemyLayer))
         {
-            EnemyAI_WaveType waveEnemy = hit.collider.GetComponent<EnemyAI_WaveType>();
-            
+            EnemyAI_WaveType waveEnemy =
+                hit.collider.GetComponent<EnemyAI_WaveType>();
+
             if (waveEnemy != null)
             {
                 Transform hitEnemy = hit.transform;
-                
+
                 if (hitEnemy == currentEnemy)
                 {
                     hitTimer += Time.deltaTime;
@@ -172,6 +270,8 @@ public class FlashlightController : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.purple;
-        Gizmos.DrawRay(transform.position, transform.forward * raycastRange);
+        Gizmos.DrawRay(
+            transform.position,
+            transform.forward * raycastRange);
     }
 }
