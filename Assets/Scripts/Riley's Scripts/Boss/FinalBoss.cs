@@ -30,6 +30,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
+    [SerializeField] private Animator animator;
 
 
     [Header("Objective")]
@@ -59,15 +60,22 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     [Header("Melee Attack")]
     [SerializeField] private float attackCooldown = 2f;
-    [SerializeField] private float meleeHitboxDuration = 0.5f;
+    [SerializeField] private float meleeRange = 4f;
     [SerializeField] private GameObject meleeHitbox;
+    [SerializeField] private GameObject meleeHitboxHeavy;
+    [SerializeField] private int lightAttackChance;
 
     private float meleeTimer;
+    private int attack;
 
 
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform projectileSpawnPoint;
+    //[SerializeField] private Transform beamCore;
+    [SerializeField] private ParticleSystem energyBeam;
+    [SerializeField] private ParticleSystem energyParticles;
+    [SerializeField] private ParticleSystem sparks;
 
     [SerializeField] private float rangedAttackCooldown = 15f;
     [SerializeField] private float rangedAttackChargeTime = 1f;
@@ -81,6 +89,12 @@ public class FinalBoss : MonoBehaviour, IDamage
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
 
+    [Header("Ranged Animation (Rage)")]
+    [SerializeField] private string rangeAnimationName = "Rage";
+    [SerializeField] private float rangePauseTime = 0f;
+
+    private bool rangeAnimationPaused = false;
+    private bool beamFired;
 
     [Header("Enemy Summoning")]
     [SerializeField] private GameObject enemyPrefab;
@@ -116,7 +130,6 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private float energyFieldTimer;
 
-
     private Transform PlayerTransform
     {
         get
@@ -145,6 +158,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             maxHP
         );
 
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
 
         if (agent == null)
         {
@@ -156,9 +173,14 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             meleeHitbox.SetActive(false);
         }
+        if (meleeHitboxHeavy != null)
+        {
+            meleeHitboxHeavy.SetActive(false);
+        }
 
 
         agent.speed = phase1Speed;
+        agent.stoppingDistance = meleeRange;
     }
 
 
@@ -168,6 +190,14 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (PlayerTransform == null) return;
 
         if (currentPhase == BossPhase.Dead) return;
+
+        if (animator != null && agent != null && !chargingRangedAttack)
+        {
+            if (agent.velocity.magnitude > 0.05f)
+                animator.SetFloat("Walk", 1f);
+            else
+                animator.SetFloat("Walk", 0f);
+        }
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
@@ -205,12 +235,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
-        Vector3 direction =
-            (PlayerTransform.position -
-             projectileSpawnPoint.position).normalized;
+        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
 
         direction.y = 0;
-
 
         if (direction.sqrMagnitude <= 0.01f) return;
 
@@ -294,11 +321,11 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer <= meleeRange - 0.1f)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -392,11 +419,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer < meleeRange - 0.1f)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -447,11 +474,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer <= 5f)
+        if (distanceToPlayer < meleeRange - 0.1f)
         {
             MeleeAttack();
         }
-        else
+        else if (distanceToPlayer >= 10f)
         {
             RangedAttack();
         }
@@ -463,33 +490,192 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
+        agent.stoppingDistance = meleeRange;
 
-        agent.SetDestination(
-            PlayerTransform.position
-        );
+        agent.SetDestination(PlayerTransform.position);
     }
 
 
     // MELEE ATTACK
     private void MeleeAttack()
     {
-        if (meleeTimer > 0) return;
+        if (meleeTimer > 0f) return;
 
+        attack = Random.Range(0, 100);
+        FacePlayer();
+        Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
+        directionToPlayer.y = 0;
+        float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
-        Debug.Log(
-            "Boss Melee Attack!"
-        );
+        if (angle > 3f) return;
+        
+        Debug.Log("Boss Melee Attack");
 
+        if (agent != null)
+            agent.isStopped = true;
 
-        StartCoroutine(
-            MeleeAttackRoutine()
-        );
-
-
-        meleeTimer =
-            attackCooldown;
+        if (attack < lightAttackChance)
+            animator.SetTrigger("Hit2");
+        else
+            animator.SetTrigger("Hit1");
+        meleeTimer = attackCooldown;
     }
 
+    public void MeleeHit()
+    {
+        if (currentPhase == BossPhase.Dead)
+            return;
+
+        if (meleeHitbox != null)
+        {
+            if (attack < lightAttackChance)
+                meleeHitbox.SetActive(true);
+            else
+                meleeHitboxHeavy.SetActive(true);
+        }
+    }
+
+    public void EndMeleeHit()
+    {
+        if (meleeHitbox != null)
+        {
+            if (attack < lightAttackChance)
+                meleeHitbox.SetActive(false);
+            else
+                meleeHitboxHeavy.SetActive(false);
+        }
+
+        if (agent != null)
+            agent.isStopped = false;
+    }
+
+    private void StartRangeAnimation()
+    {
+        if (animator == null)
+            return;
+
+        beamFired = false;
+        rangeAnimationPaused = false;
+        animator.speed = 1f;
+        animator.ResetTrigger("Rage");
+        animator.SetTrigger("Rage");
+    }
+
+    private void PauseRangeAnimation()
+    {
+        if (animator == null)
+            return;
+
+        animator.speed = 0f;
+        rangeAnimationPaused = true;
+    }
+
+    private void ResumeRangeAnimation()
+    {
+        if (animator == null)
+            return;
+
+        animator.speed = 1f;
+        rangeAnimationPaused = false;
+    }
+
+    public void FireBeam()
+    {
+        if (currentPhase == BossPhase.Dead)
+            return;
+
+        if (!chargingRangedAttack)
+            return;
+
+        if (beamFired)
+            return;
+
+        beamFired = true;
+
+        SpawnBeam();
+        PauseRangeAnimation();
+    }
+
+    private void SpawnBeam()
+    {
+        if (PlayerTransform == null)
+            return;
+
+        FacePlayer();
+
+        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
+        GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+        BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
+        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
+        //Transform core = newProjectile.transform.Find("Beam Core");
+        ParticleSystem core = newProjectile.transform.Find("Beam Particle")?.GetComponent<ParticleSystem>();
+        ParticleSystem energy = newProjectile.transform.Find("Beam Energy")?.GetComponent<ParticleSystem>();
+        ParticleSystem sparkEffect = newProjectile.transform.Find("Beam Sparks")?.GetComponent<ParticleSystem>();
+
+        if (hitboxCollider == null)
+        {
+            Debug.LogError("Projectile needs a box collider!");
+            Destroy(newProjectile);
+            return;
+        }
+
+        float newLength = 0.1f;
+        hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
+        hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
+
+        StartCoroutine(ExtendBeam(newProjectile, hitboxCollider, core, energy, sparkEffect, sonicBoom));
+    }
+
+    private IEnumerator ExtendBeam(GameObject beam, BoxCollider hitboxCollider, ParticleSystem core, ParticleSystem energy, ParticleSystem sparks, ProjectileCollision sonicBoom)
+    {
+        float newLength = 0.1f;
+        float attackTime = 0f;
+
+        while (attackTime < rangedAttackDuration)
+        {
+            if (beam == null)
+            {
+                chargingRangedAttack = false;
+                yield break;
+            }
+
+            newLength += hitboxExtendSpeed * Time.deltaTime;
+            hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
+            hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
+            
+            if (core != null)
+            {
+                ParticleSystem.ShapeModule shape = core.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                core.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+            }
+
+            if (energy != null)
+            {
+                ParticleSystem.ShapeModule shape = energy.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                energy.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+            }
+
+            if (sparks != null)
+            {
+                ParticleSystem.ShapeModule shape = sparks.shape;
+                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
+                sparks.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+            }
+
+            attackTime += Time.deltaTime;
+            yield return null;
+        }
+        Debug.Log("Sonic Boom ended");
+
+        if (sonicBoom != null)
+            sonicBoom.StartMoving();
+
+        agent.isStopped = false;
+        chargingRangedAttack = false;
+        ResumeRangeAnimation();
+    }
 
     // RANGED ATTACK
     private void RangedAttack()
@@ -498,16 +684,15 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (chargingRangedAttack) return;
 
+        if (isShooting) return;
+
         if (projectile == null ||
             projectileSpawnPoint == null)
         {
             return;
         }
 
-
-        StartCoroutine(
-            RangedAttackRoutine()
-        );
+        StartCoroutine(RangedAttackRoutine());
     }
 
 
@@ -843,7 +1028,6 @@ public class FinalBoss : MonoBehaviour, IDamage
             "Rift Boss Defeated!"
         );
 
-        gameManager.instance.extractionWin();
 
         Destroy(
             gameObject,
@@ -851,246 +1035,32 @@ public class FinalBoss : MonoBehaviour, IDamage
         );
     }
 
-
-    private IEnumerator MeleeAttackRoutine()
-    {
-        yield return new WaitForSeconds(
-            0.3f
-        );
-
-
-        meleeHitbox.SetActive(
-            true
-        );
-
-
-        yield return new WaitForSeconds(
-            meleeHitboxDuration
-        );
-
-
-        meleeHitbox.SetActive(
-            false
-        );
-    }
-
-
     private IEnumerator RangedAttackRoutine()
     {
         isShooting = true;
         chargingRangedAttack = true;
 
-
-        Debug.Log(
-            "Boss is charging ranged attack!"
-        );
-
+        Debug.Log("Boss is charging ranged attack!");
 
         agent.isStopped = true;
-
-
-        float chargeTime = 0f;
-
 
         if (PlayerTransform == null)
         {
             agent.isStopped = false;
             chargingRangedAttack = false;
             isShooting = false;
-
             yield break;
         }
 
+        StartRangeAnimation();
 
-        while (chargeTime <
-               rangedAttackChargeTime)
-        {
-            FacePlayer();
+        yield return new WaitUntil(() => !chargingRangedAttack);
 
-            chargeTime +=
-                Time.deltaTime;
-
-            yield return null;
-        }
-
-
-        FacePlayer();
-
-
-        yield return null;
-
-
-        Vector3 direction =
-            (
-                PlayerTransform.position -
-                projectileSpawnPoint.position
-            ).normalized;
-
-
-        GameObject newProjectile =
-            Instantiate(
-                projectile,
-                projectileSpawnPoint.position,
-                Quaternion.LookRotation(
-                    direction
-                )
-            );
-
-
-        BoxCollider hitboxCollider =
-            newProjectile
-                .GetComponent<BoxCollider>();
-
-
-        Transform projectileVisual =
-            newProjectile.transform.Find(
-                "RiftBeam Visual"
-            );
-
-
-        ProjectileCollision sonicBoom =
-            newProjectile
-                .GetComponent<
-                    ProjectileCollision>();
-
-
-        if (hitboxCollider == null)
-        {
-            Debug.LogError(
-                "Projectile needs a Box Collider!"
-            );
-
-
-            Destroy(
-                newProjectile
-            );
-
-
+        if (agent != null)
             agent.isStopped = false;
-            chargingRangedAttack = false;
-            isShooting = false;
 
-            yield break;
-        }
-
-
-        float newLength = 0.1f;
-
-
-        hitboxCollider.size =
-            new Vector3(
-                projectileWidth,
-                projectileHeight,
-                newLength
-            );
-
-
-        hitboxCollider.center =
-            new Vector3(
-                projectileWidth,
-                projectileHeight,
-                newLength / 2f
-            );
-
-
-        projectileVisual.localScale =
-            new Vector3(
-                projectileWidth,
-                projectileHeight,
-                newLength
-            );
-
-
-        projectileVisual.localPosition =
-            new Vector3(
-                projectileWidth,
-                projectileHeight,
-                newLength / 2f
-            );
-
-
-        float attackTime = 0f;
-
-
-        while (attackTime <
-               rangedAttackDuration)
-        {
-            // Extends hitbox with the projectile's
-            // forward direction.
-            newLength +=
-                hitboxExtendSpeed *
-                Time.deltaTime;
-
-
-            hitboxCollider.size =
-                new Vector3(
-                    projectileWidth,
-                    projectileHeight,
-                    newLength
-                );
-
-
-            hitboxCollider.center =
-                new Vector3(
-                    0f,
-                    0f,
-                    newLength / 2f
-                );
-
-
-            // Extends visual cube.
-            if (projectileVisual != null)
-            {
-                projectileVisual.localScale =
-                    new Vector3(
-                        projectileWidth,
-                        projectileHeight,
-                        newLength
-                    );
-
-
-                projectileVisual.localPosition =
-                    new Vector3(
-                        0f,
-                        0f,
-                        newLength / 2f
-                    );
-            }
-
-
-            attackTime +=
-                Time.deltaTime;
-
-
-            yield return null;
-        }
-
-
-        Debug.Log(
-            "Sonic Boom ended"
-        );
-
-
-        if (sonicBoom != null)
-        {
-            sonicBoom.StartMoving();
-        }
-
-
-        rangedTimer =
-            rangedAttackCooldown;
-
-
-        agent.isStopped =
-            false;
-
-
-        chargingRangedAttack =
-            false;
-
-
-        isShooting =
-            false;
+        isShooting = false;
+        rangedTimer = rangedAttackCooldown;
     }
 
 
