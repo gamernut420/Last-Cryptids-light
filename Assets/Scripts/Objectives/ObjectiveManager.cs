@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ObjectiveManager : MonoBehaviour
 {
     public static ObjectiveManager Instance
@@ -59,6 +60,13 @@ public class ObjectiveManager : MonoBehaviour
                 false;
 
 
+            // ADDED:
+            // Reset runtime objective progress whenever
+            // the scene starts.
+            obj.currentProgress =
+                0;
+
+
             if (obj.prerequisiteObjective ==
                 null)
             {
@@ -110,6 +118,71 @@ public class ObjectiveManager : MonoBehaviour
     }
 
 
+    // ADDED:
+    // Used for multi-step objectives such as:
+    //
+    // Locate Military Bases 0/3
+    // Clear Bases 0/3
+    //
+    // Each trigger can add one or more points of progress.
+    public void AddObjectiveProgress(
+        string objectiveID,
+        int amount = 1)
+    {
+        ObjectiveData targetObjective =
+            activeObjectives.Find(
+                o =>
+                    o != null &&
+                    o.objectiveID ==
+                    objectiveID
+            );
+
+
+        if (targetObjective == null)
+        {
+            return;
+        }
+
+
+        if (!targetObjective.isUnlocked ||
+            targetObjective.isCompleted)
+        {
+            return;
+        }
+
+
+        targetObjective.currentProgress =
+            Mathf.Clamp(
+                targetObjective.currentProgress +
+                amount,
+                0,
+                targetObjective.requiredProgress
+            );
+
+
+        Debug.Log(
+            "Objective Progress: " +
+            targetObjective.objectiveTitle +
+            " " +
+            targetObjective.currentProgress +
+            "/" +
+            targetObjective.requiredProgress
+        );
+
+
+        // ADDED:
+        // Automatically finish the objective once
+        // the required amount has been reached.
+        if (targetObjective.currentProgress >=
+            targetObjective.requiredProgress)
+        {
+            CompleteObjective(
+                objectiveID
+            );
+        }
+    }
+
+
     public void CompleteObjective(
         string objectiveID)
     {
@@ -133,6 +206,14 @@ public class ObjectiveManager : MonoBehaviour
         {
             return;
         }
+
+
+        // ADDED:
+        // If this is a progress-based objective and something
+        // completes it directly, make sure its progress also
+        // reaches the required amount.
+        targetObjective.currentProgress =
+            targetObjective.requiredProgress;
 
 
         targetObjective.isCompleted =

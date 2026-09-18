@@ -2,9 +2,10 @@
 using UnityEngine;
 using TMPro;
 
+
 public class MissionUI : MonoBehaviour
 {
-    [Header("HUD Objective Display")]
+    [Header("Main Objective")]
 
     [SerializeField]
     private TextMeshProUGUI headerText;
@@ -16,6 +17,17 @@ public class MissionUI : MonoBehaviour
     private TextMeshProUGUI checklistText;
 
 
+    // ADDED:
+    // Separate HUD fields for one side objective.
+    [Header("Side Objective")]
+
+    [SerializeField]
+    private TextMeshProUGUI sideHeaderText;
+
+    [SerializeField]
+    private TextMeshProUGUI sideObjectiveText;
+
+
     [Header("Optional System Status")]
 
     [SerializeField]
@@ -24,13 +36,6 @@ public class MissionUI : MonoBehaviour
 
     private void Start()
     {
-        if (headerText != null)
-        {
-            headerText.text =
-                "OBJECTIVE";
-        }
-
-
         RefreshUI();
     }
 
@@ -50,23 +55,37 @@ public class MissionUI : MonoBehaviour
         }
 
 
+        // ADDED:
+        // Find only one active MAIN objective.
+        ObjectiveData mainObjective =
+            GetCurrentObjective(
+                ObjectiveDisplayType.Main
+            );
+
+
+        // ADDED:
+        // Find only one active SIDE objective.
+        ObjectiveData sideObjective =
+            GetCurrentObjective(
+                ObjectiveDisplayType.Side
+            );
+
+
         if (headerText != null)
         {
             headerText.text =
-                "OBJECTIVE";
+                "MAIN OBJECTIVE";
         }
-
-
-        ObjectiveData primary =
-            GetPrimaryObjective();
 
 
         if (primaryObjectiveText != null)
         {
-            if (primary != null)
+            if (mainObjective != null)
             {
                 primaryObjectiveText.text =
-                    primary.objectiveTitle;
+                    FormatObjective(
+                        mainObjective
+                    );
             }
             else
             {
@@ -78,14 +97,60 @@ public class MissionUI : MonoBehaviour
 
         if (checklistText != null)
         {
+            // ADDED:
+            // Requirements now only belong to the
+            // currently displayed main objective.
             checklistText.text =
-                BuildChecklist();
+                BuildRequirements(
+                    mainObjective
+                );
+        }
+
+
+        if (sideHeaderText != null)
+        {
+            sideHeaderText.text =
+                "SIDE OBJECTIVE";
+
+
+            // ADDED:
+            // Hide the entire side header when there
+            // is no current side objective.
+            sideHeaderText.gameObject
+                .SetActive(
+                    sideObjective != null
+                );
+        }
+
+
+        if (sideObjectiveText != null)
+        {
+            if (sideObjective != null)
+            {
+                sideObjectiveText.gameObject
+                    .SetActive(
+                        true
+                    );
+
+
+                sideObjectiveText.text =
+                    FormatObjective(
+                        sideObjective
+                    );
+            }
+            else
+            {
+                sideObjectiveText.gameObject
+                    .SetActive(
+                        false
+                    );
+            }
         }
 
 
         if (statusText != null)
         {
-            if (primary != null)
+            if (mainObjective != null)
             {
                 statusText.text =
                     "NAV DATA // ACTIVE";
@@ -99,7 +164,14 @@ public class MissionUI : MonoBehaviour
     }
 
 
-    private ObjectiveData GetPrimaryObjective()
+    // ADDED:
+    // Returns only the FIRST unlocked and incomplete
+    // objective matching the requested type.
+    //
+    // This prevents every active objective from
+    // appearing on screen simultaneously.
+    private ObjectiveData GetCurrentObjective(
+        ObjectiveDisplayType type)
     {
         foreach (
             ObjectiveData obj
@@ -107,6 +179,13 @@ public class MissionUI : MonoBehaviour
                 .activeObjectives)
         {
             if (obj == null)
+            {
+                continue;
+            }
+
+
+            if (obj.displayType !=
+                type)
             {
                 continue;
             }
@@ -138,8 +217,18 @@ public class MissionUI : MonoBehaviour
     }
 
 
-    private string BuildChecklist()
+    // ADDED:
+    // Displays only requirement objectives belonging
+    // to the current Main objective.
+    private string BuildRequirements(
+        ObjectiveData mainObjective)
     {
+        if (mainObjective == null)
+        {
+            return "";
+        }
+
+
         StringBuilder builder =
             new StringBuilder();
 
@@ -150,6 +239,23 @@ public class MissionUI : MonoBehaviour
                 .activeObjectives)
         {
             if (obj == null)
+            {
+                continue;
+            }
+
+
+            if (obj.displayType !=
+                ObjectiveDisplayType.Requirement)
+            {
+                continue;
+            }
+
+
+            // ADDED:
+            // Don't show requirements belonging
+            // to another main objective.
+            if (obj.parentObjective !=
+                mainObjective)
             {
                 continue;
             }
@@ -169,23 +275,74 @@ public class MissionUI : MonoBehaviour
 
             if (obj.isCompleted)
             {
+                builder.Append(
+                    "<color=#62D8FF>✓</color> "
+                );
+
+
+                builder.Append(
+                    "<color=#8299A6>"
+                );
+
+
+                builder.Append(
+                    FormatObjective(
+                        obj
+                    )
+                );
+
+
                 builder.AppendLine(
-                    "<color=#55D6F5>✓</color> " +
-                    "<color=#8299A6>" +
-                    obj.objectiveTitle +
                     "</color>"
                 );
             }
             else
             {
+                builder.Append(
+                    "<color=#EAF7FF>□</color> "
+                );
+
+
                 builder.AppendLine(
-                    "<color=#EAF7FF>□</color> " +
-                    obj.objectiveTitle
+                    FormatObjective(
+                        obj
+                    )
                 );
             }
         }
 
 
         return builder.ToString();
+    }
+
+
+    // ADDED:
+    // Automatically adds progress numbers when
+    // Required Progress is greater than one.
+    //
+    // Example:
+    // Locate Military Bases 1/3
+    private string FormatObjective(
+        ObjectiveData objective)
+    {
+        if (objective == null)
+        {
+            return "";
+        }
+
+
+        if (!objective.UsesProgress)
+        {
+            return
+                objective.objectiveTitle;
+        }
+
+
+        return
+            objective.objectiveTitle +
+            "  " +
+            objective.currentProgress +
+            "/" +
+            objective.requiredProgress;
     }
 }
