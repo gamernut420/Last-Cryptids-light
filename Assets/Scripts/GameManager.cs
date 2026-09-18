@@ -17,15 +17,12 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
     [SerializeField] GameObject ItemHotbar;
-    [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
     [SerializeField] GameObject ShopUI;
     [SerializeField] GameObject UpgradeUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
-
-    [Header("UI Tracking")]
     [SerializeField] private GameObject exposurePromptObject;
     [SerializeField] private float promptDuration;
     private float promptTimer = 0f;
@@ -41,6 +38,9 @@ public class gameManager : MonoBehaviour
     public Image playerHPBar;
     public GameObject damageFlashPanel;
 
+    [Header("Stamina")]
+    [SerializeField] GameObject staminaUI;
+    [SerializeField] Image staminaBar;
 
     [Header("Auto Set Variables (No need to touch)")]
     public GameObject beacon;
@@ -147,8 +147,6 @@ public class gameManager : MonoBehaviour
 
     }
 
-
-
     void Update()
     {
         if (Input.GetButtonDown("Cancel"))
@@ -231,8 +229,6 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-
-
     public void updateGameGoal(int amount)
     {
         // Update number of waver till you win
@@ -258,7 +254,6 @@ public class gameManager : MonoBehaviour
         isExtracting = true;
     }
 
-
     // completed beacon to win
     public void extractionWin()
     {
@@ -268,7 +263,6 @@ public class gameManager : MonoBehaviour
         menuActive.SetActive(true);
     }
 
-
     public void youLose()
     {
         statePause();
@@ -276,7 +270,6 @@ public class gameManager : MonoBehaviour
         hud.SetActive(false);
         menuActive.SetActive(true);
     }
-
 
     // killed all ai to win
     public void ModifyEnemyCount(int ammount)
@@ -294,6 +287,7 @@ public class gameManager : MonoBehaviour
    public void AddKill()
     {
         killCount++;
+
         UpateKillUI();
     }
 
@@ -365,11 +359,6 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void UpdateActiveWep(string text)
-    {
-        ActiveWeaponText.text = text;
-    }
-
     public void ShowReloadPrompt(bool show)
     {
         ReloadPrompt.SetActive(show);
@@ -429,5 +418,12 @@ public class gameManager : MonoBehaviour
         }
 
         UpgradeUI.SetActive(show);
+    }
+
+    public void UpdateStaminaBar(float ammount, bool show)
+    {
+        staminaUI.SetActive(show);
+
+        staminaBar.fillAmount = ammount;
     }
 }

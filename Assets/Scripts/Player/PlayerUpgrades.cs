@@ -46,16 +46,16 @@ public class PlayerUpgrades : MonoBehaviour
             {
                 Modifier = ModifySpeedUpgrades,
                 CountGetter = GetSpeedUpgrades,
-                Price = StaminaPrice,
-                MaxCount = StaminaMax
+                Price = SpeedPrice,
+                MaxCount = SpeedMax
             }
             },
             {"Stamina", new UpgradeFuncs()
             {
                 Modifier = ModifyStaminaUpgrades,
                 CountGetter = GetStaminaUpgrades,
-                Price = SpeedPrice,
-                MaxCount = SpeedMax
+                Price = StaminaPrice,
+                MaxCount = StaminaMax
             }
             },
             {"Jumps", new UpgradeFuncs()

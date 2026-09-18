@@ -569,6 +569,10 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         Debug.Log("Basic Enemy Defeated!");
 
+        gameManager.instance.playerScript.ModifyPlayerFunds(10);
+
+        gameManager.instance.AddKill();
+
         if (attackHitbox != null)
         {
             attackHitbox.SetActive(false);

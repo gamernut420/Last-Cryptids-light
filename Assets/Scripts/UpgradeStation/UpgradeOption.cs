@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,6 +16,8 @@ public class UpgradeOption : MonoBehaviour
     [SerializeField] Color InaffordableColor;
 
     [SerializeField] Button UpgradeButton;
+
+    bool isMaxed = false;
 
     UpgradeFuncs FunctionCalls;
 
@@ -58,6 +61,8 @@ public class UpgradeOption : MonoBehaviour
 
                 Price.text = String.Empty;
 
+                isMaxed = true;
+
                 SetBuyable(false);
             }
         }
@@ -77,6 +82,11 @@ public class UpgradeOption : MonoBehaviour
 
     public void SetBuyable(bool buyable)
     {
+        if (isMaxed == true)
+        {
+            buyable = false;
+        }
+
         BackgroundPanel.color = buyable ? DefaultColor : InaffordableColor;
 
         UpgradeButton.interactable = buyable;
