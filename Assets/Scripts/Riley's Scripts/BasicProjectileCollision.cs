@@ -5,9 +5,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
     [Header("Targeting Layers")]
     public LayerMask destroyLayers;
 
-
-    [Header("Effects (Optional)")]
-    public GameObject impactEffect;
+    [Header("Effects")]
+    [SerializeField] private GameObject impactEffect;
 
     private void OnTriggerEnter(Collider other)
     {

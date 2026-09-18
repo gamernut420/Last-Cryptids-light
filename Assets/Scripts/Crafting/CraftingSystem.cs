@@ -2,9 +2,6 @@ using UnityEngine;
 
 public static class CraftingSystem
 {
-    // ADDED FOR CRAFTING:
-    // Checks whether the player has every ingredient
-    // required by the selected recipe.
     public static bool CanCraft(
         CrafatbleItemRecipe recipe,
         PlayerInventory inventory)
@@ -57,8 +54,6 @@ public static class CraftingSystem
     }
 
 
-    // ADDED FOR CRAFTING:
-    // Performs the complete crafting transaction.
     public static bool TryCraft(
         CrafatbleItemRecipe recipe,
         PlayerInventory inventory)
@@ -82,8 +77,6 @@ public static class CraftingSystem
         }
 
 
-        // Never consume anything unless every
-        // ingredient is available first.
         if (!CanCraft(
                 recipe,
                 inventory))
@@ -98,7 +91,6 @@ public static class CraftingSystem
         }
 
 
-        // Consume ingredients.
         foreach (
             CrafatbleItemRecipe.Item requirement
             in recipe.ItemsNeeded)
@@ -110,28 +102,14 @@ public static class CraftingSystem
             }
 
 
-            bool removed =
-                inventory.RemoveItem(
-                    requirement.itemData,
-                    requirement.Quantity
-                );
-
-
-            if (!removed)
-            {
-                Debug.LogWarning(
-                    "Crafting failed while removing " +
-                    requirement.itemData.itemName
-                );
-
-                return false;
-            }
+            inventory.RemoveItem(
+                requirement.itemData,
+                requirement.Quantity
+            );
         }
 
 
-        // CHANGED FOR QUICK SLOTS:
-        // Finished crafts enter the normal inventory
-        // AND the first available slot 1-4.
+        // CHANGED FOR HUD QUICK SLOTS:
         inventory.AddCraftedItem(
             recipe.craftedItemData,
             1

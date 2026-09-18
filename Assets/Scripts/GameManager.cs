@@ -39,7 +39,7 @@ public class gameManager : MonoBehaviour
     public GameObject damageFlashPanel;
 
     [Header("Stamina")]
-    [SerializeField] GameObject staminaUI;
+   // [SerializeField] GameObject staminaUI;
     [SerializeField] Image staminaBar;
 
     [Header("Auto Set Variables (No need to touch)")]
@@ -422,7 +422,7 @@ public class gameManager : MonoBehaviour
 
     public void UpdateStaminaBar(float ammount, bool show)
     {
-        staminaUI.SetActive(show);
+       // staminaUI.SetActive(show);
 
         staminaBar.fillAmount = ammount;
     }
