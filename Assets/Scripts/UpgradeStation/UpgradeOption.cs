@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,6 +17,8 @@ public class UpgradeOption : MonoBehaviour
 
     [SerializeField] Button UpgradeButton;
 
+    bool isMaxed = false;
+
     UpgradeFuncs FunctionCalls;
 
     public struct UpgradeFuncs
@@ -26,7 +29,9 @@ public class UpgradeOption : MonoBehaviour
 
         public Func<int> CountGetter;
 
-        public Func<int> PriceGetter;
+        public int Price;
+
+        public int MaxCount;
     }
 
     public void Bind(string name, UnityAction<int> purchaseFunc, UpgradeFuncs functions)
@@ -44,12 +49,21 @@ public class UpgradeOption : MonoBehaviour
     {
         if(FunctionCalls.CountGetter != null)
         {
-            UpgradeCounter.text = FunctionCalls.CountGetter.Invoke().ToString();
-
-            if (FunctionCalls.PriceGetter != null)
+            if(FunctionCalls.MaxCount > FunctionCalls.CountGetter.Invoke())
             {
-                
+                UpgradeCounter.text = FunctionCalls.CountGetter.Invoke().ToString();
+
                 Price.text = $"Price: {GetPrice()}";
+            }
+            else
+            {
+                UpgradeCounter.text = "Max";
+
+                Price.text = String.Empty;
+
+                isMaxed = true;
+
+                SetBuyable(false);
             }
         }
     }
@@ -58,9 +72,9 @@ public class UpgradeOption : MonoBehaviour
     {
         int cost = 1;
 
-        if (FunctionCalls.CountGetter != null && FunctionCalls.PriceGetter != null)
+        if (FunctionCalls.CountGetter != null)
         {
-            cost = (FunctionCalls.PriceGetter() + (FunctionCalls.CountGetter.Invoke() * FunctionCalls.PriceGetter()));
+            cost = (FunctionCalls.Price + (FunctionCalls.CountGetter.Invoke() * FunctionCalls.Price));
         }
 
         return cost;
@@ -68,6 +82,11 @@ public class UpgradeOption : MonoBehaviour
 
     public void SetBuyable(bool buyable)
     {
+        if (isMaxed == true)
+        {
+            buyable = false;
+        }
+
         BackgroundPanel.color = buyable ? DefaultColor : InaffordableColor;
 
         UpgradeButton.interactable = buyable;

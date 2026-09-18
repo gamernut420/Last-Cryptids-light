@@ -20,4 +20,11 @@ public class BossAnimationEvents : MonoBehaviour
         if (boss != null)
             boss.EndMeleeHit();
     }
+
+    public void FireBeam()
+    {
+        if (boss != null)
+            boss.FireBeam();
+    }
+
 }

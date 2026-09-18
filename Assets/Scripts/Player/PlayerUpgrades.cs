@@ -7,16 +7,22 @@ public class PlayerUpgrades : MonoBehaviour
     [Header("----- Increase Ammounts -----")]
     [SerializeField][Min(0f)] float HPIncrease = 5f;
     [SerializeField][Min(0)] int HPPrice = 1;
+    [SerializeField][Min(0)] int HPMax = 100;
     [SerializeField][Min(0f)] float StaminaIncrease = 5f;
     [SerializeField][Min(0)] int StaminaPrice = 1;
+    [SerializeField][Min(0)] int StaminaMax = 100;
     [SerializeField][Min(0f)] float SpeedIncrease = 5f;
     [SerializeField][Min(0)] int SpeedPrice = 1;
+    [SerializeField][Min(0)] int SpeedMax = 100;
+    [SerializeField][Min(0)] int JumpPrice = 1;
+    [SerializeField][Min(0f)] int MaxJumpUpgrades = 1;
 
     playerController player;
 
     int hpUpgrades = 0;
     int staminaUpgrades = 0;
     int speedUpgrades = 0;
+    int jumpUpgrades = 0;
 
     float baseHealth;
     float baseSpeed;
@@ -32,21 +38,32 @@ public class PlayerUpgrades : MonoBehaviour
             { 
                 Modifier = ModifyHPUpgrades,
                 CountGetter = GetHPUpgrades,
-                PriceGetter = GetHPPrice
+                Price = HPPrice,
+                MaxCount = HPMax
             } 
             },
             {"Speed", new UpgradeFuncs()
             {
                 Modifier = ModifySpeedUpgrades,
                 CountGetter = GetSpeedUpgrades,
-                PriceGetter = GetSpeedPrice
+                Price = SpeedPrice,
+                MaxCount = SpeedMax
             }
             },
             {"Stamina", new UpgradeFuncs()
             {
                 Modifier = ModifyStaminaUpgrades,
                 CountGetter = GetStaminaUpgrades,
-                PriceGetter = GetStaminaPrice
+                Price = StaminaPrice,
+                MaxCount = StaminaMax
+            }
+            },
+            {"Jumps", new UpgradeFuncs()
+            {
+                Modifier = ModifyJumpUpgrades,
+                CountGetter = GetJumpUpgrades,
+                Price = JumpPrice,
+                MaxCount = MaxJumpUpgrades
             }
             }
         };
@@ -72,6 +89,8 @@ public class PlayerUpgrades : MonoBehaviour
         player.SetMaxStamina(StaminaIncrease * staminaUpgrades + baseStamina);
 
         player.SetMaxSpeed(SpeedIncrease * speedUpgrades + baseSpeed);
+
+        player.SetMaxJumps(1 * jumpUpgrades + 1);
     }
 
     public Dictionary<string, UpgradeFuncs> GetStatMap()
@@ -126,6 +145,18 @@ public class PlayerUpgrades : MonoBehaviour
     public void ModifySpeedUpgrades(int ammount)
     {
         speedUpgrades += ammount;
+
+        ApplyUpgrades();
+    }
+
+    public int GetJumpUpgrades()
+    {
+        return jumpUpgrades;
+    }
+
+    public void ModifyJumpUpgrades(int ammount)
+    {
+        jumpUpgrades += ammount;
 
         ApplyUpgrades();
     }

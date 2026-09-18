@@ -6,17 +6,22 @@ using static UpgradeOption;
 public class WeaponUpgrades : MonoBehaviour
 {
     [Header("----- Increase Ammounts -----")]
-    [SerializeField][Min(0f)] float DamageIncrease = 10f;
+    [SerializeField][Min(0f)] float DamageIncrease = 10;
     [SerializeField][Min(0)] int DamagePrice = 1;
-    [SerializeField][Min(0f)] float VelocityIncrease = 25f;
+    [SerializeField][Min(0)] int DamageMax = 100;
+    [SerializeField][Min(0f)] float VelocityIncrease = 25;
     [SerializeField][Min(0)] int VelocityPrice = 1;
+    [SerializeField][Min(0)] int VelocityMax = 100;
     [Tooltip("This is as a percentage 25 = 25% of firerate")]
     [SerializeField][Min(0f)] float FireRateIncrease = 2.5f;
     [SerializeField][Min(0)] int FireRatePrice = 1;
+    int FireRateMax;
     [SerializeField][Min(0f)] int MaxAmmoIncrease = 5;
     [SerializeField][Min(0)] int MaxAmmoPrice = 1;
+    [SerializeField][Min(0)] int MaxAmmoMax = 100;
     [SerializeField][Min(0f)] int MagSizeIncrease = 5;
     [SerializeField][Min(0)] int MagSizePrice = 1;
+    [SerializeField][Min(0)] int MagSizeMax = 100;
 
     GunController gun;
 
@@ -36,41 +41,48 @@ public class WeaponUpgrades : MonoBehaviour
 
     private void Awake()
     {
+        FireRateMax = (int)(100 / FireRateIncrease);
+
         StatMap = new Dictionary<string, UpgradeFuncs>()
         {
             {"Damage", new UpgradeFuncs()
             {
                 Modifier = ModifyDamage,
                 CountGetter = GetDamageUpgrades,
-                PriceGetter = GetDamagePrice,
+                Price = DamagePrice,
+                MaxCount = DamageMax
             }
             },
             {"Velocity", new UpgradeFuncs()
             {
                 Modifier = ModifyVelocity,
                 CountGetter = GetVelocityUpgrades,
-                PriceGetter = GetVelocityPrice,
+                Price = VelocityPrice,
+                MaxCount = VelocityMax
             }
             },
             {"Fire-Rate", new UpgradeFuncs()
             {
                 Modifier = ModifyFireRate,
                 CountGetter = GetFireRateUpgrades,
-                PriceGetter = GetFireRatePrice,
+                Price = FireRatePrice,
+                MaxCount = FireRateMax
             }
             },
             {"Max Ammo", new UpgradeFuncs()
             {
                 Modifier = ModifyMaxAmmo,
                 CountGetter = GetMaxAmmoUpgrades,
-                PriceGetter = GetMaxAmmoPrice,
+                Price = MaxAmmoPrice,
+                MaxCount = MaxAmmoMax
             }
             },
             {"Mag Size", new UpgradeFuncs()
             {
                 Modifier = ModifyMagSize,
                 CountGetter = GetMagSizeUpgrades,
-                PriceGetter = GetMagSizePrice,
+                Price = MagSizePrice,
+                MaxCount = MagSizeMax
             }
             }
         };
@@ -112,11 +124,6 @@ public class WeaponUpgrades : MonoBehaviour
         return damageUpgrades;
     }
 
-    public int GetDamagePrice()
-    {
-        return DamagePrice;
-    }
-
     public void ModifyDamage(int ammount)
     {
         damageUpgrades += ammount;
@@ -127,11 +134,6 @@ public class WeaponUpgrades : MonoBehaviour
     public int GetVelocityUpgrades()
     {
         return velocityUpgrades;
-    }
-
-    public int GetVelocityPrice()
-    {
-        return VelocityPrice;
     }
 
     public void ModifyVelocity(int ammount)
@@ -146,11 +148,6 @@ public class WeaponUpgrades : MonoBehaviour
         return fireRateUpgrades;
     }
 
-    public int GetFireRatePrice()
-    {
-        return FireRatePrice;
-    }
-
     public void ModifyFireRate(int ammount)
     {
         fireRateUpgrades += ammount;
@@ -163,11 +160,6 @@ public class WeaponUpgrades : MonoBehaviour
         return maxAmmoUpgrades;
     }
 
-    public int GetMaxAmmoPrice()
-    {
-        return MaxAmmoPrice;
-    }
-
     public void ModifyMaxAmmo(int ammount)
     {
         maxAmmoUpgrades += ammount;
@@ -178,11 +170,6 @@ public class WeaponUpgrades : MonoBehaviour
     public int GetMagSizeUpgrades()
     {
         return magSizeUpgrades;
-    }
-
-    public int GetMagSizePrice()
-    {
-        return MagSizePrice;
     }
 
     public void ModifyMagSize(int ammount)
