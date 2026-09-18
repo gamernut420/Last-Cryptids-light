@@ -321,7 +321,7 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer <= meleeRange - 0.1f)
+        if (distanceToPlayer < meleeRange - 0.1f)
         {
             MeleeAttack();
         }
