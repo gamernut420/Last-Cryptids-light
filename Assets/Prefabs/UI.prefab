@@ -1520,7 +1520,6 @@ MonoBehaviour:
   hud: {fileID: 6636216825321088011}
   countdownText: {fileID: 6757767462520673443}
   ItemHotbar: {fileID: 5239129728815898585}
-  ActiveWeaponText: {fileID: 0}
   ReloadPrompt: {fileID: 5781434874947206990}
   ShopUI: {fileID: 6767190091766865135}
   UpgradeUI: {fileID: 8700970457728506235}
@@ -1531,8 +1530,8 @@ MonoBehaviour:
   checkpointManager: {fileID: 6966736145444322220}
   playerHPBar: {fileID: 4214719113515134353}
   damageFlashPanel: {fileID: 5872003117020856513}
-  staminaUI: {fileID: 0}
-  staminaBar: {fileID: 0}
+  staminaUI: {fileID: 3079341061486495066}
+  staminaBar: {fileID: 1477201611742159239}
   beacon: {fileID: 0}
   player: {fileID: 0}
   playerInventory: {fileID: 0}
@@ -11872,6 +11871,22 @@ PrefabInstance:
 --- !u!224 &1174786951460188948 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5011637235539848064, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+  m_PrefabInstance: {fileID: 6179298234959485076}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1477201611742159239 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4702131893489105171, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+  m_PrefabInstance: {fileID: 6179298234959485076}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1 &3079341061486495066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9186572895572729294, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
   m_PrefabInstance: {fileID: 6179298234959485076}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6481695131133470860
