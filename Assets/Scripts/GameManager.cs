@@ -39,7 +39,7 @@ public class gameManager : MonoBehaviour
     public GameObject damageFlashPanel;
 
     [Header("Stamina")]
-   // [SerializeField] GameObject staminaUI;
+    [SerializeField] GameObject staminaUI;
     [SerializeField] Image staminaBar;
 
     [Header("Auto Set Variables (No need to touch)")]
@@ -314,11 +314,11 @@ public class gameManager : MonoBehaviour
                 {
                     if(i == slotInUse)
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.darkRed);
+                        slots[i].UpdateSlot(wep.GetWeaponImage(), wep.GetWeaponName(), 1, Color.darkRed);
                     }
                     else
                     {
-                        slots[i].UpdateSlot(null, wep.GetWeaponName(), 1, Color.gray2);
+                        slots[i].UpdateSlot(wep.GetWeaponImage(), wep.GetWeaponName(), 1, Color.gray2);
                     }
                 }
                 else
@@ -422,7 +422,7 @@ public class gameManager : MonoBehaviour
 
     public void UpdateStaminaBar(float ammount, bool show)
     {
-       // staminaUI.SetActive(show);
+        staminaUI.SetActive(show);
 
         staminaBar.fillAmount = ammount;
     }
