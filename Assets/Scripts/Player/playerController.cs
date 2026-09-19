@@ -15,6 +15,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Range(8, 15)][SerializeField] int jumpSpeed = 10;
     [Range(15, 45)][SerializeField] int gravity = 35;
 
+    [SerializeField][Min(0)] int StartingPoints = 0;
+
     int jumpMax = 1;
     PlayerUpgrades upgradeManager;
 
@@ -70,7 +72,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         dodgeController = GetComponent<PlayerDodge>();
 
-        points = 10;
+        points = StartingPoints;
 
         UpdateWeaponUI();
     }
