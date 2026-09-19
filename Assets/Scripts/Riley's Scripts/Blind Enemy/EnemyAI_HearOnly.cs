@@ -37,13 +37,15 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     public float patrolSpeed = 2f;
     public float investigationSpeed = 10f;
     public float patrolRadius = 15f;
-    public float attackRadius = 3f;
-    [SerializeField] private GameObject attackHitbox;
-    [SerializeField] private float attackHitboxDuration = 0.5f;
+    public float attackRadius = 4f;
+    [SerializeField] private GameObject punch1Hitbox;
+    [SerializeField] private GameObject punch2Hitbox;
+    [SerializeField] private GameObject punch3Hitbox;
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] LayerMask playerLayer;
 
     private bool attacking;
+    private bool animationFinished;
 
     [Header("Projectile")]
     [SerializeField] private GameObject projectile;
@@ -55,8 +57,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] private float projectileSpeed = 20f;
 
     private float projectileTimer;
-
-    Color colorOrig;
 
     private NavMeshAgent agent;
     private float memoryTimer;
@@ -110,11 +110,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         MoveToRandomPoint();
         footstepAudio = GetComponent<AudioManager>();
 
-        if (attackHitbox != null)
-        {
-            attackHitbox.SetActive(false);
-        }
-        
+        DisableAllAttackHitboxes();
+
         if (PlayerTransform != null)
         {
             playerLastPosition = PlayerTransform.position;
@@ -137,7 +134,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (throwing)
             return;
 
-        attackTimer += Time.deltaTime;
+        if (!attacking)
+            attackTimer += Time.deltaTime;
 
         switch (currentState)
         {
@@ -159,6 +157,18 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    private void DisableAllAttackHitboxes()
+    {
+        if (punch1Hitbox != null)
+            punch1Hitbox.SetActive(false);
+
+        if (punch2Hitbox != null)
+            punch2Hitbox.SetActive(false);
+
+        if (punch3Hitbox != null)
+            punch3Hitbox.SetActive(false);
     }
 
     private void PlayAnimation(string animationName)
@@ -479,16 +489,21 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void AttackLogic()
     {
-        agent.stoppingDistance = 3;
-        agent.speed = attackSpeed;
-
-        if (!attacking)
+        if (attacking)
         {
-            PlayAnimation(runAnimation);
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+            return;
         }
 
+        agent.stoppingDistance = 3.5f;
+        agent.speed = attackSpeed;
+
+        PlayAnimation(runAnimation);
+
         Vector3 targetDirection = new Vector3(PlayerTransform.position.x, transform.position.y, PlayerTransform.position.z);
-        transform.LookAt(targetDirection);
+        if (targetDirection.sqrMagnitude > 0.01f)
+            transform.LookAt(targetDirection);
 
         pathUpdateTimer += Time.deltaTime;
         if (pathUpdateTimer >= 0.2f)
@@ -508,6 +523,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
+            agent.isStopped = false;
             agent.speed = investigationSpeed;
             if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             {
@@ -516,14 +532,15 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             return;
         }
 
-        if (attackTimer >= attackCooldown)
+        if (attackTimer >= attackCooldown && distanceToPlayer < attackRadius)
         {
-            attackTimer = 0f;
             StartCoroutine(AttackRoutine());
+            return;
         }
 
         if (distanceToPlayer > attackRadius)
         {
+            agent.isStopped = false;
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
@@ -534,36 +551,66 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private IEnumerator AttackRoutine()
     {
+        if (attacking || throwing || dead)
+            yield break;
+
         attacking = true;
+        animationFinished = false;
+
         agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        PlayAnimation(investigateIdleAnimation);
+
+        DisableAllAttackHitboxes();
 
         Vector3 targetDirection = PlayerTransform.position - transform.position;
+
         targetDirection.y = 0f;
 
         if (targetDirection.sqrMagnitude > 0.01f)
         {
-            transform.rotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation =
+                Quaternion.LookRotation(targetDirection);
         }
 
         int attack = Random.Range(0, 3);
-        if (attack == 0)
-            PlayAnimation("Demon|Punch1");
-        else if (attack == 1)
-            PlayAnimation("Demon|Punch2");
-        else
-            PlayAnimation("Demon|Punch3");
 
-        yield return new WaitForSeconds(0.2f);
-
-        if (attackHitbox != null)
+        switch (attack)
         {
-            attackHitbox.SetActive(true);
-            yield return new WaitForSeconds(attackHitboxDuration);
-            attackHitbox.SetActive(false);
+            case 0:
+                PlayAnimation("Demon|Punch1");
+                break;
+
+            case 1:
+                PlayAnimation("Demon|Punch2");
+                break;
+
+            case 2:
+                PlayAnimation("Demon|Punch3");
+                break;
         }
 
-        agent.isStopped = false;
+        yield return new WaitUntil(() => animationFinished);
+
+        DisableAllAttackHitboxes();
+
+        attackTimer = 0f;
         attacking = false;
+
+        if (dead)
+            yield break;
+
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+        }
+    }
+
+    public void EndAttack()
+    {
+        DisableAllAttackHitboxes();
+
+        animationFinished = true;
     }
 
     public void takeDamage(int amount)
@@ -571,6 +618,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (currentHP <= 0) return;
 
         currentHP -= amount;
+
+        Debug.Log("Enemy takes" + amount + " damage");
 
         PlayAnimation(hurtAnimation);
 
@@ -596,11 +645,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         Debug.Log("Blind Enemy Defeated!");
         StopAllCoroutines();
         attacking = false;
+        throwing = false;
 
-        if (attackHitbox != null)
-        {
-            attackHitbox.SetActive(false);
-        }
+        DisableAllAttackHitboxes();
 
         if (agent != null)
         {
