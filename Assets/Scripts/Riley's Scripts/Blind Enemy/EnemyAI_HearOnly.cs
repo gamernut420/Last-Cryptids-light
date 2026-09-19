@@ -4,8 +4,6 @@ using System.Collections;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 {
-    [SerializeField] private Animator animator;
-
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
@@ -16,6 +14,23 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [Header("Health")]
     [SerializeField] private int maxHP = 50;
     private int currentHP;
+
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+
+    [SerializeField] private string patrolIdleAnimation = "Demon|Idle1";
+    [SerializeField] private string investigateIdleAnimation = "Demon|Idle2";
+    [SerializeField] private string walkAnimation = "Demon|Walk1";
+    [SerializeField] private string runAnimation = "Demon|Run1";
+    [SerializeField] private string throwAnimation = "Demon|Throw";
+    [SerializeField] private string hurtAnimation = "Demon|Get-Damage";
+    [SerializeField] private string deathAnimation = "Demon|Death";
+    [SerializeField] private string returnAnimation = "Demon|Throw-catch";
+    [SerializeField] private string throwloopAnimation = "Demon|Throw-loop";
+
+    private string currentAnimation = "";
+    private bool projectileReleased;
+    private bool returningProjectile;
 
     [Header("Movement & Combat")]
     public float attackSpeed = 10f;
@@ -32,10 +47,12 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     [Header("Projectile")]
     [SerializeField] private GameObject projectile;
+    private GameObject activeProjectile;
+    [SerializeField] private Renderer handBall;
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private float projectileCooldown = 5f;
-    [SerializeField] private float launchAngle = 10f;
-    [SerializeField] private float projectileLifetime = 5f;
+    [SerializeField] private float projectileLifetime = 3f;
+    [SerializeField] private float projectileSpeed = 20f;
 
     private float projectileTimer;
 
@@ -52,6 +69,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private bool isPlayerTouchingMe;
     bool isPlayingStep;
     private AudioManager footstepAudio;
+
+    private bool dead;
+    private bool throwing;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -82,6 +102,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     {
         agent = GetComponent<NavMeshAgent>();
 
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
         currentHP = maxHP;
 
         MoveToRandomPoint();
@@ -96,16 +119,24 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         {
             playerLastPosition = PlayerTransform.position;
         }
+
+        PlayAnimation(patrolIdleAnimation);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (dead) return;
+
         if (PlayerTransform == null) return;
 
         projectileTimer -= Time.deltaTime;
 
         TrackPlayerMovement();
+
+        if (throwing)
+            return;
+
         attackTimer += Time.deltaTime;
 
         switch (currentState)
@@ -130,51 +161,87 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         }
     }
 
-    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float angleInDegrees)
+    private void PlayAnimation(string animationName)
     {
-        Vector3 playerXZ = new Vector3(targetPoint.x, startPoint.y, targetPoint.z);
-        float distanceXZ = Vector3.Distance(startPoint, playerXZ);
-        float deltaY = targetPoint.y - startPoint.y;
+        if (animator == null || string.IsNullOrEmpty(animationName))
+            return;
 
-        float radAngle = angleInDegrees * Mathf.Deg2Rad;
-        float gravity = Physics.gravity.y;
+        if (currentAnimation == animationName)
+            return;
 
-        float velocitySquared = (gravity * distanceXZ * distanceXZ) / (2 * Mathf.Cos(radAngle) * Mathf.Cos(radAngle) * (deltaY - distanceXZ * Mathf.Tan(radAngle)));
+        currentAnimation = animationName;
 
-        if (velocitySquared <= 0)
-        {
-            return (targetPoint - startPoint).normalized * 10f;
-        }
-
-        float totalSpeed = Mathf.Sqrt(velocitySquared);
-        float forwardSpeed = totalSpeed * Mathf.Cos(radAngle);
-        float verticalSpeed = totalSpeed * Mathf.Sin(radAngle);
-
-        Vector3 directionXZ = (playerXZ - startPoint).normalized;
-        Vector3 launchVelocity = directionXZ * forwardSpeed + Vector3.up * verticalSpeed;
-        return launchVelocity;
+        animator.CrossFade(animationName, 0.1f);
     }
 
-    private void ThrowProjectile(Vector3 targetPosition)
+    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float speed)
     {
-        if (projectile == null || projectileSpawnPoint == null) return;
+        Vector3 displacement = targetPoint - startPoint;
+        Vector3 horizontalDisplacement = new Vector3(displacement.x, 0f, displacement.z);
 
-        Vector3 launchVelocity = CalculateLaunchVelocity(projectileSpawnPoint.position, targetPosition, launchAngle);
+        float distance = horizontalDisplacement.magnitude;
+        float heightDifference = displacement.y;
 
-        if (launchVelocity.sqrMagnitude <= 0.01f) return;
+        if (distance < 0.01f)
+        {
+            return Vector3.up * speed;
+        }
 
-        GameObject thrownObj = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(launchVelocity));
+        float gravity = Mathf.Abs(Physics.gravity.y);
+        float speedSquared = speed * speed;
 
-        Rigidbody rb = thrownObj.GetComponent<Rigidbody>();
+        float discriminant = speedSquared * speedSquared - gravity * (gravity * distance * distance + 2f * heightDifference * speedSquared);
+
+        if (discriminant < 0f)
+        {
+            Debug.LogWarning("Projectile target is unreachable at speed " + speed);
+            return displacement.normalized * speed;
+        }
+
+        float sqrtDiscriminant = Mathf.Sqrt(discriminant);
+
+        float angle = Mathf.Atan((speedSquared - sqrtDiscriminant) / (gravity * distance));
+        Vector3 horizontalDirection = horizontalDisplacement.normalized;
+        Vector3 velocity = horizontalDirection * (speed * Mathf.Cos(angle));
+        velocity.y = speed * Mathf.Sin(angle);
+
+        return velocity;
+    }
+
+    private void ThrowProjectile(Vector3 spawnPosition, Quaternion spawnRotation)
+    {
+        if (projectile == null || handBall == null) return;
+
+        activeProjectile = Instantiate(projectile, spawnPosition, spawnRotation);
+        Renderer[] renderers = activeProjectile.GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer renderer in renderers)
+        {
+            renderer.enabled = true;
+        }
+        
+        HearOnlyProjectile projectileScript = activeProjectile.GetComponent<HearOnlyProjectile>();
+
+        if (projectileScript != null)
+        {
+            projectileScript.Initialize(this);
+        }
+        else
+        {
+            Debug.LogError(
+                "Projectile prefab is missing " +
+                "HearOnlyProjectile!"
+            );
+        }
+
+        Rigidbody rb = activeProjectile.GetComponent<Rigidbody>();
 
         if (rb != null)
         {
-            rb.linearVelocity = launchVelocity;
-        }
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            Vector3 launchVelocity = CalculateLaunchVelocity(activeProjectile.transform.position, lastHeardPosition, projectileSpeed);
 
-        if (thrownObj != null)
-        {
-            Destroy(thrownObj, projectileLifetime);
+            rb.linearVelocity = launchVelocity;
         }
     }
 
@@ -205,22 +272,156 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             lastHeardPosition = noisePosition;
             memoryTimer = timeToForgetSound;
 
-            if (projectileTimer <= 0f && currentState != State.Attack)
+            if (currentState == State.Attack || attacking || throwing)
+                return;
+
+            if (projectileTimer <= 0f)
             {
-                ThrowProjectile(noisePosition);
                 projectileTimer = projectileCooldown;
+                StartCoroutine(ThrowAttackRoutine(noisePosition));
+                return;
             }
 
-            if (currentState != State.Attack)
+            currentState = State.InvestigateSound;
+
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             {
-                currentState = State.InvestigateSound;
-                agent.speed = investigationSpeed;
-
-                if (agent.isActiveAndEnabled && agent.isOnNavMesh)
-                {
-                    agent.SetDestination(lastHeardPosition);
-                }
+                agent.SetDestination(lastHeardPosition);
             }
+        }
+    }
+
+    public void ReleaseProjectile()
+    {
+        if (projectileReleased)
+            return;
+
+        projectileReleased = true;
+
+        Vector3 spawnPosition = projectileSpawnPoint.transform.position;
+        Quaternion spawnRotation = projectileSpawnPoint.transform.rotation;
+        if (handBall != null)
+            handBall.enabled = false;
+
+        ThrowProjectile(spawnPosition, spawnRotation);
+        StartCoroutine(ProjectileReturnTimeout());
+    }
+
+    private IEnumerator ProjectileReturnTimeout()
+    {
+        yield return new WaitForSeconds(projectileLifetime);
+
+        if (activeProjectile == null)
+            yield break;
+
+        Debug.Log("Projectile return timeout reached. Forcing return.");
+
+        ProjectileHit();
+    }
+
+    public void ProjectileHit()
+    {
+        if (activeProjectile == null)
+            return;
+
+        if (!throwing)
+            return;
+
+        if (returningProjectile)
+            return;
+
+        returningProjectile = true;
+
+        StartCoroutine(ReturnProjectile());
+    }
+
+    private IEnumerator ThrowAttackRoutine(Vector3 targetPosition)
+    {
+        if (throwing || attacking) 
+            yield break;
+
+        throwing = true;
+        projectileReleased = false;
+        agent.isStopped = true;
+
+        agent.velocity = Vector3.zero;
+
+        Vector3 targetDirection = targetPosition - transform.position;
+        targetDirection.y = 0f;
+
+        if (targetDirection.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 2f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 360f * Time.deltaTime);
+                yield return null;
+            }
+
+            transform.rotation = targetRotation;
+        }
+
+        PlayAnimation(throwAnimation);
+        yield return new WaitUntil(() => projectileReleased);
+
+        PlayAnimation(throwloopAnimation);
+        yield return new WaitUntil(() => activeProjectile == null);
+
+        yield return new WaitForSeconds(0.5f);
+
+        agent.isStopped = false;
+        throwing = false;
+
+        currentState = State.InvestigateSound;
+        PlayAnimation(runAnimation);
+        agent.speed = investigationSpeed;
+
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.SetDestination(lastHeardPosition);
+        }
+    }
+
+    private IEnumerator ReturnProjectile()
+    {
+        if (activeProjectile == null || handBall == null)
+            yield break;
+        
+        Collider projectileCollider = activeProjectile.GetComponent<Collider>();
+        if (projectileCollider != null)
+            projectileCollider.enabled = false;
+
+        Rigidbody rb = activeProjectile.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        float returnSpeed = 30f;
+        float catchDistance = 0.05f;
+
+        while (activeProjectile != null)
+        {
+            Vector3 target = projectileSpawnPoint.transform.position;
+            activeProjectile.transform.position = Vector3.MoveTowards(activeProjectile.transform.position, target, returnSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(activeProjectile.transform.position, target) <= catchDistance)
+            {
+                activeProjectile.transform.position = target;
+                GameObject projectileToDestroy = activeProjectile;
+                activeProjectile = null;
+                handBall.enabled = true;
+                returningProjectile = false;
+                Destroy(projectileToDestroy);
+                PlayAnimation(returnAnimation);
+                
+                yield break;
+            }
+            yield return null;
         }
     }
 
@@ -228,6 +429,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     {
         agent.stoppingDistance = 0;
         agent.speed = patrolSpeed;
+
+        PlayAnimation(walkAnimation);
+
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
         if (distanceToPlayer <= attackRadius && (isPlayerMoving || isPlayerTouchingMe))
@@ -245,6 +449,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void InvestigationLogic()
     {
         agent.stoppingDistance = 0;
+        agent.speed = investigationSpeed;
+
+        PlayAnimation(runAnimation);
+
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
         if (distanceToPlayer <= attackRadius && (isPlayerMoving || isPlayerTouchingMe))
         {
@@ -257,6 +465,11 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             memoryTimer -= Time.deltaTime;
         }
 
+        if (agent.remainingDistance < 0.1f)
+        {
+            PlayAnimation(investigateIdleAnimation);
+        }
+
         if (memoryTimer <= 0f)
         {
             currentState = State.Patrol;
@@ -266,8 +479,14 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     void AttackLogic()
     {
-        agent.stoppingDistance = 2;
+        agent.stoppingDistance = 3;
         agent.speed = attackSpeed;
+
+        if (!attacking)
+        {
+            PlayAnimation(runAnimation);
+        }
+
         Vector3 targetDirection = new Vector3(PlayerTransform.position.x, transform.position.y, PlayerTransform.position.z);
         transform.LookAt(targetDirection);
 
@@ -326,6 +545,14 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             transform.rotation = Quaternion.LookRotation(targetDirection);
         }
 
+        int attack = Random.Range(0, 3);
+        if (attack == 0)
+            PlayAnimation("Demon|Punch1");
+        else if (attack == 1)
+            PlayAnimation("Demon|Punch2");
+        else
+            PlayAnimation("Demon|Punch3");
+
         yield return new WaitForSeconds(0.2f);
 
         if (attackHitbox != null)
@@ -345,9 +572,12 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         currentHP -= amount;
 
+        PlayAnimation(hurtAnimation);
+
         if (currentHP <= 0)
         {
             Die();
+            return;
         }
 
         if (currentState != State.Attack && PlayerTransform != null)
@@ -360,11 +590,31 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private void Die()
     {
+        if (dead) return;
+
+        dead = true;
         Debug.Log("Blind Enemy Defeated!");
+        StopAllCoroutines();
+        attacking = false;
+
         if (attackHitbox != null)
         {
             attackHitbox.SetActive(false);
         }
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
+        PlayAnimation(deathAnimation);
+        StartCoroutine(DestroyAfterDeath());
+    }
+
+    private IEnumerator DestroyAfterDeath()
+    {
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 
