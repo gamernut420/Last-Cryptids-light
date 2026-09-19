@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
-  m_Name: LocateMilitaryBase2
+  m_Name: LocateMilitaryBases
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
   prerequisiteObjective: {fileID: 0}
   isUnlocked: 1
   shouldHideFromUI: 0
-  objectiveID: primary_locate_base_two
-  objectiveTitle: Locate Miliary Base 2
-  objectiveDescription: Find the Military Base 2
+  objectiveID: primary_locate_bases
+  objectiveTitle: Locate 3 Miliary Bases
+  objectiveDescription: Find 3 Military Base
   targetLocation: {fileID: 0}
   isCompleted: 0
   displayType: 0
-  parentObjective: {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
-  requiredProgress: 1
+  parentObjective: {fileID: 0}
+  requiredProgress: 3
   currentProgress: 0
