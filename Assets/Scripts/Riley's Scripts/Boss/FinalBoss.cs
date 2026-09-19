@@ -501,6 +501,8 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (meleeTimer > 0f) return;
 
+        if (currentPhase == BossPhase.Dead) return;
+
         attack = Random.Range(0, 100);
         FacePlayer();
         Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
@@ -1082,6 +1084,17 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         isShooting = true;
         chargingRangedAttack = true;
+
+        Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
+        float angle = Vector3.Angle(transform.forward, directionToPlayer);
+
+        while (angle > 5f)
+        {
+            FacePlayer();
+            directionToPlayer = (PlayerTransform.position - transform.position).normalized;
+            directionToPlayer.y = 0;
+            angle = Vector3.Angle(transform.forward, directionToPlayer);
+        }
 
         Debug.Log("Boss is charging ranged attack!");
 

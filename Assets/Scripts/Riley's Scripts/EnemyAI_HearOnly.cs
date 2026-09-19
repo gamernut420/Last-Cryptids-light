@@ -42,13 +42,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     Color colorOrig;
 
-    [SerializeField] Renderer leftEarRenderer;
-    [SerializeField] Renderer rightEarRenderer;
-    private Material leftEarMat;
-    private Material rightEarMat;
-    private Color leftEarOrig;
-    private Color rightEarOrig;
-
     private NavMeshAgent agent;
     private float memoryTimer;
     private float attackTimer;
@@ -89,6 +82,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        currentHP = maxHP;
 
         CheckEnemyMaterial();
         MoveToRandomPoint();
@@ -144,44 +139,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             modelMat = model.material;
             colorOrig = modelMat.color;
             modelMat.EnableKeyword("_EMISSION");
-        }
-        
-        if (leftEarRenderer != null)
-        {
-            leftEarMat = leftEarRenderer.material;
-            leftEarOrig = leftEarMat.GetColor("_BaseColor");
-            leftEarMat.EnableKeyword("_EMISSION");
-        }
-        if (rightEarRenderer)
-        {
-            rightEarMat = rightEarRenderer.material;
-            rightEarOrig = rightEarMat.GetColor("_BaseColor");
-            rightEarMat.EnableKeyword("_EMISSION");
-        }
-    }
-
-    //Ear goes red when alert of sound and back to original color when it loses aggro
-    void SetEarsAlert(bool isAlert)
-    {
-        // Configure your normal colors vs alert colors
-        Color targetLeftColor = isAlert ? Color.red : leftEarOrig;
-        Color targetRightColor = isAlert ? Color.red : rightEarOrig;
-
-        // Apply an HDR intensity multiplier (e.g., 3f) to the alert color to make it glow brightly
-        Color emissionLeftColor = isAlert ? (Color.red * 3f) : leftEarOrig;
-        Color emissionRightColor = isAlert ? (Color.red * 3f) : rightEarOrig;
-
-
-        if (leftEarMat != null)
-        {
-            leftEarMat.SetColor("_BaseColor", targetLeftColor);
-            leftEarMat.SetColor("_EmissionColor", emissionLeftColor);
-        }
-
-        if (rightEarMat != null)
-        {
-            rightEarMat.SetColor("_BaseColor", targetRightColor);
-            rightEarMat.SetColor("_EmissionColor", emissionRightColor);
         }
     }
 
@@ -260,8 +217,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             lastHeardPosition = noisePosition;
             memoryTimer = timeToForgetSound;
 
-            SetEarsAlert(true);
-
             if (projectileTimer <= 0f && currentState != State.Attack)
             {
                 ThrowProjectile(noisePosition);
@@ -316,7 +271,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         if (memoryTimer <= 0f)
         {
-            SetEarsAlert(false);
             currentState = State.Patrol;
             MoveToRandomPoint();
         }
@@ -414,7 +368,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
-            SetEarsAlert(true);
         }    
     }
 
