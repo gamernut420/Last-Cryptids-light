@@ -4,8 +4,6 @@ using System.Collections;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 {
-    [SerializeField] Renderer model;
-    private Material modelMat;
 
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
@@ -85,7 +83,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         currentHP = maxHP;
 
-        CheckEnemyMaterial();
         MoveToRandomPoint();
         footstepAudio = GetComponent<AudioManager>();
 
@@ -129,16 +126,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             {
                 StartCoroutine(PlayStep());
             }
-        }
-    }
-
-    void CheckEnemyMaterial()
-    {
-        if (model != null)
-        {
-            modelMat = model.material;
-            colorOrig = modelMat.color;
-            modelMat.EnableKeyword("_EMISSION");
         }
     }
 
@@ -356,7 +343,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (currentHP <= 0) return;
 
         currentHP -= amount;
-        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -379,15 +365,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             attackHitbox.SetActive(false);
         }
         Destroy(gameObject);
-    }
-
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     IEnumerator PlayStep()
