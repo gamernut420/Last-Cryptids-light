@@ -4,6 +4,7 @@ using System.Collections;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 {
+    [SerializeField] private Animator animator;
 
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
