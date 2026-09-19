@@ -36,9 +36,6 @@ public class gameManager : MonoBehaviour
     private bool isShowingPrompt = false;
 
 
-    // ADDED:
-    // Uses the same weapon sprites configured
-    // in the bottom-right weapon HUD.
     [Header("Weapon HUD")]
     [SerializeField]
     private WeaponHUDController weaponHUDController;
@@ -58,9 +55,13 @@ public class gameManager : MonoBehaviour
 
     public GameObject damageFlashPanel;
 
+    // ADDED:
+    // Orange arch that appears above the crosshair
+    // when the player takes normal non-exposure damage.
+    public GameObject damageIndicator;
+
 
     [Header("Stamina")]
-    // [SerializeField] GameObject staminaUI;
     [SerializeField]
     Image staminaBar;
 
@@ -176,6 +177,12 @@ public class gameManager : MonoBehaviour
         if (countdownText != null)
         {
             countdownText.SetActive(false);
+        }
+
+
+        if (damageIndicator != null)
+        {
+            damageIndicator.SetActive(false);
         }
 
 
@@ -470,7 +477,6 @@ public class gameManager : MonoBehaviour
     {
         killCount++;
 
-
         UpateKillUI();
     }
 
@@ -506,10 +512,6 @@ public class gameManager : MonoBehaviour
              i < slots.Length;
              i++)
         {
-            // ADDED:
-            // Prevents a fifth visual HUD slot from
-            // trying to read beyond the current
-            // gameplay hotbar array.
             if (i >= inv.Length)
             {
                 slots[i].UpdateSlot(
@@ -532,9 +534,6 @@ public class gameManager : MonoBehaviour
 
                 if (wep != null)
                 {
-                    // ADDED:
-                    // Ask WeaponHUDController for the
-                    // icon matching this weapon.
                     Sprite weaponSprite =
                         null;
 
@@ -616,12 +615,8 @@ public class gameManager : MonoBehaviour
                             {
                                 slots[i].UpdateSlot(
                                     null,
-
-                                    gadget
-                                        .GetGadgetName(),
-
+                                    gadget.GetGadgetName(),
                                     1,
-
                                     Color.darkRed
                                 );
                             }
@@ -629,12 +624,8 @@ public class gameManager : MonoBehaviour
                             {
                                 slots[i].UpdateSlot(
                                     null,
-
-                                    gadget
-                                        .GetGadgetName(),
-
+                                    gadget.GetGadgetName(),
                                     1,
-
                                     Color.gray2
                                 );
                             }
@@ -657,7 +648,10 @@ public class gameManager : MonoBehaviour
 
     public void ShowReloadPrompt(bool show)
     {
-        ReloadPrompt.SetActive(show);
+        if (ReloadPrompt != null)
+        {
+            ReloadPrompt.SetActive(show);
+        }
     }
 
 
@@ -751,8 +745,6 @@ public class gameManager : MonoBehaviour
         float ammount,
         bool show)
     {
-        // staminaUI.SetActive(show);
-
         staminaBar.fillAmount =
             ammount;
     }

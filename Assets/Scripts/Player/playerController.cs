@@ -15,52 +15,83 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     PlayerUpgrades upgradeManager;
 
+
     [Header("Inventory")]
-    [SerializeField] PlayerInventory Inventory;
+    [SerializeField]
+    PlayerInventory Inventory;
+
 
     [Header("Audio")]
     public float walkHearingRadius = 5f;
     public float sprintHearingRadius = 10f;
 
+
     [Header("Weapon")]
-    [SerializeField] ProjectileManager projectileManager;
-    [SerializeField] GameObject WeaponGrip;
+    [SerializeField]
+    ProjectileManager projectileManager;
+
+    [SerializeField]
+    GameObject WeaponGrip;
+
 
     GameObject ActiveItem;
-    GameObject[] hotbar = new GameObject[4];
 
-    int activeItemSlot = -1;
+    GameObject[] hotbar =
+        new GameObject[4];
 
-    public static System.Action<bool> ShowAmmoUI;
+
+    int activeItemSlot =
+        -1;
+
+
+    public static System.Action<bool>
+        ShowAmmoUI;
+
 
     int jumpCount;
 
     float currentHP;
+
     float currentSpeed;
 
     int points = 12345;
 
+
     Vector3 moveDir;
+
     Vector3 playerVel;
+
 
     bool isDead = false;
 
-    // Adrenaline stimulant
-    bool stimulantMode = false;
-    float stimulantMultiplier = 1f;
+
+    bool stimulantMode =
+        false;
+
+    float stimulantMultiplier =
+        1f;
 
 
     void Start()
     {
-        currentHP = MaxHP;
-        currentSpeed = BaseSpeed;
+        currentHP =
+            MaxHP;
 
-        upgradeManager = GetComponent<PlayerUpgrades>();
+
+        currentSpeed =
+            BaseSpeed;
+
+
+        upgradeManager =
+            GetComponent<PlayerUpgrades>();
+
 
         if (upgradeManager != null)
         {
-            upgradeManager.ApplyUpgrades();
+            upgradeManager
+                .ApplyUpgrades();
         }
+
 
         UpdateWeaponUI();
     }
@@ -68,30 +99,39 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(
+            KeyCode.U))
         {
             if (upgradeManager != null)
             {
-                upgradeManager.ModifyHPUpgrades(1);
+                upgradeManager
+                    .ModifyHPUpgrades(1);
+
                 updatePlayerUI();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.I))
+        else if (Input.GetKeyDown(
+            KeyCode.I))
         {
             if (upgradeManager != null)
             {
-                upgradeManager.ModifySpeedUpgrades(1);
+                upgradeManager
+                    .ModifySpeedUpgrades(1);
             }
         }
-        else if (Input.GetKeyDown(KeyCode.O))
+        else if (Input.GetKeyDown(
+            KeyCode.O))
         {
             if (upgradeManager != null)
             {
-                upgradeManager.ModifyStaminaUpgrades(1);
+                upgradeManager
+                    .ModifyStaminaUpgrades(1);
             }
         }
 
+
         sprint();
+
 
         if (gameManager.instance != null &&
             gameManager.instance.isPaused)
@@ -99,10 +139,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
+
         if (isDead)
         {
             return;
         }
+
 
         GadgetUse();
 
@@ -110,7 +152,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         movement();
 
-        if (Input.GetKey(KeyCode.LeftShift))
+
+        if (Input.GetKey(
+            KeyCode.LeftShift))
         {
             NoiseManager.MakeNoise(
                 transform.position,
@@ -118,8 +162,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             );
         }
 
-        // Testing key
-        if (Input.GetKeyDown(KeyCode.K))
+
+        if (Input.GetKeyDown(
+            KeyCode.K))
         {
             takeDamage(1);
         }
@@ -131,12 +176,18 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         if (controller.isGrounded)
         {
             jumpCount = 0;
+
             playerVel.y = 0;
         }
 
+
         moveDir =
-            Input.GetAxis("Horizontal") * transform.right +
-            Input.GetAxis("Vertical") * transform.forward;
+            Input.GetAxis("Horizontal") *
+            transform.right +
+
+            Input.GetAxis("Vertical") *
+            transform.forward;
+
 
         controller.Move(
             moveDir *
@@ -144,14 +195,19 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             Time.deltaTime
         );
 
+
         jump();
+
 
         controller.Move(
             playerVel *
             Time.deltaTime
         );
 
-        playerVel.y -= gravity * Time.deltaTime;
+
+        playerVel.y -=
+            gravity *
+            Time.deltaTime;
     }
 
 
@@ -159,38 +215,52 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         float targetSpeed;
 
-        if (Input.GetKey(KeyCode.LeftShift))
+
+        if (Input.GetKey(
+            KeyCode.LeftShift))
         {
-            targetSpeed = MaxSpeed;
+            targetSpeed =
+                MaxSpeed;
         }
         else
         {
-            targetSpeed = BaseSpeed;
+            targetSpeed =
+                BaseSpeed;
         }
+
 
         if (stimulantMode)
         {
-            targetSpeed *= stimulantMultiplier;
+            targetSpeed *=
+                stimulantMultiplier;
         }
 
-        currentSpeed = targetSpeed;
+
+        currentSpeed =
+            targetSpeed;
     }
 
 
     void jump()
     {
-        if (Input.GetButtonDown("Jump") &&
+        if (Input.GetButtonDown(
+                "Jump") &&
             jumpCount < jumpMax)
         {
             jumpCount++;
-            playerVel.y = jumpSpeed;
+
+            playerVel.y =
+                jumpSpeed;
         }
     }
 
 
     public void takeDamage(int amount)
     {
-        takeDamage(amount, true);
+        takeDamage(
+            amount,
+            true
+        );
     }
 
 
@@ -198,10 +268,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         int amount,
         bool showFlash = true)
     {
-        currentHP -= amount;
+        currentHP -=
+            amount;
+
 
         updatePlayerUI();
 
+
+        // Normal physical/enemy damage triggers this.
+        // Exposure-style damage can pass false.
         if (showFlash)
         {
             StartCoroutine(
@@ -209,11 +284,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             );
         }
 
+
         if (currentHP <= 0)
         {
             if (gameManager.instance != null)
             {
-                gameManager.instance.youLose();
+                gameManager.instance
+                    .youLose();
             }
         }
     }
@@ -221,18 +298,52 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     IEnumerator flashDamage()
     {
-        if (gameManager.instance != null &&
-            gameManager.instance.damageFlashPanel != null)
+        if (gameManager.instance != null)
         {
-            gameManager.instance
-                .damageFlashPanel
-                .SetActive(true);
+            if (gameManager.instance
+                .damageFlashPanel != null)
+            {
+                gameManager.instance
+                    .damageFlashPanel
+                    .SetActive(true);
+            }
 
-            yield return new WaitForSeconds(0.1f);
 
-            gameManager.instance
-                .damageFlashPanel
-                .SetActive(false);
+            // ADDED:
+            // Shows orange damage arc above crosshair.
+            if (gameManager.instance
+                .damageIndicator != null)
+            {
+                gameManager.instance
+                    .damageIndicator
+                    .SetActive(true);
+            }
+        }
+
+
+        yield return new WaitForSeconds(
+            0.15f
+        );
+
+
+        if (gameManager.instance != null)
+        {
+            if (gameManager.instance
+                .damageFlashPanel != null)
+            {
+                gameManager.instance
+                    .damageFlashPanel
+                    .SetActive(false);
+            }
+
+
+            if (gameManager.instance
+                .damageIndicator != null)
+            {
+                gameManager.instance
+                    .damageIndicator
+                    .SetActive(false);
+            }
         }
     }
 
@@ -240,10 +351,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     public void updatePlayerUI()
     {
         if (gameManager.instance != null &&
-            gameManager.instance.playerHPBar != null)
+            gameManager.instance
+                .playerHPBar != null)
         {
-            gameManager.instance.playerHPBar.fillAmount =
-                currentHP / MaxHP;
+            gameManager.instance
+                .playerHPBar
+                .fillAmount =
+                    currentHP /
+                    MaxHP;
         }
     }
 
@@ -262,33 +377,41 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public bool PlayerRefillAmmo(int amount)
+    public bool PlayerRefillAmmo(
+        int amount)
     {
         if (ActiveItem == null)
         {
             return false;
         }
 
+
         IWeapon wep =
-            ActiveItem.GetComponent<IWeapon>();
+            ActiveItem
+                .GetComponent<IWeapon>();
+
 
         if (wep != null)
         {
-            return wep.WeaponRefillAmmo(
-                amount
-            );
+            return wep
+                .WeaponRefillAmmo(
+                    amount
+                );
         }
+
 
         return false;
     }
 
 
-    public void PlayerAddItem(GameObject Item)
+    public void PlayerAddItem(
+        GameObject Item)
     {
         if (Item == null)
         {
             return;
         }
+
 
         if (WeaponGrip == null)
         {
@@ -299,14 +422,19 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
+
         int arrayStart = -1;
+
         int arrayEnd = -1;
+
 
         IWeapon wep =
             Item.GetComponent<IWeapon>();
 
+
         IGadget gadget =
             Item.GetComponent<IGadget>();
+
 
         if (wep != null)
         {
@@ -327,7 +455,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-        bool hadEmpty = false;
+
+        bool hadEmpty =
+            false;
+
 
         for (int i = arrayStart;
              i <= arrayEnd;
@@ -335,80 +466,114 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         {
             if (hotbar[i] == null)
             {
-                hadEmpty = true;
+                hadEmpty =
+                    true;
+
 
                 if (ActiveItem != null)
                 {
-                    ActiveItem.SetActive(false);
+                    ActiveItem
+                        .SetActive(false);
                 }
 
-                hotbar[i] = Item;
 
-                ActiveItem = Item;
-                activeItemSlot = i;
+                hotbar[i] =
+                    Item;
+
+
+                ActiveItem =
+                    Item;
+
+
+                activeItemSlot =
+                    i;
+
 
                 break;
             }
         }
+
 
         if (!hadEmpty)
         {
             int slotToUse =
                 activeItemSlot;
 
+
             if (slotToUse < arrayStart ||
                 slotToUse > arrayEnd)
             {
-                slotToUse = arrayStart;
+                slotToUse =
+                    arrayStart;
             }
+
 
             if (ActiveItem != null)
             {
                 DropWeapon();
             }
 
+
             hotbar[slotToUse] =
                 Item;
 
+
             ActiveItem =
                 Item;
+
 
             activeItemSlot =
                 slotToUse;
         }
 
-        // Parent directly to WeaponGrip
+
         Item.transform.SetParent(
             WeaponGrip.transform,
             false
         );
 
+
         Item.transform.localPosition =
             Vector3.zero;
 
+
         Item.transform.localRotation =
             Quaternion.identity;
+
 
         if (wep != null)
         {
             Camera playerCamera =
                 Camera.main;
 
+
             if (playerCamera != null)
             {
                 wep.SetPlayerVariables(
                     GetComponent<IPlayer>(),
-                    playerCamera.GetComponent<ICamera>(),
+                    playerCamera
+                        .GetComponent<ICamera>(),
                     projectileManager,
                     Vector3.zero
                 );
             }
 
-            wep.SetWeaponUse(true);
+
+            wep.SetWeaponUse(
+                true
+            );
         }
 
-        ActiveItem.SetActive(false);
-        ActiveItem.SetActive(true);
+
+        ActiveItem.SetActive(
+            false
+        );
+
+
+        ActiveItem.SetActive(
+            true
+        );
+
 
         UpdateWeaponUI();
     }
@@ -421,26 +586,40 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
+
         IWeapon wep =
-            ActiveItem.GetComponent<IWeapon>();
+            ActiveItem
+                .GetComponent<IWeapon>();
+
 
         if (wep != null)
         {
-            wep.SetWeaponUse(false);
+            wep.SetWeaponUse(
+                false
+            );
+
+
             wep.SetPlayerVariables();
         }
 
+
         RaycastHit frontRay;
+
         RaycastHit downRay;
+
 
         Vector3 traceStart =
             transform.position;
 
+
         Vector3 traceEnd =
             traceStart +
-            (transform.forward * 3);
+            transform.forward *
+            3;
+
 
         Vector3 dropLocation;
+
 
         if (Physics.Linecast(
             traceStart,
@@ -456,9 +635,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 traceEnd;
         }
 
+
         traceEnd =
             traceStart +
-            (Vector3.down * 100);
+            Vector3.down *
+            100;
+
 
         if (Physics.Linecast(
             traceStart,
@@ -474,13 +656,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 traceEnd;
         }
 
-        ActiveItem.transform.SetParent(
-            null,
-            true
-        );
+
+        ActiveItem.transform
+            .SetParent(
+                null,
+                true
+            );
+
 
         ActiveItem.transform.position =
             dropLocation;
+
 
         ActiveItem.transform.rotation =
             Quaternion.Euler(
@@ -489,15 +675,24 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 0
             );
 
+
         Collider itemCollider =
-            ActiveItem.GetComponent<Collider>();
+            ActiveItem
+                .GetComponent<Collider>();
+
 
         if (itemCollider != null)
         {
-            itemCollider.enabled = true;
+            itemCollider.enabled =
+                true;
+
 
             float posOffset =
-                itemCollider.bounds.extents.y;
+                itemCollider
+                    .bounds
+                    .extents
+                    .y;
+
 
             ActiveItem.transform.position +=
                 new Vector3(
@@ -507,15 +702,24 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 );
         }
 
+
         if (activeItemSlot >= 0 &&
-            activeItemSlot < hotbar.Length)
+            activeItemSlot <
+            hotbar.Length)
         {
-            hotbar[activeItemSlot] =
-                null;
+            hotbar[
+                activeItemSlot
+            ] = null;
         }
 
-        ActiveItem = null;
-        activeItemSlot = -1;
+
+        ActiveItem =
+            null;
+
+
+        activeItemSlot =
+            -1;
+
 
         UpdateWeaponUI();
     }
@@ -523,23 +727,28 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void CheckSwapItem()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(
+            KeyCode.Alpha1))
         {
             SwapItem(0);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(
+            KeyCode.Alpha2))
         {
             SwapItem(1);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        else if (Input.GetKeyDown(
+            KeyCode.Alpha3))
         {
             SwapItem(2);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        else if (Input.GetKeyDown(
+            KeyCode.Alpha4))
         {
             SwapItem(3);
         }
-        else if (Input.GetKeyDown(KeyCode.Backspace))
+        else if (Input.GetKeyDown(
+            KeyCode.Backspace))
         {
             DropWeapon();
         }
@@ -554,24 +763,34 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
+
         if (hotbar[index] == null ||
             activeItemSlot == index)
         {
             return;
         }
 
+
         if (ActiveItem != null)
         {
-            ActiveItem.SetActive(false);
+            ActiveItem.SetActive(
+                false
+            );
         }
+
 
         ActiveItem =
             hotbar[index];
 
+
         activeItemSlot =
             index;
 
-        ActiveItem.SetActive(true);
+
+        ActiveItem.SetActive(
+            true
+        );
+
 
         UpdateWeaponUI();
     }
@@ -579,40 +798,56 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     void GadgetUse()
     {
-        if (!Input.GetKeyDown(KeyCode.Mouse0))
+        if (!Input.GetKeyDown(
+            KeyCode.Mouse0))
         {
             return;
         }
+
 
         if (ActiveItem == null)
         {
             return;
         }
 
+
         IGadget gadget =
-            ActiveItem.GetComponent<IGadget>();
+            ActiveItem
+                .GetComponent<IGadget>();
+
 
         if (gadget == null)
         {
             return;
         }
 
-        if (gadget.UseGadget(gameObject))
-        {
-            ActiveItem.transform.SetParent(
-                null
-            );
 
-            ActiveItem = null;
+        if (gadget.UseGadget(
+            gameObject))
+        {
+            ActiveItem.transform
+                .SetParent(
+                    null
+                );
+
+
+            ActiveItem =
+                null;
+
 
             if (activeItemSlot >= 0 &&
-                activeItemSlot < hotbar.Length)
+                activeItemSlot <
+                hotbar.Length)
             {
-                hotbar[activeItemSlot] =
-                    null;
+                hotbar[
+                    activeItemSlot
+                ] = null;
             }
 
-            activeItemSlot = -1;
+
+            activeItemSlot =
+                -1;
+
 
             UpdateWeaponUI();
         }
@@ -624,80 +859,108 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         if (ActiveItem != null)
         {
             IWeapon wep =
-                ActiveItem.GetComponent<IWeapon>();
+                ActiveItem
+                    .GetComponent<IWeapon>();
+
 
             if (wep != null)
             {
-                ShowAmmoUI?.Invoke(true);
+                ShowAmmoUI
+                    ?.Invoke(true);
             }
             else
             {
                 IGadget gadget =
-                    ActiveItem.GetComponent<IGadget>();
+                    ActiveItem
+                        .GetComponent<IGadget>();
+
 
                 if (gadget != null)
                 {
-                    ShowAmmoUI?.Invoke(false);
+                    ShowAmmoUI
+                        ?.Invoke(false);
                 }
             }
         }
         else
         {
-            activeItemSlot = -1;
+            activeItemSlot =
+                -1;
+
 
             if (gameManager.instance != null)
             {
                 gameManager.instance
-                    .ShowReloadPrompt(false);
+                    .ShowReloadPrompt(
+                        false
+                    );
             }
 
-            ShowAmmoUI?.Invoke(false);
+
+            ShowAmmoUI
+                ?.Invoke(false);
         }
+
 
         if (gameManager.instance != null)
         {
-            gameManager.instance.UpdateWeaponInv(
-                hotbar,
-                activeItemSlot
-            );
+            gameManager.instance
+                .UpdateWeaponInv(
+                    hotbar,
+                    activeItemSlot
+                );
         }
     }
 
 
-    public GameObject[] GetPlayerHotbar()
+    public GameObject[]
+        GetPlayerHotbar()
     {
-        return (GameObject[])hotbar.Clone();
+        return
+            (GameObject[])
+            hotbar.Clone();
     }
 
 
-    public GameObject[] GetWeaponsForCheckpoint()
+    public GameObject[]
+        GetWeaponsForCheckpoint()
     {
-        return (GameObject[])hotbar.Clone();
+        return
+            (GameObject[])
+            hotbar.Clone();
     }
 
 
-    public string GetActiveItemNameForCheckpoint()
+    public string
+        GetActiveItemNameForCheckpoint()
     {
         if (ActiveItem == null)
         {
-            return string.Empty;
+            return
+                string.Empty;
         }
 
+
         IWeapon weapon =
-            ActiveItem.GetComponent<IWeapon>();
+            ActiveItem
+                .GetComponent<IWeapon>();
+
 
         if (weapon != null)
         {
-            return weapon.GetWeaponName();
+            return weapon
+                .GetWeaponName();
         }
+
 
         return string.Empty;
     }
 
 
-    public bool RestoreWeaponSlotForCheckpoint(
-        GameObject weaponObject,
-        int slot)
+    public bool
+        RestoreWeaponSlotForCheckpoint(
+            GameObject weaponObject,
+            int slot)
     {
         if (weaponObject == null ||
             slot < 0 ||
@@ -706,11 +969,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
 
+
         IWeapon weapon =
-            weaponObject.GetComponent<IWeapon>();
+            weaponObject
+                .GetComponent<IWeapon>();
+
 
         Camera playerCamera =
             Camera.main;
+
 
         if (weapon == null ||
             playerCamera == null ||
@@ -719,43 +986,61 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
 
+
         hotbar[slot] =
             weaponObject;
 
-        weaponObject.transform.SetParent(
-            WeaponGrip.transform,
-            false
-        );
 
-        weaponObject.transform.localPosition =
-            Vector3.zero;
+        weaponObject.transform
+            .SetParent(
+                WeaponGrip.transform,
+                false
+            );
 
-        weaponObject.transform.localRotation =
-            Quaternion.identity;
+
+        weaponObject.transform
+            .localPosition =
+                Vector3.zero;
+
+
+        weaponObject.transform
+            .localRotation =
+                Quaternion.identity;
+
 
         weapon.SetPlayerVariables(
             GetComponent<IPlayer>(),
-            playerCamera.GetComponent<ICamera>(),
+            playerCamera
+                .GetComponent<ICamera>(),
             projectileManager,
             Vector3.zero
         );
 
-        weapon.SetWeaponUse(true);
 
-        weaponObject.SetActive(false);
+        weapon.SetWeaponUse(
+            true
+        );
+
+
+        weaponObject.SetActive(
+            false
+        );
+
 
         return true;
     }
 
 
-    public void EquipWeaponForCheckpoint(
-        string weaponName)
+    public void
+        EquipWeaponForCheckpoint(
+            string weaponName)
     {
         if (string.IsNullOrEmpty(
             weaponName))
         {
             return;
         }
+
 
         for (int slot = 0;
              slot < hotbar.Length;
@@ -768,6 +1053,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             }
         }
 
+
         for (int slot = 0;
              slot < hotbar.Length;
              slot++)
@@ -777,9 +1063,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 continue;
             }
 
+
             IWeapon weapon =
                 hotbar[slot]
                     .GetComponent<IWeapon>();
+
 
             if (weapon == null ||
                 weapon.GetWeaponName() !=
@@ -788,41 +1076,57 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 continue;
             }
 
+
             if (ActiveItem != null)
             {
-                ActiveItem.SetActive(false);
+                ActiveItem
+                    .SetActive(false);
             }
+
 
             ActiveItem =
                 hotbar[slot];
 
+
             activeItemSlot =
                 slot;
 
-            ActiveItem.SetActive(true);
 
-            ShowAmmoUI?.Invoke(true);
+            ActiveItem.SetActive(
+                true
+            );
+
+
+            ShowAmmoUI
+                ?.Invoke(true);
+
 
             UpdateWeaponUI();
+
 
             return;
         }
     }
 
 
-    public void RefreshWeaponUIForCheckpoint()
+    public void
+        RefreshWeaponUIForCheckpoint()
     {
-        ShowAmmoUI?.Invoke(
-            ActiveItem != null
-        );
+        ShowAmmoUI
+            ?.Invoke(
+                ActiveItem != null
+            );
+
 
         UpdateWeaponUI();
     }
 
 
-    public ProjectileManager GetProjectileManager()
+    public ProjectileManager
+        GetProjectileManager()
     {
-        return projectileManager;
+        return
+            projectileManager;
     }
 
 
@@ -837,31 +1141,35 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 Mathf.Clamp(
                     amount,
                     0,
-                    MaxHP - currentHP
+                    MaxHP -
+                    currentHP
                 );
 
+
             updatePlayerUI();
+
 
             return true;
         }
         else if (overHeal)
         {
-            currentHP += amount;
+            currentHP +=
+                amount;
+
 
             updatePlayerUI();
 
+
             return true;
         }
+
 
         return false;
     }
 
 
-    // =====================================================
-    // PLAYER UPGRADE / TEMP EFFECT METHODS
-    // =====================================================
-
-    public void SetMaxJumps(int amount)
+    public void SetMaxJumps(
+        int amount)
     {
         jumpMax =
             Mathf.Clamp(
@@ -879,6 +1187,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         stimulantMode =
             enabled;
 
+
         if (enabled)
         {
             stimulantMultiplier =
@@ -895,17 +1204,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    // =====================================================
-    // HP GETTERS / SETTERS
-    // =====================================================
-
     public float GetCurrentHP()
     {
         return currentHP;
     }
 
 
-    public void SetCurrentHP(float ammount)
+    public void SetCurrentHP(
+        float ammount)
     {
         currentHP =
             ammount;
@@ -918,16 +1224,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void SetMaxHP(float ammount)
+    public void SetMaxHP(
+        float ammount)
     {
         MaxHP =
             ammount;
     }
 
-
-    // =====================================================
-    // SPEED GETTERS / SETTERS
-    // =====================================================
 
     public float GetBaseSpeed()
     {
@@ -935,7 +1238,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void SetBaseSpeed(float speed)
+    public void SetBaseSpeed(
+        float speed)
     {
         BaseSpeed =
             speed;
@@ -948,16 +1252,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void SetMaxSpeed(float speed)
+    public void SetMaxSpeed(
+        float speed)
     {
         MaxSpeed =
             speed;
     }
 
-
-    // =====================================================
-    // STAMINA GETTERS / SETTERS
-    // =====================================================
 
     public float GetMaxStamina()
     {
@@ -965,15 +1266,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void SetMaxStamina(float ammount)
+    public void SetMaxStamina(
+        float ammount)
     {
-        // set max stamina
     }
 
-
-    // =====================================================
-    // FUNDS
-    // =====================================================
 
     public int GetPlayerFunds()
     {
@@ -981,7 +1278,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void ModifyPlayerFunds(int ammount)
+    public void ModifyPlayerFunds(
+        int ammount)
     {
         points +=
             ammount;
