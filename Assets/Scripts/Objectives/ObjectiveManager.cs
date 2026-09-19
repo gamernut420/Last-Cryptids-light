@@ -1,87 +1,362 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ObjectiveManager : MonoBehaviour
 {
-    public static ObjectiveManager Instance { get; private set; }
+    public static ObjectiveManager Instance
+    {
+        get;
+        private set;
+    }
+
 
     [Header("Active Objectives")]
-    public List<ObjectiveData> activeObjectives = new List<ObjectiveData>();
-    public int hideUIin;
+
+    public List<ObjectiveData>
+        activeObjectives =
+            new List<ObjectiveData>();
+
+
+    [Tooltip(
+        "Seconds a completed objective remains visible."
+    )]
+    public int hideUIin = 2;
+
+
+    [Header("Compass")]
 
     public Transform currentCompassTarget;
 
+
     private void Awake()
     {
-        // Ensures only one instance of this manager exists
-        if (Instance != null && Instance != this)
+        if (Instance != null &&
+            Instance != this)
         {
             Destroy(gameObject);
+
             return;
         }
+
+
         Instance = this;
-        foreach (var obj in activeObjectives)
+
+
+        foreach (
+            ObjectiveData obj
+            in activeObjectives)
         {
-            if (obj != null)
+            if (obj == null)
             {
-                obj.shouldHideFromUI = false;
-                obj.isCompleted = false;
-                // if it has no prerequisite, unlock it immadiately. Otherwise, lock it.
-                if (obj.prerequisiteObjective == null)
-                    obj.isUnlocked = true;
-                else
-                    obj.isUnlocked = false;
+                continue;
+            }
 
 
+            obj.shouldHideFromUI =
+                false;
+
+            obj.isCompleted =
+                false;
+
+
+            // ADDED:
+            // Reset runtime objective progress whenever
+            // the scene starts.
+            obj.currentProgress =
+                0;
+
+
+            if (obj.prerequisiteObjective ==
+                null)
+            {
+                obj.isUnlocked =
+                    true;
+            }
+            else
+            {
+                obj.isUnlocked =
+                    false;
             }
         }
     }
 
-    public void AddObjective(ObjectiveData newObj)
+
+    private void Start()
     {
-        if(!activeObjectives.Contains(newObj))
+        UpdateCompassTarget();
+    }
+
+
+    public void AddObjective(
+        ObjectiveData newObj)
+    {
+        if (newObj == null)
         {
-            activeObjectives.Add(newObj);
-            
-            //Set the compass target to this new objecive if it has a location
-            if(newObj.targetLocation != null) currentCompassTarget = newObj.targetLocation;
+            return;
         }
 
+
+        if (!activeObjectives.Contains(
+                newObj))
+        {
+            activeObjectives.Add(
+                newObj
+            );
+        }
+
+
+        if (newObj.prerequisiteObjective ==
+            null)
+        {
+            newObj.isUnlocked =
+                true;
+        }
+
+
+        UpdateCompassTarget();
     }
 
-    public void CompleteObjective(string objectiveID)
-    {
-        ObjectiveData targetObjective = activeObjectives.Find(o => o.objectiveID == objectiveID);
-        if (targetObjective != null && targetObjective.isUnlocked && !targetObjective.isCompleted)
-        {
-            targetObjective.isCompleted = true;
-            Debug.Log($"Objective Completed: {targetObjective.objectiveTitle}");
 
-            // Call this right here to unlock any objectives waiting on this one
-            UnlockNextObjective(targetObjective);
-            // Wait x seconds, turn hide it from the UI
-            StartCoroutine(HideObjectiveRoutine(targetObjective, hideUIin));
+    // ADDED:
+    // Used for multi-step objectives such as:
+    //
+    // Locate Military Bases 0/3
+    // Clear Bases 0/3
+    //
+    // Each trigger can add one or more points of progress.
+    public void AddObjectiveProgress(
+        string objectiveID,
+        int amount = 1)
+    {
+        ObjectiveData targetObjective =
+            activeObjectives.Find(
+                o =>
+                    o != null &&
+                    o.objectiveID ==
+                    objectiveID
+            );
+
+
+        if (targetObjective == null)
+        {
+            return;
+        }
+
+
+        if (!targetObjective.isUnlocked ||
+            targetObjective.isCompleted)
+        {
+            return;
+        }
+
+
+        targetObjective.currentProgress =
+            Mathf.Clamp(
+                targetObjective.currentProgress +
+                amount,
+                0,
+                targetObjective.requiredProgress
+            );
+
+
+        Debug.Log(
+            "Objective Progress: " +
+            targetObjective.objectiveTitle +
+            " " +
+            targetObjective.currentProgress +
+            "/" +
+            targetObjective.requiredProgress
+        );
+
+
+        // ADDED:
+        // Automatically finish the objective once
+        // the required amount has been reached.
+        if (targetObjective.currentProgress >=
+            targetObjective.requiredProgress)
+        {
+            CompleteObjective(
+                objectiveID
+            );
         }
     }
 
-    private System.Collections.IEnumerator HideObjectiveRoutine(ObjectiveData objectiveToHide, float delay)
-    {
-        Debug.Log($"Objective hide in 2 secs: {objectiveToHide.objectiveTitle}");
 
-        yield return new WaitForSeconds(delay);
-        objectiveToHide.shouldHideFromUI = true;
-    }
-    private void UnlockNextObjective(ObjectiveData completedObjective)
+    public void CompleteObjective(
+        string objectiveID)
     {
-        // Loop through your active objectives (or a master list of all game objectives)
-        foreach(var obj in activeObjectives)
+        ObjectiveData targetObjective =
+            activeObjectives.Find(
+                o =>
+                    o != null &&
+                    o.objectiveID ==
+                    objectiveID
+            );
+
+
+        if (targetObjective == null)
         {
-            if(!obj.isUnlocked && obj.prerequisiteObjective == completedObjective)
+            return;
+        }
+
+
+        if (!targetObjective.isUnlocked ||
+            targetObjective.isCompleted)
+        {
+            return;
+        }
+
+
+        // ADDED:
+        // If this is a progress-based objective and something
+        // completes it directly, make sure its progress also
+        // reaches the required amount.
+        targetObjective.currentProgress =
+            targetObjective.requiredProgress;
+
+
+        targetObjective.isCompleted =
+            true;
+
+
+        Debug.Log(
+            "Objective Completed: " +
+            targetObjective.objectiveTitle
+        );
+
+
+        UnlockNextObjective(
+            targetObjective
+        );
+
+
+        UpdateCompassTarget();
+
+
+        StartCoroutine(
+            HideObjectiveRoutine(
+                targetObjective,
+                hideUIin
+            )
+        );
+    }
+
+
+    private System.Collections.IEnumerator
+        HideObjectiveRoutine(
+            ObjectiveData objectiveToHide,
+            float delay)
+    {
+        yield return
+            new WaitForSeconds(
+                delay
+            );
+
+
+        if (objectiveToHide != null)
+        {
+            objectiveToHide
+                .shouldHideFromUI =
+                true;
+        }
+
+
+        UpdateCompassTarget();
+    }
+
+
+    private void UnlockNextObjective(
+        ObjectiveData completedObjective)
+    {
+        foreach (
+            ObjectiveData obj
+            in activeObjectives)
+        {
+            if (obj == null)
             {
-                obj.isUnlocked = true;
-                Debug.Log($"Objective Unlocked: { obj.objectiveTitle}");
+                continue;
+            }
 
+
+            if (!obj.isUnlocked &&
+                obj.prerequisiteObjective ==
+                completedObjective)
+            {
+                obj.isUnlocked =
+                    true;
+
+
+                Debug.Log(
+                    "Objective Unlocked: " +
+                    obj.objectiveTitle
+                );
             }
         }
+    }
+
+
+    private void UpdateCompassTarget()
+    {
+        currentCompassTarget =
+            null;
+
+
+        foreach (
+            ObjectiveData obj
+            in activeObjectives)
+        {
+            if (obj == null)
+            {
+                continue;
+            }
+
+
+            if (!obj.isUnlocked ||
+                obj.isCompleted ||
+                obj.shouldHideFromUI)
+            {
+                continue;
+            }
+
+
+            if (obj.targetLocation ==
+                null)
+            {
+                continue;
+            }
+
+
+            currentCompassTarget =
+                obj.targetLocation;
+
+            return;
+        }
+    }
+
+
+    public ObjectiveData
+        GetCurrentObjective()
+    {
+        foreach (
+            ObjectiveData obj
+            in activeObjectives)
+        {
+            if (obj == null)
+            {
+                continue;
+            }
+
+
+            if (obj.isUnlocked &&
+                !obj.isCompleted &&
+                !obj.shouldHideFromUI)
+            {
+                return obj;
+            }
+        }
+
+
+        return null;
     }
 }
