@@ -103,18 +103,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 
     private void DetectSpawnNavMeshArea()
     {
-        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            return;
-        }
+        int territoryArea = NavMesh.GetAreaFromName("Base");
 
-        int areaIndex = hit.mask;
-        spawnAreaMask = areaIndex;
-
-        if (agent != null)
-        {
-            agent.areaMask = spawnAreaMask;
-        }
+        if (territoryArea >= 0)
+            agent.areaMask = 1 << territoryArea;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -147,6 +139,13 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
         if (dead) return;
 
         if (PlayerTransform == null) return;
+
+        if (playerHiding)
+        {
+            currentState = State.Patrol;
+            PatrolLogic();
+            return;
+        }
 
         projectileTimer -= Time.deltaTime;
 

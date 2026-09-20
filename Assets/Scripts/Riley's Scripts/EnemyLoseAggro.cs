@@ -69,8 +69,7 @@ public class EnemyLoseAggro : MonoBehaviour
 
     private void ResumeAggroForAllEnemies()
     {
-        MonoBehaviour[] allObjects =
-            FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+        MonoBehaviour[] allObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
 
         foreach (MonoBehaviour obj in allObjects)
         {
