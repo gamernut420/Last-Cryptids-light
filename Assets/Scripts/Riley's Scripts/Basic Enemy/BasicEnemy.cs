@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class BasicEnemy : MonoBehaviour, IDamage
+public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
 {
     public enum AIType 
     { 
@@ -91,6 +91,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private bool bossEnemy = false;
     private bool dead;
+    private bool playerHidden;
 
     public void SetBossEnemy()
     {
@@ -233,6 +234,35 @@ public class BasicEnemy : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    public void LosePlayer()
+    {
+        if (dead)
+            return;
+
+        playerHidden = true;
+
+        aggroTimer = 0f;
+        attacking = false;
+        animationFinished = true;
+
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            agent.ResetPath();
+        }
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (dead)
+            return;
+
+        playerHidden = false;
     }
 
     private void UpdateAnimation()
