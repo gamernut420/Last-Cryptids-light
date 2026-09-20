@@ -135,9 +135,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -248,6 +248,7 @@ GameObject:
   - component: {fileID: 7457088123574576321}
   - component: {fileID: 4907239047242697929}
   - component: {fileID: 9004663095627259373}
+  - component: {fileID: 1872821556689520286}
   m_Layer: 6
   m_Name: Creep2
   m_TagString: Untagged
@@ -310,12 +311,13 @@ MonoBehaviour:
   coverSearchDistance: 15
   coverOffset: 1.5
   hideNavMeshSearchDistance: 4
-  attackHitbox: {fileID: 0}
-  attackRange: 4
+  attackHitbox1: {fileID: 2579376738319857548}
+  attackHitbox2: {fileID: 5898425547427087152}
+  attackRange: 2
   attackCooldown: 10
   attackHitboxDuration: 0.5
   attackRetreatDistance: 15
-  audStepsVol: 0
+  audStepsVol: 1
 --- !u!205 &4907239047242697929
 LODGroup:
   m_ObjectHideFlags: 0
@@ -362,6 +364,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!65 &1872821556689520286
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4907239047242697928}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.6, y: 3.14, z: 2.3}
+  m_Center: {x: 0, y: 1.12, z: 0}
 --- !u!1 &5491336483619138883
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,9 +520,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -590,7 +613,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
