@@ -3,17 +3,24 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAI : MonoBehaviour, IDamage
+public class EnemyStalk : MonoBehaviour, IDamage
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] Renderer model;
-    private Material modelMat;
-    Color colorOrig;
+    [SerializeField] private Animator animator;
+    [SerializeField] private LayerMask sightBlocker;
+    [SerializeField] private Camera playerCamera;
+
+    [Header("Animation Parameters")]
+    [SerializeField] private string speedParameter = "Speed";
+    [SerializeField] private string attackTrigger = "Attack";
+    [SerializeField] private string dieTrigger = "Die";
+    private string currentAnimation = "";
 
     [Header("Health")]
-    [SerializeField] private int maxHP = 25;
+    [SerializeField] private int maxHP = 50;
     private int currentHP;
 
     [Header("Stalking Distance")]
@@ -26,15 +33,12 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private int positionAttempts = 20;
 
     [Header("Player Visibility")]
-    [SerializeField] private Camera playerCamera;
     [Tooltip("Half of the player's field of view. 45 = 90 degrees total FOV.")]
     [SerializeField] private float playerViewAngle = 45f;
     [SerializeField] private float playerViewDistance = 100f;
 
-    [SerializeField] private LayerMask sightBlocker;
-
     [Header("Player Movement")]
-    [SerializeField] private float playerMovementThreshold = 0.05f;
+    [SerializeField] private float playerMovementThreshold = 0.01f;
     private Vector3 lastPlayerPosition;
     private bool playerWasMoving;
     private bool wasVisible;
@@ -46,10 +50,11 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] private float coverSearchDistance = 15f;
     [SerializeField] private float coverOffset = 1.5f;
     [Tooltip("How far to search when finding a valid NavMesh position.")]
-    [SerializeField] private float navMeshSearchDistance = 4f;
+    [SerializeField] private float hideNavMeshSearchDistance = 4f;
 
     [Header("Attack")]
-    [SerializeField] private GameObject attackHitbox;
+    [SerializeField] private GameObject attackHitbox1;
+    [SerializeField] private GameObject attackHitbox2;
     [SerializeField] private float attackRange = 4f;
     [SerializeField] private float attackCooldown = 10f;
     [SerializeField] private float attackHitboxDuration = 0.5f;
@@ -67,7 +72,8 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         Stalking,
         Hiding,
-        Attacking
+        Attacking,
+        Dead
     }
 
     private StalkerState currentState = StalkerState.Stalking;
@@ -78,6 +84,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private bool attacking = false;
     private bool hasStalkPosition;
+    private bool isDead;
 
     private Transform PlayerTransform
     {
@@ -104,19 +111,26 @@ public class EnemyAI : MonoBehaviour, IDamage
     void Start()
     {
         enemyAudio = GetComponent<EnemyAudioManager>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
         footstepAudio = GetComponent<AudioManager>();
 
-        if (attackHitbox != null)
+        if (attackHitbox1 != null)
         {
-            attackHitbox.SetActive(false);
+            attackHitbox1.SetActive(false);
+        }
+
+        if (attackHitbox2 != null)
+        {
+            attackHitbox2.SetActive(false);
         }
 
         if (playerCamera == null)
         {
-            playerCamera = Camera.main;
+            playerCamera = PlayerTransform.GetComponentInChildren<Camera>(true);
         }
 
         if (PlayerTransform == null)
@@ -125,13 +139,6 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
 
         lastPlayerPosition = PlayerTransform.position;
-
-        if (model != null)
-        {
-            modelMat = model.material;
-            colorOrig = modelMat.color;
-            modelMat.EnableKeyword("_EMMISSION");
-        }
     }
 
     /*void HearNoise(Vector3 noiseLocation, float noiseRadius)
@@ -161,14 +168,33 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     void Update()
     {
+        if (isDead)
+            return;
+
         if (PlayerTransform == null || playerCamera == null) return;
 
         UpdateTimers();
+        UpdateAnimation();
 
         bool playerIsMoving = IsPlayerMoving();
         bool playerCanSeeMe = IsPlayerLookingAtMe();
         bool attackPlayer = CanAttack();
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (currentState == StalkerState.Hiding && distanceToPlayer >= maxStalkDistance && !playerCanSeeMe)
+        {
+            currentState = StalkerState.Stalking;
+            hasStalkPosition = false;
+
+            agent.isStopped = false;
+
+            FindNewStalkPosition();
+
+            lastPlayerPosition = PlayerTransform.position;
+            playerWasMoving = playerIsMoving;
+
+            return;
+        }
 
         if (agent.velocity.sqrMagnitude > 0.3f && !isPlayingStep)
         {
@@ -203,7 +229,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             {
                 EnterHiding();
             }
-            
+
             wasVisible = true;
             agent.isStopped = false;
             lastPlayerPosition = PlayerTransform.position;
@@ -212,7 +238,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
 
         wasVisible = false;
-        
+
         if (currentState == StalkerState.Hiding)
         {
             if (!IsCameraLookingAtAI())
@@ -225,6 +251,28 @@ public class EnemyAI : MonoBehaviour, IDamage
         HandleStalking(playerIsMoving);
         lastPlayerPosition = PlayerTransform.position;
         playerWasMoving = playerIsMoving;
+    }
+
+    private void PlayAnimation(string animationName)
+    {
+        if (animator == null || string.IsNullOrEmpty(animationName))
+            return;
+
+        if (currentAnimation == animationName)
+            return;
+
+        currentAnimation = animationName;
+
+        animator.CrossFade(animationName, 0.1f);
+    }
+
+    private void UpdateAnimation()
+    {
+        if (animator == null || agent == null)
+            return;
+
+        float speed = agent.velocity.magnitude;
+        animator.SetFloat(speedParameter, speed, 0.1f, Time.deltaTime);
     }
 
     private void UpdateTimers()
@@ -275,8 +323,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private void FindNewStalkPosition()
     {
-        positionTimer = 0f;
-
         Vector3 bestPosition = transform.position;
         float bestScore = float.MinValue;
 
@@ -315,7 +361,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             currentStalkPosition = bestPosition;
             hasStalkPosition = true;
-
+            positionTimer = 0f;
             agent.isStopped = false;
             agent.SetDestination(currentStalkPosition);
         }
@@ -355,11 +401,14 @@ public class EnemyAI : MonoBehaviour, IDamage
         Vector3 direction = transform.position - PlayerTransform.position;
         direction.y = 0f;
         if (direction.sqrMagnitude < 0.01f)
+        {
             direction = -PlayerTransform.forward;
+            direction.y = 0f;
+        }
 
         direction.Normalize();
 
-        Vector3 targetPosition = PlayerTransform.position + direction * maxStalkDistance;
+        Vector3 targetPosition = transform.position + direction * maxStalkDistance;
 
         NavMeshHit hit;
         if (NavMesh.SamplePosition(targetPosition, out hit, 10f, NavMesh.AllAreas))
@@ -367,7 +416,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             currentStalkPosition = hit.position;
             hasStalkPosition = true;
             agent.isStopped = false;
-            agent.SetDestination(currentStalkPosition);
+            agent.SetDestination(hit.position);
         }
     }
 
@@ -403,9 +452,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private void FindHidePosition()
     {
-        if (IsPlayerLookingAtMe() == false)
-            return;
-
         Vector3 bestPosition = transform.position;
         float bestDistance = Mathf.Infinity;
 
@@ -474,7 +520,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     private bool PlayerCanSeePosition(Vector3 position)
     {
-        Vector3 direction = position + Vector3.up - playerCamera.transform.position;
+        Vector3 direction = position - playerCamera.transform.position;
 
         float distance = direction.magnitude;
 
@@ -498,26 +544,25 @@ public class EnemyAI : MonoBehaviour, IDamage
         if (playerCamera == null)
             return false;
 
-        Vector3 target = transform.position + Vector3.up * 1f;
+        Vector3 target = transform.position;
         Vector3 directionToStalker = target - playerCamera.transform.position;
         float distance = directionToStalker.magnitude;
 
-        if (distance > playerViewDistance) 
+        if (distance > playerViewDistance)
             return false;
 
         float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker.normalized);
+        Debug.Log($"Looking: {angle} degrees");
+        Debug.DrawRay(playerCamera.transform.position, directionToStalker.normalized * distance, Color.red);
 
-        if (angle > playerViewAngle) 
+        if (angle > playerViewAngle)
             return false;
 
         RaycastHit hit;
-        if (Physics.Raycast(playerCamera.transform.position, directionToStalker.normalized, out hit, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(playerCamera.transform.position, directionToStalker.normalized, out hit, distance, ~0, QueryTriggerInteraction.Ignore))
         {
-            if (hit.transform == transform || hit.transform.IsChildOf(transform))
-            {
-                return true;
-            }
-            return false;
+
+            return hit.transform == transform || hit.transform.IsChildOf(transform);
         }
         return false;
     }
@@ -567,6 +612,32 @@ public class EnemyAI : MonoBehaviour, IDamage
         return false;
     }
 
+    public void EnableAttackHitbox()
+    {
+        if (attackHitbox1 != null)
+        {
+            attackHitbox1.SetActive(true);
+        }
+
+        if (attackHitbox2 != null)
+        {
+            attackHitbox2.SetActive(true);
+        }
+    }
+
+    public void DisableAttackHitbox()
+    {
+        if (attackHitbox1 != null)
+        {
+            attackHitbox1.SetActive(false);
+        }
+
+        if (attackHitbox2 != null)
+        {
+            attackHitbox2.SetActive(false);
+        }
+    }
+
     private IEnumerator AttackRoutine()
     {
         attacking = true;
@@ -579,11 +650,10 @@ public class EnemyAI : MonoBehaviour, IDamage
         {
             enemyAudio?.PlayMeleeAttack();
             attackHitbox.SetActive(true);
-
-            yield return new WaitForSeconds(attackHitboxDuration);
-
-            attackHitbox.SetActive(false);
         }
+        PlayAnimation(attackTrigger);
+
+        yield return new WaitForSeconds(1.2f);
 
         attackTimer = attackCooldown;
         FindHidePosition();
@@ -633,7 +703,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         currentHP -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. HP: {currentHP} / {maxHP}");
-        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -641,21 +710,43 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
 
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
-    }
-
     private void Die()
     {
-        if (attackHitbox != null)
-            attackHitbox.SetActive(false);
+        if (isDead)
+            return;
 
+        isDead = true;
+        currentState = StalkerState.Dead;
+        attacking = false;
+        DisableAttackHitbox();
         StopAllCoroutines();
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+
+        if (animator != null)
+        {
+            animator.ResetTrigger(attackTrigger);
+            animator.SetTrigger(dieTrigger);
+            StartCoroutine(DeathRoutine());
+        }
+        else
+            Destroy(gameObject, 2f);
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        isDead = true;
+
+        if (agent != null)
+            agent.isStopped = true;
+
+        animator.ResetTrigger(attackTrigger);
+        animator.SetTrigger(dieTrigger);
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 

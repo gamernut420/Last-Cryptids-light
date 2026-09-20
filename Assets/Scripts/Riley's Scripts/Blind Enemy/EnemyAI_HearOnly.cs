@@ -88,6 +88,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             return null;
         }
     }
+
     void OnEnable()
     {
         NoiseManager.OnNoiseMade += HearNoise;
