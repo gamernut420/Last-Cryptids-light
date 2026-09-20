@@ -129,6 +129,16 @@ public class Spawner : MonoBehaviour
 
         GameObject enemy = Instantiate(prefab, location.spawnPoint.position, location.spawnPoint.rotation);
 
+        if (enemy.GetComponent<BasicEnemy>())
+        {
+            BasicEnemy enemyAI = enemy.GetComponent<BasicEnemy>();
+
+            if (enemyAI != null)
+            {
+                enemyAI.SetBossEnemy();
+            }
+        }
+
         spawnedEnemies.Add(enemy);
         totalSpawned++;
     }

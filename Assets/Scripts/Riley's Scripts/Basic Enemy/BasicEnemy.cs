@@ -197,6 +197,9 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
+        if (dead)
+            return;
+
         attackTimer -= Time.deltaTime;
         aggroTimer -= Time.deltaTime;
         throwTimer += Time.deltaTime;
