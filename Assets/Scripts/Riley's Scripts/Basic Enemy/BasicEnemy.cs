@@ -181,10 +181,14 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     
     private void DetectSpawnNavMeshArea()
     {
-        int territoryArea = NavMesh.GetAreaFromName("Base");
+        NavMeshHit hit;
 
-        if (territoryArea >= 0)
-            agent.areaMask = 1 << territoryArea;
+        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
+        {
+            int areaMask = 1 << hit.mask;
+
+            agent.areaMask = areaMask;
+        }
     }
 
     private void Update()
