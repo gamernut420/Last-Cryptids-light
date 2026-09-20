@@ -14,9 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
   prerequisiteObjective: {fileID: 11400000, guid: ca5f08c396c98ec4394337b57108168a, type: 2}
   isUnlocked: 0
+  shouldHideFromUI: 0
   objectiveID: secondary_find loot
   objectiveTitle: Locate Hidden Supply Cache
   objectiveDescription: Search the surrounding area for extra equpment before confronting
     the main theat.
   targetLocation: {fileID: 0}
   isCompleted: 0
+  displayType: 1
+  parentObjective: {fileID: 0}
+  requiredProgress: 1
+  currentProgress: 0
