@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1173541640369840569}
   - component: {fileID: 7120185494672612617}
-  - component: {fileID: 4097335549624072782}
+  - component: {fileID: 8916333435261851655}
   m_Layer: 0
   m_Name: SporePod
   m_TagString: Untagged
@@ -49,7 +49,7 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 519b92053c2c35941a28f6b0da56a08a, type: 2}
   HoldTimer: 0
   PromptMessage: Spore Pod
---- !u!136 &4097335549624072782
+--- !u!136 &8916333435261851655
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -68,10 +68,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 0.377024
+  m_Height: 2.0460675
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0.09600371, y: 0.90646493, z: -0.026972128}
 --- !u!1 &8234189309743301140
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c246d2b4e20ff034ca4dfa465c64a046, type: 2}
+  - {fileID: 2100000, guid: a0c2c49e5e344e549be3932508d3fa19, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
