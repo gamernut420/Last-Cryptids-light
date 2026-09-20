@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyStalk : MonoBehaviour, IDamage
+public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
@@ -84,6 +84,7 @@ public class EnemyStalk : MonoBehaviour, IDamage
     private bool hasStalkPosition;
     private bool isDead;
     private int spawnAreaMask;
+    private bool playerHidden;
 
     private Transform PlayerTransform
     {
@@ -245,6 +246,40 @@ public class EnemyStalk : MonoBehaviour, IDamage
         HandleStalking(playerIsMoving);
         lastPlayerPosition = PlayerTransform.position;
         playerWasMoving = playerIsMoving;
+    }
+
+    public void LosePlayer()
+    {
+        if (isDead)
+            return;
+
+        playerHidden = true;
+        attacking = false;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+        if (distanceToPlayer < maxStalkDistance)
+            MoveAwayFromPlayer();
+        else
+            agent.isStopped = true;
+
+        if (attackHitbox1 != null && attackHitbox2 != null)
+            attackHitbox1.SetActive(false);
+            attackHitbox2.SetActive(false);
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            agent.ResetPath();
+        }
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (isDead)
+            return;
+
+        agent.isStopped = false;
+        playerHidden = false;
     }
 
     private void DetectSpawnNavMeshArea()
@@ -562,8 +597,6 @@ public class EnemyStalk : MonoBehaviour, IDamage
             return false;
 
         float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker.normalized);
-        Debug.Log($"Looking: {angle} degrees");
-        Debug.DrawRay(playerCamera.transform.position, directionToStalker.normalized * distance, Color.red);
 
         if (angle > playerViewAngle)
             return false;

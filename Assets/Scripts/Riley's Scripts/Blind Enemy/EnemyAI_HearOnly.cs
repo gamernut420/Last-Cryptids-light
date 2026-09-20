@@ -1,8 +1,9 @@
 using UnityEngine.AI;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
-public class EnemyAI_HearOnly : MonoBehaviour, IDamage
+public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 {
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
@@ -73,6 +74,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private bool dead;
     private bool throwing;
     private int spawnAreaMask;
+    private bool playerHiding;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -176,6 +178,27 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    public void LosePlayer()
+    {
+        if (dead)
+            return;
+
+        DisableAllAttackHitboxes();
+        currentState = State.Patrol;
+        playerHiding = true;
+        attacking = false;
+        throwing = false;
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (dead)
+            return;
+
+        agent.isStopped = false;
+        playerHiding = false;
     }
 
     private void DisableAllAttackHitboxes()
