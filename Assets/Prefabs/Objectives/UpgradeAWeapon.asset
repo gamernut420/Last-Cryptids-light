@@ -14,8 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
   prerequisiteObjective: {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
   isUnlocked: 0
+  shouldHideFromUI: 0
   objectiveID: secondary_upgrade_a_weapon
   objectiveTitle: Upgrade A Weapon
   objectiveDescription: Upgrade a weapon at the shop.
   targetLocation: {fileID: 0}
   isCompleted: 0
+  displayType: 2
+  parentObjective: {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
+  requiredProgress: 1
+  currentProgress: 0

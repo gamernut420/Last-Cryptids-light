@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
+  m_Name: ClearOutMilitaryBases
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
+  prerequisiteObjective: {fileID: 0}
+  isUnlocked: 1
+  shouldHideFromUI: 0
+  objectiveID: primary_clear_bases
+  objectiveTitle: Locate Miliary Base 2
+  objectiveDescription: Find the Military Base 2
+  targetLocation: {fileID: 0}
+  isCompleted: 0
+  displayType: 0
+  parentObjective: {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
+  requiredProgress: 3
+  currentProgress: 0
