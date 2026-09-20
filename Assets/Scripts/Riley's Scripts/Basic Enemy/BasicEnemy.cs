@@ -181,7 +181,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            Debug.LogWarning(gameObject.name + " could not find a NavMesh at spawn position.");
             return;
         }
 
@@ -197,6 +196,9 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private void Update()
     {
         if (PlayerTransform == null) return;
+
+        if (dead)
+            return;
 
         attackTimer -= Time.deltaTime;
         aggroTimer -= Time.deltaTime;
