@@ -88,6 +88,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     Color colorOrig;
     private bool bossEnemy = false;
+    private EnemyAudioManager enemyAudio;
 
     public void SetBossEnemy()
     {
@@ -121,6 +122,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private void Start()
     {
+        enemyAudio = GetComponent<EnemyAudioManager>();
         RandomizeEnemyType();
         SetEnemyColor();
         footstepAudio = GetComponent<AudioManager>();
@@ -358,6 +360,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         FaceTarget();
 
         yield return new WaitForSeconds(0.2f);
+        enemyAudio?.PlayMeleeAttack();
 
         if (attackHitbox != null)
         {
@@ -396,6 +399,8 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         GameObject thrownObj = Instantiate(projectilePrefab, throwPoint.position, Quaternion.LookRotation(launchVelocity));
 
+        enemyAudio?.PlayProjectileAttack();
+        
         Rigidbody rb = thrownObj.GetComponent<Rigidbody>();
 
         if (rb != null)

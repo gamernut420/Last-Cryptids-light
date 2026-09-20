@@ -392,7 +392,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1948062332732691307}
   - component: {fileID: 8674626437349447780}
+  - component: {fileID: 2517001574494654358}
   - component: {fileID: 142797487843416144}
+  - component: {fileID: -1405042679700611062}
   m_Layer: 0
   m_Name: Blind_Enemy
   m_TagString: Untagged
@@ -447,8 +449,9 @@ MonoBehaviour:
   investigationSpeed: 10
   patrolRadius: 15
   attackRadius: 3
-  attackHitbox: {fileID: 8135409748197838584}
-  attackHitboxDuration: 0.5
+  punch1Hitbox: {fileID: 0}
+  punch2Hitbox: {fileID: 0}
+  punch3Hitbox: {fileID: 0}
   attackCooldown: 1
   playerLayer:
     serializedVersion: 2
@@ -460,6 +463,34 @@ MonoBehaviour:
   projectileLifetime: 2
   projectileSpeed: 25
   currentState: 0
+--- !u!114 &2517001574494654358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3009523618388480875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887020b0897ed6349b6c5326795e8348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAudioManager
+  audioSource: {fileID: -1405042679700611062}
+  meleeAttackSounds:
+  - {fileID: 8300000, guid: ac6034ade498bb94b87620cdf6eac48b, type: 3}
+  - {fileID: 8300000, guid: 8ebcb6234d419344daa712ba65bb3798, type: 3}
+  projectileAttackSounds:
+  - {fileID: 8300000, guid: 5055df1d6078baa4bab8f035a8243090, type: 3}
+  - {fileID: 8300000, guid: 97bad23c149b8d14e9ccd2dd2a7f51e9, type: 3}
+  energyFieldAttackSounds: []
+  summonSounds: []
+  teleportSounds: []
+  phaseChangeSounds: []
+  hurtSounds: []
+  deathSounds: []
+  attackVolume: 0.5
+  hurtVolume: 0.5
+  deathVolume: 0.5
 --- !u!195 &142797487843416144
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -482,6 +513,103 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!82 &-1405042679700611062
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3009523618388480875}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 7188904818081384389, guid: af87610b33fc88146903fc286a1a3d2e, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &3032994791103508357
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,6 +1524,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72898f4fedc1f2942835f1e9b366a744, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimationEvents
+  punch1Hitbox: {fileID: 0}
+  punch2Hitbox: {fileID: 0}
+  punch3Hitbox: {fileID: 0}
 --- !u!95 &3004836884397121062
 Animator:
   serializedVersion: 7

@@ -3,14 +3,18 @@ using UnityEngine;
 public class BossAnimationEvents : MonoBehaviour
 {
     private FinalBoss boss;
+    private EnemyAudioManager enemyAudio;
 
     private void Awake()
     {
         boss = GetComponentInParent<FinalBoss>();
+        enemyAudio = GetComponentInParent<EnemyAudioManager>();
     }
 
     public void MeleeHit()
     {
+        
+
         if (boss != null)
             boss.MeleeHit();
     }
@@ -23,6 +27,7 @@ public class BossAnimationEvents : MonoBehaviour
 
     public void FireBeam()
     {
+        
         if (boss != null)
             boss.FireBeam();
     }

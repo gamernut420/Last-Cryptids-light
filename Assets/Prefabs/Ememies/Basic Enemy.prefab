@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1348687183633318763}
   - component: {fileID: 7364862128440608332}
+  - component: {fileID: -7587514033386211836}
   - component: {fileID: 1463716391572757016}
   - component: {fileID: 8691781997894555558}
   - component: {fileID: 6921717133420145470}
@@ -115,6 +116,34 @@ MonoBehaviour:
   usePlayerRigidbody: 1
   estimatedPlayerSpeed: 5
   audStepsVol: 0.5
+--- !u!114 &-7587514033386211836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7071000206556148062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887020b0897ed6349b6c5326795e8348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAudioManager
+  audioSource: {fileID: 8691781997894555558}
+  meleeAttackSounds:
+  - {fileID: 8300000, guid: ac6034ade498bb94b87620cdf6eac48b, type: 3}
+  - {fileID: 8300000, guid: 8ebcb6234d419344daa712ba65bb3798, type: 3}
+  projectileAttackSounds:
+  - {fileID: 8300000, guid: 5055df1d6078baa4bab8f035a8243090, type: 3}
+  - {fileID: 8300000, guid: 97bad23c149b8d14e9ccd2dd2a7f51e9, type: 3}
+  energyFieldAttackSounds: []
+  summonSounds: []
+  teleportSounds: []
+  phaseChangeSounds: []
+  hurtSounds: []
+  deathSounds: []
+  attackVolume: 0.5
+  hurtVolume: 0.5
+  deathVolume: 0.5
 --- !u!114 &1463716391572757016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,10 +188,10 @@ AudioSource:
   m_GameObject: {fileID: 7071000206556148062}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 7188904818081384389, guid: af87610b33fc88146903fc286a1a3d2e, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

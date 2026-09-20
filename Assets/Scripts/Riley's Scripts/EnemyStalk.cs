@@ -60,6 +60,8 @@ public class EnemyAI : MonoBehaviour, IDamage
     [SerializeField] float audStepsVol;
     private AudioManager footstepAudio;
     bool isPlayingStep;
+    private EnemyAudioManager enemyAudio;
+
 
     private enum StalkerState
     {
@@ -101,6 +103,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
     void Start()
     {
+        enemyAudio = GetComponent<EnemyAudioManager>();
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
@@ -574,6 +577,7 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         if (attackHitbox != null)
         {
+            enemyAudio?.PlayMeleeAttack();
             attackHitbox.SetActive(true);
 
             yield return new WaitForSeconds(attackHitboxDuration);

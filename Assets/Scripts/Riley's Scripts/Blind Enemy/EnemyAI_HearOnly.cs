@@ -72,6 +72,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private bool dead;
     private bool throwing;
+    private EnemyAudioManager enemyAudio;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -100,6 +101,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        enemyAudio = GetComponent<EnemyAudioManager>();
         agent = GetComponent<NavMeshAgent>();
 
         if (animator == null)
@@ -312,7 +314,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         Quaternion spawnRotation = projectileSpawnPoint.transform.rotation;
         if (handBall != null)
             handBall.enabled = false;
-
+        enemyAudio?.PlayProjectileAttack();
         ThrowProjectile(spawnPosition, spawnRotation);
         StartCoroutine(ProjectileReturnTimeout());
     }
@@ -589,6 +591,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 PlayAnimation("Demon|Punch3");
                 break;
         }
+        enemyAudio?.PlayMeleeAttack();
 
         yield return new WaitUntil(() => animationFinished);
 
