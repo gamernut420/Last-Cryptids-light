@@ -662,28 +662,18 @@ public class BasicEnemy : MonoBehaviour, IDamage
             agent.velocity = Vector3.zero;
         }
 
-        if (animator != null)
-        {
-            animator.SetTrigger("Death");
-        }
-
         StartCoroutine(DestroyAfterDeath());
     }
 
     private IEnumerator DestroyAfterDeath()
     {
-        if (animator != null)
-        {
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Death"));
-            yield return new WaitUntil(() =>
-            {
-                AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-                return state.normalizedTime >= 1f;
-            });
-            animator.speed = 0f;
-        }
+        if (agent != null)
+            agent.isStopped = true;
 
-        yield return new WaitForSeconds(2f);
+        animator.ResetTrigger("sword attack");
+        animator.ResetTrigger("shoots gun_2");
+        animator.SetTrigger("Death");
+        yield return new WaitForSeconds(4f);
         Destroy(gameObject);
     }
 
