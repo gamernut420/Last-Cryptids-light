@@ -126,7 +126,6 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     private void Start()
     {
         footstepAudio = GetComponent<AudioManager>();
-        DetectSpawnNavMeshArea();
         RandomizeEnemyType();
 
         if (animator == null)
@@ -161,6 +160,8 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
             agent = GetComponent<NavMeshAgent>();
         }
 
+        DetectSpawnNavMeshArea();
+
         if (agent != null)
         {
             agent.speed = speed;
@@ -180,18 +181,10 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     
     private void DetectSpawnNavMeshArea()
     {
-        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            return;
-        }
+        int territoryArea = NavMesh.GetAreaFromName("Base");
 
-        int areaIndex = hit.mask;
-        spawnAreaMask = areaIndex;
-
-        if (agent != null)
-        {
-            agent.areaMask = spawnAreaMask;
-        }
+        if (territoryArea >= 0)
+            agent.areaMask = 1 << territoryArea;
     }
 
     private void Update()
@@ -200,14 +193,21 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
 
         if (dead)
             return;
-
+        
+        UpdateAnimation();
         attackTimer -= Time.deltaTime;
         aggroTimer -= Time.deltaTime;
         throwTimer += Time.deltaTime;
 
-        CalculatePlayerVelocity();
-        UpdateAnimation();
+        if (playerHidden)
+        {
+            Roam();
+            animationFinished = false;
+            return;
+        }
 
+        CalculatePlayerVelocity();
+        
         if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);

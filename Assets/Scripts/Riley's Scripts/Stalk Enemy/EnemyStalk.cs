@@ -177,6 +177,11 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
         bool attackPlayer = CanAttack();
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
+        if (playerHidden)
+        {
+            playerIsMoving = false;
+        }
+
         if (currentState == StalkerState.Hiding && distanceToPlayer >= maxStalkDistance && !playerCanSeeMe)
         {
             currentState = StalkerState.Stalking;
