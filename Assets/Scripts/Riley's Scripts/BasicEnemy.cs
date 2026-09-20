@@ -45,7 +45,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float attackTimer;
     private bool attacking;
 
-    [Header("Range")]
+    /*[Header("Range")]
 
     [Header("Health")]
     [SerializeField] private float rangeMaxHP = 30f;
@@ -71,7 +71,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float throwTimer;
     private Rigidbody playerRb; 
     private Vector3 lastPlayerPosition;
-    private Vector3 calculatedPlayerVelocity;
+    private Vector3 calculatedPlayerVelocity;*/
 
     private float roamTimer;
     private Vector3 roamPosition;
@@ -85,6 +85,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     [SerializeField] private float audStepsVol;
     private bool isPlayingStep;
     private AudioManager footstepAudio;
+    private int spawnAreaMask;
 
     Color colorOrig;
     private bool bossEnemy = false;
@@ -106,7 +107,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
     }
 
-    private void RandomizeEnemyType()
+    /*private void RandomizeEnemyType()
     {
         float randomRoll = Random.Range(0, 100);
         if (randomRoll < 60)
@@ -117,24 +118,24 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             aiType = AIType.Range;
         }
-    }
+    }*/
 
     private void Start()
     {
-        RandomizeEnemyType();
-        SetEnemyColor();
+        aiType = AIType.Melee;
         footstepAudio = GetComponent<AudioManager>();
+        DetectSpawnNavMeshArea();
 
         if (aiType == AIType.Melee)
         {
             maxHP = meleeMaxHP;
             speed = moveSpeed;
         }
-        else
+        /*else
         {
             maxHP = rangeMaxHP;
             speed = RmoveSpeed;
-        }
+        }*/
         //added by sean
         DifficultyManager difficultyManager = DifficultyManager.GetInstance();
         if (difficultyManager != null)
@@ -162,10 +163,27 @@ public class BasicEnemy : MonoBehaviour, IDamage
             attackHitbox.SetActive(false);
         }    
 
-        if (PlayerTransform != null)
+        /*if (PlayerTransform != null)
         {
             playerRb = PlayerTransform.GetComponent<Rigidbody>();
             lastPlayerPosition = PlayerTransform.position;
+        }*/
+    }
+    
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            Debug.LogWarning(gameObject.name + " could not find a NavMesh at spawn position.");
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
         }
     }
 
@@ -175,9 +193,9 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         attackTimer -= Time.deltaTime;
         aggroTimer -= Time.deltaTime;
-        throwTimer += Time.deltaTime;
+        //throwTimer += Time.deltaTime;
 
-        CalculatePlayerVelocity();
+        //CalculatePlayerVelocity();
 
         if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
@@ -187,11 +205,11 @@ public class BasicEnemy : MonoBehaviour, IDamage
             {
                 MeleeBehavior(distanceToPlayer);
             }
-            else
+            /*else
             {
                 FaceTarget();
                 RangedBehavior(distanceToPlayer);
-            }
+            }*/
         }
         else
         {
@@ -204,29 +222,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
             {
                 StartCoroutine(PlayStep());
             }
-        }
-    }
-
-    void SetEnemyColor()
-    {
-        if (model != null)
-        {
-            modelMat = model.material;
-            modelMat.EnableKeyword("_EMISSION");
-
-            switch (aiType)
-            {
-                case AIType.Melee:
-                    modelMat.color = Color.blue;
-                    modelMat.SetColor("_EmissionColor", Color.blue);
-                    break;
-                case AIType.Range:
-                    modelMat.color = Color.yellow;
-                    modelMat.SetColor("_EmissionColor", Color.yellow);
-                    break;
-            }
-
-            colorOrig = modelMat.color;
         }
     }
 
@@ -270,11 +265,11 @@ public class BasicEnemy : MonoBehaviour, IDamage
             currentDetectionRange = detectionRange;
             currentFieldOfView = fieldOfView;
         }
-        else
+        /*else
         {
             currentDetectionRange = RdetectionRange;
             currentFieldOfView = RfieldOfView;
-        }
+        }*/
 
         Vector3 directionToPlayer = PlayerTransform.position - transform.position;
 
@@ -318,7 +313,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
     }
 
-    private void RangedBehavior(float distanceToPlayer)
+    /*private void RangedBehavior(float distanceToPlayer)
     {
         if (attacking) return;
 
@@ -339,7 +334,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             RangedAttack();
         }
-    }
+    }*/
 
     private void Attack()
     {
@@ -373,7 +368,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         attacking = false;
     }
 
-    private void RangedAttack()
+    /*private void RangedAttack()
     {
         if (throwTimer < throwCooldown) return;
 
@@ -515,7 +510,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
             agent.isStopped = false;
             agent.SetDestination(hit.position);
         }
-    }
+    }*/
 
     private void StopMovement()
     {
@@ -558,7 +553,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
     {
         currentHP -= amount;
         Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
-        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -580,15 +574,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
 
         Destroy(gameObject);
-    }
-
-    IEnumerator flashRed()
-    {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
     }
 
     private void OnDrawGizmosSelected()
