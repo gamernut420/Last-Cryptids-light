@@ -2243,7 +2243,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2761643105830822892, guid: b984303294408c747b9a9f050dc14c0f, type: 3}
       insertIndex: 2
       addedObject: {fileID: 2048386559}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1161637012829950498, guid: b984303294408c747b9a9f050dc14c0f, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 2431414112261799888}
   m_SourcePrefab: {fileID: 100100000, guid: b984303294408c747b9a9f050dc14c0f, type: 3}
 --- !u!224 &2431414112261799884 stripped
 RectTransform:
@@ -2260,6 +2263,26 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2761643105830822892, guid: b984303294408c747b9a9f050dc14c0f, type: 3}
   m_PrefabInstance: {fileID: 2431414112261799883}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2431414112261799887 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1161637012829950498, guid: b984303294408c747b9a9f050dc14c0f, type: 3}
+  m_PrefabInstance: {fileID: 2431414112261799883}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2431414112261799888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2431414112261799887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05f397c4e5b1af64aac7f5225f856e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicVolumeInitializer
+  audioMixer: {fileID: 24100000, guid: af87610b33fc88146903fc286a1a3d2e, type: 2}
+  exposedParameter: MusicVolume
+  defaultVolume: 0.5
 --- !u!1001 &2826790581309476841
 PrefabInstance:
   m_ObjectHideFlags: 0
