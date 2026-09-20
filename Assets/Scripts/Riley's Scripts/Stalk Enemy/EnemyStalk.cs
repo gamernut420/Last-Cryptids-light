@@ -83,6 +83,7 @@ public class EnemyStalk : MonoBehaviour, IDamage
     private bool attacking = false;
     private bool hasStalkPosition;
     private bool isDead;
+    private int spawnAreaMask;
 
     private Transform PlayerTransform
     {
@@ -111,6 +112,7 @@ public class EnemyStalk : MonoBehaviour, IDamage
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
+        DetectSpawnNavMeshArea();
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
@@ -129,11 +131,6 @@ public class EnemyStalk : MonoBehaviour, IDamage
         if (playerCamera == null)
         {
             playerCamera = PlayerTransform.GetComponentInChildren<Camera>(true);
-        }
-
-        if (PlayerTransform == null)
-        {
-            Debug.LogWarning("Stalker AI could not find the player.");
         }
 
         lastPlayerPosition = PlayerTransform.position;
@@ -222,7 +219,6 @@ public class EnemyStalk : MonoBehaviour, IDamage
 
         if (playerCanSeeMe && !attacking)
         {
-            Debug.Log("Player is looking at stalker");
             if (!wasVisible || ReachedStalkPosition())
             {
                 EnterHiding();
@@ -249,6 +245,22 @@ public class EnemyStalk : MonoBehaviour, IDamage
         HandleStalking(playerIsMoving);
         lastPlayerPosition = PlayerTransform.position;
         playerWasMoving = playerIsMoving;
+    }
+
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
     }
 
     private void PlayAnimation(string animationName)

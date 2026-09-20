@@ -129,6 +129,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
+    private int spawnAreaMask; 
 
     private Transform PlayerTransform
     {
@@ -144,12 +145,27 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentHP = maxHP;
-
+        DetectSpawnNavMeshArea();
 
         // ADDED FOR BOSS HEALTH BAR:
         // Show the boss HUD and initialize it at full health.

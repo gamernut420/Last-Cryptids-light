@@ -72,6 +72,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private bool dead;
     private bool throwing;
+    private int spawnAreaMask;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -98,10 +99,27 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         NoiseManager.OnNoiseMade -= HearNoise;
     }
 
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        DetectSpawnNavMeshArea();
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
