@@ -12398,7 +12398,7 @@ MonoBehaviour:
   maxEnemiesAlive: 400
   spawnRate: 1
   maxTotalSpawns: 300
-  randomEnemyType: 0
+  randomEnemyType: 1
   randomSpawnLocation: 0
   useTrigger: 0
   triggerOnce: 0
@@ -26913,6 +26913,42 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4649760456550405131, guid: eb1134e33d1244c4b809196e44bac7cc, type: 3}
   m_PrefabInstance: {fileID: 5880399197268091028}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1742807682 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1097291034308284224, guid: 1187f8da9114257418f09ff8539353de, type: 3}
+  m_PrefabInstance: {fileID: 6783216252554682888}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1742807688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742807682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eda7b76c7cc9814690f1be2aa5bafdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLoseAggro
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!208 &1742807689
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742807682}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!43 &1747725804
 Mesh:
   m_ObjectHideFlags: 0
@@ -51930,6 +51966,12 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1097291034308284224, guid: 1187f8da9114257418f09ff8539353de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1742807689}
+    - targetCorrespondingSourceObject: {fileID: 1097291034308284224, guid: 1187f8da9114257418f09ff8539353de, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1742807688}
     - targetCorrespondingSourceObject: {fileID: 8685596383720243740, guid: 1187f8da9114257418f09ff8539353de, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
