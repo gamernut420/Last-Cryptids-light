@@ -646,7 +646,7 @@ public class EnemyStalk : MonoBehaviour, IDamage
 
         PlayAnimation(attackTrigger);
 
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(1.5f);
 
         attackTimer = attackCooldown;
         FindHidePosition();
