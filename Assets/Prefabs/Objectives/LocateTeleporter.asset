@@ -12,9 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a8c0f6c8e561be4d93472fd912c134b, type: 3}
   m_Name: LocateTeleporter
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveData
-  objectiveID: primary_find_lost
+  prerequisiteObjective: {fileID: 0}
+  isUnlocked: 1
+  shouldHideFromUI: 0
+  objectiveID: interactTeleporter
   objectiveTitle: Locate Teleporter
   objectiveDescription: Search the unknown Location for the teleporter to Eliminate
     the threat on the other side.
   targetLocation: {fileID: 0}
-  isCompleted: 1
+  isCompleted: 0
+  displayType: 0
+  parentObjective: {fileID: 0}
+  requiredProgress: 1
+  currentProgress: 0

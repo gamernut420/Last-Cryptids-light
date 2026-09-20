@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -16,47 +17,76 @@ public class UpgradeOption : MonoBehaviour
 
     [SerializeField] Button UpgradeButton;
 
-    UnityAction<int> PurchaseFNC;
+    bool isMaxed = false;
 
-    Func<int> UpgradeCountFNC;
-    Func<int> PriceGetFNC;
+    UpgradeFuncs FunctionCalls;
 
     public struct UpgradeFuncs
     {
+        public UnityAction<int> PurchaseFNC;
+
         public UnityAction<int> Modifier;
 
         public Func<int> CountGetter;
 
-        public Func<int> PriceGetter;
+        public int Price;
+
+        public int MaxCount;
     }
 
-    public void Bind(string name, UnityAction<int> purchaseFunc, Func<int> upgraderCounter = null, Func<int> priceGetter = null)
+    public void Bind(string name, UnityAction<int> purchaseFunc, UpgradeFuncs functions)
     {
         UpgradeName.text = name;
 
-        PurchaseFNC = purchaseFunc;
+        FunctionCalls = functions;
 
-        UpgradeCountFNC = upgraderCounter;
-        PriceGetFNC = priceGetter;
+        FunctionCalls.PurchaseFNC = purchaseFunc;
 
         Refresh();
     }
 
     void Refresh()
     {
-        if(UpgradeCountFNC != null)
+        if(FunctionCalls.CountGetter != null)
         {
-            UpgradeCounter.text = UpgradeCountFNC.Invoke().ToString();
-
-            if (PriceGetFNC != null)
+            if(FunctionCalls.MaxCount > FunctionCalls.CountGetter.Invoke())
             {
-                Price.text = $"Price: {(PriceGetFNC() + (UpgradeCountFNC.Invoke() * PriceGetFNC()))}";
+                UpgradeCounter.text = FunctionCalls.CountGetter.Invoke().ToString();
+
+                Price.text = $"Price: {GetPrice()}";
+            }
+            else
+            {
+                UpgradeCounter.text = "Max";
+
+                Price.text = String.Empty;
+
+                isMaxed = true;
+
+                SetBuyable(false);
             }
         }
     }
 
+    public int GetPrice()
+    {
+        int cost = 1;
+
+        if (FunctionCalls.CountGetter != null)
+        {
+            cost = (FunctionCalls.Price + (FunctionCalls.CountGetter.Invoke() * FunctionCalls.Price));
+        }
+
+        return cost;
+    }
+
     public void SetBuyable(bool buyable)
     {
+        if (isMaxed == true)
+        {
+            buyable = false;
+        }
+
         BackgroundPanel.color = buyable ? DefaultColor : InaffordableColor;
 
         UpgradeButton.interactable = buyable;
@@ -64,9 +94,11 @@ public class UpgradeOption : MonoBehaviour
 
     public void OnClicked()
     {
-        if(PurchaseFNC != null)
+        if(FunctionCalls.Modifier != null && FunctionCalls.PurchaseFNC != null)
         {
-            PurchaseFNC.Invoke(1);
+            FunctionCalls.PurchaseFNC(GetPrice());
+
+            FunctionCalls.Modifier.Invoke(1);
         }
 
         Refresh();

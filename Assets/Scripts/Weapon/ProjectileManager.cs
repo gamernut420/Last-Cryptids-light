@@ -96,7 +96,7 @@ public class ProjectileManager : MonoBehaviour
             }
             
             //projectile collided
-            if (Physics.Linecast(proj.startPos, endPos, out hit)) 
+            if (Physics.Linecast(proj.startPos, endPos, out hit) && hit.collider.gameObject != gameObject) 
             {
                 if (proj.tracer != null)
                 {
@@ -108,7 +108,7 @@ public class ProjectileManager : MonoBehaviour
                     Debug.Log(hit.collider.gameObject.name);
                 }
 
-                if(proj.iproj != null)
+                if (proj.iproj != null)
                 {
                     proj.iproj.Impact(hit);
                 }

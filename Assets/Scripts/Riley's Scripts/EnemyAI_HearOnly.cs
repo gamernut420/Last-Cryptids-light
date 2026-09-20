@@ -7,16 +7,16 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     [SerializeField] Renderer model;
     private Material modelMat;
 
-    [Header("Health")]
-    [SerializeField] private int maxHP = 50;
-    private int currentHP;
-
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
 
     [Header("Audio")]
     [Range(0, 1)][SerializeField] float audStepsVol;
+
+    [Header("Health")]
+    [SerializeField] private int maxHP = 50;
+    private int currentHP;
 
     [Header("Movement & Combat")]
     public float attackSpeed = 10f;
@@ -89,7 +89,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        currentHP = maxHP;
 
         CheckEnemyMaterial();
         MoveToRandomPoint();
@@ -403,7 +402,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (currentHP <= 0) return;
 
         currentHP -= amount;
-        Debug.Log("Blind Enemy Health: " + currentHP + "/" + maxHP);
         StartCoroutine(flashRed());
 
         if (currentHP <= 0)
@@ -416,24 +414,18 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
             lastHeardPosition = PlayerTransform.position;
             memoryTimer = timeToForgetSound;
             currentState = State.InvestigateSound;
-            AttackLogic();
             SetEarsAlert(true);
         }    
     }
 
     private void Die()
     {
+        Debug.Log("Blind Enemy Defeated!");
         if (attackHitbox != null)
         {
             attackHitbox.SetActive(false);
         }
-
         Destroy(gameObject);
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance.AddKill();
-        }
     }
 
     IEnumerator flashRed()

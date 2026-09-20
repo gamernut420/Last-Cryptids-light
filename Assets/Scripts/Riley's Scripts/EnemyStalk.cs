@@ -51,8 +51,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     [Header("Attack")]
     [SerializeField] private GameObject attackHitbox;
     [SerializeField] private float attackRange = 4f;
-    [SerializeField] private float attackCooldown = 5f;
-    [SerializeField] private float attackWindup = 0.25f;
+    [SerializeField] private float attackCooldown = 10f;
     [SerializeField] private float attackHitboxDuration = 0.5f;
     [SerializeField] private float attackRetreatDistance = 15f;
 
@@ -654,11 +653,6 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         StopAllCoroutines();
         Destroy(gameObject);
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance.AddKill();
-        }
     }
 
     private void OnDrawGizmosSelected()

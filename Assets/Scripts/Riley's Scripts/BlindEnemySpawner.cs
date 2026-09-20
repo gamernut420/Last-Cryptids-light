@@ -4,7 +4,7 @@ using UnityEngine.AI;
 public class BlindEnemySpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    [SerializeField] private GameObject enemyBlindPrefab;
+    [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private float spawnDistance = 30f;
     [SerializeField] private float navMeshSearchRadius = 5f;
 
@@ -74,7 +74,7 @@ public class BlindEnemySpawner : MonoBehaviour
 
     private void SpawnBlindEnemy()
     {
-        if (enemyBlindPrefab == null)
+        if (enemyPrefab == null)
         {
             Debug.LogWarning($"[TriggerEnemySpawner] ({gameObject.name}) Missing Prefab");
             return;
@@ -95,7 +95,7 @@ public class BlindEnemySpawner : MonoBehaviour
                 ? Quaternion.LookRotation(directionToTarget)
                 : Quaternion.identity;
 
-            Instantiate(enemyBlindPrefab, finalSpawnPoint, spawnRotation);
+            Instantiate(enemyPrefab, finalSpawnPoint, spawnRotation);
             DisableTrigger();
         }
     }

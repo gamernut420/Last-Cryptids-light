@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class gameManager : MonoBehaviour
 {
@@ -16,15 +17,12 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject hud;
     [SerializeField] GameObject countdownText;
     [SerializeField] GameObject ItemHotbar;
-    [SerializeField] TextMeshProUGUI ActiveWeaponText;
     [SerializeField] GameObject ReloadPrompt;
     [SerializeField] GameObject ShopUI;
     [SerializeField] GameObject UpgradeUI;
 
     [Header("UI Tracking")]
     [SerializeField] TextMeshProUGUI killCounterText;
-
-    [Header("UI Tracking")]
     [SerializeField] private GameObject exposurePromptObject;
     [SerializeField] private float promptDuration;
     private float promptTimer = 0f;
@@ -40,6 +38,9 @@ public class gameManager : MonoBehaviour
     public Image playerHPBar;
     public GameObject damageFlashPanel;
 
+    [Header("Stamina")]
+   // [SerializeField] GameObject staminaUI;
+    [SerializeField] Image staminaBar;
 
     [Header("Auto Set Variables (No need to touch)")]
     public GameObject beacon;
@@ -146,8 +147,6 @@ public class gameManager : MonoBehaviour
 
     }
 
-
-
     void Update()
     {
         if (Input.GetButtonDown("Cancel"))
@@ -230,8 +229,6 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-
-
     public void updateGameGoal(int amount)
     {
         // Update number of waver till you win
@@ -257,7 +254,6 @@ public class gameManager : MonoBehaviour
         isExtracting = true;
     }
 
-
     // completed beacon to win
     public void extractionWin()
     {
@@ -267,7 +263,6 @@ public class gameManager : MonoBehaviour
         menuActive.SetActive(true);
     }
 
-
     public void youLose()
     {
         statePause();
@@ -275,7 +270,6 @@ public class gameManager : MonoBehaviour
         hud.SetActive(false);
         menuActive.SetActive(true);
     }
-
 
     // killed all ai to win
     public void ModifyEnemyCount(int ammount)
@@ -293,6 +287,7 @@ public class gameManager : MonoBehaviour
    public void AddKill()
     {
         killCount++;
+
         UpateKillUI();
     }
 
@@ -332,13 +327,27 @@ public class gameManager : MonoBehaviour
 
                     if(gadget != null)
                     {
-                        if (i == slotInUse)
+                        if(gadget.GetItemInfo()  != null)
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                            if (i == slotInUse)
+                            {
+                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.darkRed);
+                            }
+                            else
+                            {
+                                slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, Color.gray2);
+                            }
                         }
                         else
                         {
-                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                            if (i == slotInUse)
+                            {
+                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.darkRed);
+                            }
+                            else
+                            {
+                                slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, Color.gray2);
+                            }
                         }
                     }
                 }
@@ -348,11 +357,6 @@ public class gameManager : MonoBehaviour
                 slots[i].UpdateSlot(null, null, 0, Color.gray2);
             }
         }
-    }
-
-    public void UpdateActiveWep(string text)
-    {
-        ActiveWeaponText.text = text;
     }
 
     public void ShowReloadPrompt(bool show)
@@ -386,7 +390,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void ShowShopUI(bool show, Vector3 _spawnLocation)
+    public void ShowShopUI(bool show, List<ShopItem> items, Vector3 _spawnLocation)
     {
         if (show)
         {
@@ -399,7 +403,7 @@ public class gameManager : MonoBehaviour
 
         ShopUI.SetActive(show);
 
-        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), _spawnLocation);
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), items, _spawnLocation);
     }
 
     public void ShowUpgradeUI(bool show)
@@ -414,5 +418,12 @@ public class gameManager : MonoBehaviour
         }
 
         UpgradeUI.SetActive(show);
+    }
+
+    public void UpdateStaminaBar(float ammount, bool show)
+    {
+       // staminaUI.SetActive(show);
+
+        staminaBar.fillAmount = ammount;
     }
 }

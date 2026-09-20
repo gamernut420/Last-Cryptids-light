@@ -11,15 +11,16 @@ public class AmbiencePlaylist : MonoBehaviour
     private bool playlistStarted;
     private bool playlistPaused;
     private float pausedPlaybackTime;
+    private float transitionVolume = 1f;
 
-   private void Awake()
+    private void Awake()
     {
         ambienceSource = GetComponent<AudioSource>();
-
         ambienceSource.playOnAwake = false; 
         ambienceSource.loop = false;
         ambienceSource.spatialBlend = 0f;
-        ambienceSource.volume = volume;
+        //ambienceSource.volume = volume;
+        ApplySourceVolume();
         
     }
 
@@ -77,6 +78,25 @@ public class AmbiencePlaylist : MonoBehaviour
         playlistPaused = false;
         currentClipIndex = 0;
         ambienceSource.Stop();
+    }
+
+    public void SetTransitionVolume(float normalizedVolume)
+    {
+        transitionVolume = Mathf.Clamp01(normalizedVolume);
+        ApplySourceVolume();
+    }
+
+    public float GetTransitionVolume()
+    {
+        return transitionVolume;
+    }
+
+    private void ApplySourceVolume()
+    {
+        if (ambienceSource != null)
+        {
+            ambienceSource.volume = volume * transitionVolume;
+        }
     }
 
     private void PlayCurrentClip()
