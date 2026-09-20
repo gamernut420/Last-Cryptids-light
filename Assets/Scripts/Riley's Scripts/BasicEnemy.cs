@@ -130,7 +130,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
         footstepAudio = GetComponent<AudioManager>();
         DetectSpawnNavMeshArea();
         RandomizeEnemyType();
-        SetEnemyColor();
         footstepAudio = GetComponent<AudioManager>();
         DetectSpawnNavMeshArea();
         RandomizeEnemyType();
