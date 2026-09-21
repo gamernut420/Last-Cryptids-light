@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 7995971142281544838}
   - component: {fileID: 1289633720426159657}
   - component: {fileID: 7049393166881706612}
+  - component: {fileID: -1389749078899055627}
   - component: {fileID: 6254754168934463905}
   - component: {fileID: 5647786696481377497}
   - component: {fileID: 9100778833965841976}
@@ -309,10 +310,37 @@ MonoBehaviour:
   maxHP: 0
   currentHP: 0
   currentSpeed: 0
-  currentTarget: {fileID: 0}
   audStepsVol: 1
   leftEyeRenderer: {fileID: 1567619509603580662}
   rightEyeRenderer: {fileID: 7223063774541147314}
+--- !u!114 &-1389749078899055627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7938090647407202942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 887020b0897ed6349b6c5326795e8348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAudioManager
+  audioSource: {fileID: 3910353465737770630}
+  meleeAttackSounds:
+  - {fileID: 8300000, guid: ac6034ade498bb94b87620cdf6eac48b, type: 3}
+  - {fileID: 8300000, guid: 8ebcb6234d419344daa712ba65bb3798, type: 3}
+  projectileAttackSounds:
+  - {fileID: 8300000, guid: 5055df1d6078baa4bab8f035a8243090, type: 3}
+  - {fileID: 8300000, guid: 97bad23c149b8d14e9ccd2dd2a7f51e9, type: 3}
+  energyFieldAttackSounds: []
+  summonSounds: []
+  teleportSounds: []
+  phaseChangeSounds: []
+  hurtSounds: []
+  deathSounds: []
+  attackVolume: 0.5
+  hurtVolume: 0.5
+  deathVolume: 0.5
 --- !u!195 &6254754168934463905
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -416,10 +444,10 @@ AudioSource:
   m_GameObject: {fileID: 7938090647407202942}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 7188904818081384389, guid: af87610b33fc88146903fc286a1a3d2e, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

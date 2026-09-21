@@ -207,6 +207,17 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (currentPhase == BossPhase.Dead) return;
 
+        float distanceToPlayer =
+            Vector3.Distance(
+                transform.position,
+                PlayerTransform.position
+            );
+
+        if (distanceToPlayer < 500f)
+        {
+            return;
+        }
+
         if (animator != null && agent != null && !chargingRangedAttack)
         {
             if (agent.velocity.magnitude > 0.05f)
@@ -214,6 +225,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             else
                 animator.SetFloat("Walk", 0f);
         }
+
+        
+     
+
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
