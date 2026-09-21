@@ -213,7 +213,7 @@ public class FinalBoss : MonoBehaviour, IDamage
                 PlayerTransform.position
             );
 
-        if (distanceToPlayer < 500f)
+        if (distanceToPlayer > 500f)
         {
             return;
         }
