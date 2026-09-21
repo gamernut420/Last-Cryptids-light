@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6024020179178927981}
   - component: {fileID: 4344418835685683426}
   - component: {fileID: 5726932181737665831}
+  - component: {fileID: 3593585115732859721}
   m_Layer: 0
   m_Name: MegaCrystal
   m_TagString: Untagged
@@ -114,6 +115,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!64 &3593585115732859721
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765749156473162901}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 4d7cc98ae5cab2947a8d9fa3c15e4fa8, type: 3}
 --- !u!1 &7373308312667223120
 GameObject:
   m_ObjectHideFlags: 0

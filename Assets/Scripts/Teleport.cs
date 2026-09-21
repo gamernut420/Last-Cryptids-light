@@ -1,24 +1,21 @@
 using UnityEngine;
 
-public class Teleporter : MonoBehaviour
+public class TeleportWall : MonoBehaviour
 {
-    [SerializeField] Transform destination;
+    [SerializeField] private Transform teleportDestination;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player"))
-            return;
+        if (other.CompareTag("Player"))
+        {
+            CharacterController playerController = other.GetComponent<CharacterController>();
 
-        CharacterController controller =
-            other.GetComponent<CharacterController>();
-
-        if (controller != null)
-            controller.enabled = false;
-
-        other.transform.position = destination.position;
-        other.transform.rotation = destination.rotation;
-
-        if (controller != null)
-            controller.enabled = true;
+            if (playerController != null)
+            {
+                playerController.enabled = false;
+                other.transform.position = teleportDestination.position;
+                playerController.enabled = true;
+            }
+        }
     }
 }
