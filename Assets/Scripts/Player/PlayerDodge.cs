@@ -28,11 +28,13 @@ public class PlayerDodge : MonoBehaviour
     private CharacterController characterController;
     private playerController player;
     private float nextAllowedDodgeTime;
+    private PlayerStaminaAudio staminaAudio;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         player = GetComponent<playerController>();
+        staminaAudio = GetComponent<PlayerStaminaAudio>();
     }
 
     void Update()
@@ -90,6 +92,7 @@ public class PlayerDodge : MonoBehaviour
     {
         IsDodging = true;
         IsInvincible = true;
+        staminaAudio?.PlayDashSound();
 
         float elapsed = 0f;
         float dodgeSpeed = player.GetMaxSpeed() * speedMultiplier;

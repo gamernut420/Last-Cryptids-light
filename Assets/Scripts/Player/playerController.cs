@@ -1271,6 +1271,33 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
     }
 
+    public float GetCurrentStamina()
+    {
+        return currentStamina;
+    }
+
+    public void SetStimulantMode(bool active, float speedMult)
+    {
+        isStimed = active;
+
+        stimMult = speedMult;
+
+        stimMult = Mathf.Clamp(stimMult, 0, float.MaxValue);
+
+        if (!active)
+        {
+            currentSpeed = isSprinting ? MaxSpeed : BaseSpeed;
+        }
+        else
+        {
+            currentSpeed *= stimMult;
+        }
+    }
+
+    public void SetMaxJumps(int jumps)
+    {
+        jumpMax = jumps;
+    }
 
     public int GetPlayerFunds()
     {
