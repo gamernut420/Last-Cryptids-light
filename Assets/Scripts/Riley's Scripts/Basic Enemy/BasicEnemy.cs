@@ -189,12 +189,11 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     {
         NavMeshHit hit;
 
-        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
         {
-            int areaMask = 1 << hit.mask;
-
-            agent.areaMask = areaMask;
+            return;
         }
+        agent.areaMask = hit.mask;
     }
 
     private void Update()
@@ -315,7 +314,7 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
             randomDirection.y = transform.position.y;
 
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomDirection, out hit, roamRadius, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomDirection, out hit, roamRadius, agent.areaMask))
             {
                 roamPosition = hit.position;
                 agent.SetDestination(roamPosition);
