@@ -1064,9 +1064,17 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
+
+
         // ADDED FOR BOSS HEALTH BAR:
         // Hide the HUD when the boss dies.
         BossDefeated?.Invoke();
+
+        // Show extraction win screen
+        if (gameManager.instance != null)
+        {
+            gameManager.instance.extractionWin();
+        }
 
         Debug.Log("Rift Boss Defeated!");
 

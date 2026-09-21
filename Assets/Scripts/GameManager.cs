@@ -427,7 +427,7 @@ public class gameManager : MonoBehaviour
 
 
         menuActive =
-            menuExtractionWin;
+            menuWin;
 
 
         menuActive.SetActive(true);
