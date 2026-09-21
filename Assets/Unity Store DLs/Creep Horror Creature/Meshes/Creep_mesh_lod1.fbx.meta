@@ -1,77 +1,22 @@
 fileFormatVersion: 2
-guid: af69d37b180cc2f49b87e760dfaa46bb
+guid: 7c655f19572688642bc69b291dc78115
 ModelImporter:
-  serializedVersion: 21300
-  internalIDToNameTable:
-  - first:
-      74: -3070773656769544776
-    second: Creep|A_Pose
-  - first:
-      74: -815216388795826607
-    second: Creep|Bite_Action
-  - first:
-      74: 8308113279142031361
-    second: Creep|Crouch_Action
-  - first:
-      74: 60994677411444552
-    second: Creep|Crouch_Pose
-  - first:
-      74: 8087875513454036377
-    second: Creep|Death_Action
-  - first:
-      74: -6936153904030280782
-    second: Creep|Eating_Action
-  - first:
-      74: -6087772779972263259
-    second: Creep|Idle1_Action
-  - first:
-      74: -8401044390300943484
-    second: Creep|Idle2_Action
-  - first:
-      74: 1151846624786495228
-    second: Creep|Idle_Pose
-  - first:
-      74: 6175007238043633351
-    second: Creep|JumpIn_Action
-  - first:
-      74: -5574319192343111270
-    second: Creep|JumpOut_Action
-  - first:
-      74: 7344986953279484206
-    second: Creep|Punch_Action
-  - first:
-      74: 6854530201773087166
-    second: Creep|Roar_Action
-  - first:
-      74: -3857298648854843717
-    second: Creep|Roar_Pose
-  - first:
-      74: -798849691556348059
-    second: Creep|Slide
-  - first:
-      74: -5256417810785657066
-    second: Creep|Sniff_Action
-  - first:
-      74: -1464133427668720647
-    second: Creep|Walk1_Action
-  - first:
-      74: 6269228107325730253
-    second: Creep|Walk2_Action
+  serializedVersion: 24501
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1
+    searchTexturesGlobally: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 1
+    removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -94,6 +39,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -111,6 +57,11 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -121,6 +72,7 @@ ModelImporter:
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -129,6 +81,7 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 0
   referencedClips: []
   importAnimation: 1
   humanDescription:
@@ -153,15 +106,9 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 244853
-  packageName: Creep Horror Creature
-  packageVersion: 1.0
-  assetPath: Assets/Creep Horror Creature/Meshes/Creep_mesh_lod1.fbx
-  uploadId: 564778

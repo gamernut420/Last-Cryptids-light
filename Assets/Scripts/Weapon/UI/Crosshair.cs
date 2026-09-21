@@ -2,66 +2,233 @@ using UnityEngine;
 
 public class Crosshair : MonoBehaviour
 {
-    [SerializeField][Min(0)] float baseScale = 10f;
-    [SerializeField] float SpreadToScale = 0.1f;
-    [SerializeField] float MaxSpreadSize = 2.5f;
-    [SerializeField] float SpreadReturnSpeed = 10f;
-    [SerializeField] float ReturnDelay = 0.25f;
+    [Header("Crosshair References")]
+    [SerializeField] private RectTransform pivotUp;
+    [SerializeField] private RectTransform pivotRight;
+    [SerializeField] private RectTransform pivotDown;
+    [SerializeField] private RectTransform pivotLeft;
 
-    float spreadScale;
-    float returnDelayTimer;
+    [Header("Normal Crosshair")]
+    [SerializeField]
+    [Min(0f)]
+    private float baseDistance = 18f;
 
-    private void OnValidate()
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            GameObject child = transform.GetChild(i).gameObject;
-            child.transform.GetChild(0).GetComponent<RectTransform>().localPosition = Vector3.up * baseScale;
-        }
-    }
+    [Header("ADS Crosshair")]
+    [SerializeField]
+    [Min(0f)]
+    private float adsDistance = 8f;
 
-    void ToggleVisibility(bool state)
-    {
-        if(this != null)
-        {
-            gameObject.SetActive(!state);
-        }
-    }
+    [SerializeField]
+    private float adsMoveSpeed = 15f;
+
+    [Header("Weapon Spread")]
+    [SerializeField]
+    private float spreadToScale = 0.1f;
+
+    [SerializeField]
+    private float maxSpreadSize = 2.5f;
+
+    [SerializeField]
+    private float spreadReturnSpeed = 10f;
+
+    [SerializeField]
+    private float returnDelay = 0.25f;
+
+    private float spreadDistance;
+    private float returnDelayTimer;
+
+    private bool isAiming;
+
 
     private void OnEnable()
     {
-        returnDelayTimer = ReturnDelay;
-        GunController.SendReticleSpread += ReciveSpread;
-        GunController.ChangedAim += ToggleVisibility;
+        GunController.SendReticleSpread += ReceiveSpread;
+        GunController.ChangedAim += OnAimChanged;
     }
+
 
     private void OnDisable()
     {
-        GunController.SendReticleSpread -= ReciveSpread;
+        GunController.SendReticleSpread -= ReceiveSpread;
+        GunController.ChangedAim -= OnAimChanged;
     }
+
+
+    private void Start()
+    {
+        SetPivotRotations();
+        UpdateCrosshairImmediate();
+    }
+
 
     private void Update()
     {
         returnDelayTimer -= Time.deltaTime;
 
-        for(int i = 0; i < transform.childCount; i++)
+        if (returnDelayTimer <= 0f)
         {
-            GameObject child = transform.GetChild(i).gameObject;
-            child.transform.GetChild(0).GetComponent<RectTransform>().localPosition = Vector3.up * (baseScale + spreadScale);
+            spreadDistance =
+                Mathf.Lerp(
+                    spreadDistance,
+                    0f,
+                    spreadReturnSpeed *
+                    Time.deltaTime
+                );
         }
 
-        if(returnDelayTimer <= 0)
+
+        float targetBaseDistance =
+            isAiming
+            ? adsDistance
+            : baseDistance;
+
+
+        float finalDistance =
+            targetBaseDistance +
+            spreadDistance;
+
+
+        UpdatePivot(
+            pivotUp,
+            Vector2.up * finalDistance
+        );
+
+        UpdatePivot(
+            pivotRight,
+            Vector2.right * finalDistance
+        );
+
+        UpdatePivot(
+            pivotDown,
+            Vector2.down * finalDistance
+        );
+
+        UpdatePivot(
+            pivotLeft,
+            Vector2.left * finalDistance
+        );
+    }
+
+
+    private void UpdatePivot(
+        RectTransform pivot,
+        Vector2 targetPosition)
+    {
+        if (pivot == null)
+            return;
+
+
+        pivot.anchoredPosition =
+            Vector2.Lerp(
+                pivot.anchoredPosition,
+                targetPosition,
+                adsMoveSpeed *
+                Time.deltaTime
+            );
+    }
+
+
+    private void ReceiveSpread(
+        float spreadAmount)
+    {
+        returnDelayTimer =
+            returnDelay;
+
+
+        float spread =
+            1f +
+            spreadAmount *
+            spreadToScale;
+
+
+        spreadDistance =
+            Mathf.Clamp(
+                Mathf.Max(
+                    spreadDistance,
+                    spread
+                ),
+                0f,
+                maxSpreadSize
+            ) * 10f;
+    }
+
+
+    private void OnAimChanged(
+        bool aiming)
+    {
+        isAiming =
+            aiming;
+    }
+
+
+    private void SetPivotRotations()
+    {
+        if (pivotUp != null)
         {
-            spreadScale = Mathf.Lerp(spreadScale, 0, SpreadReturnSpeed * Time.deltaTime);
+            pivotUp.localRotation =
+                Quaternion.identity;
+        }
+
+        if (pivotRight != null)
+        {
+            pivotRight.localRotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    -90f
+                );
+        }
+
+        if (pivotDown != null)
+        {
+            pivotDown.localRotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    180f
+                );
+        }
+
+        if (pivotLeft != null)
+        {
+            pivotLeft.localRotation =
+                Quaternion.Euler(
+                    0f,
+                    0f,
+                    90f
+                );
         }
     }
 
-    void ReciveSpread(float spreadAmmount)
+
+    private void UpdateCrosshairImmediate()
     {
-        returnDelayTimer = ReturnDelay;
+        if (pivotUp != null)
+        {
+            pivotUp.anchoredPosition =
+                Vector2.up *
+                baseDistance;
+        }
 
-        float spread = 1f + spreadAmmount * SpreadToScale;
+        if (pivotRight != null)
+        {
+            pivotRight.anchoredPosition =
+                Vector2.right *
+                baseDistance;
+        }
 
-        spreadScale = Mathf.Clamp(Mathf.Max(spreadScale, spread), 0, MaxSpreadSize) * 10;
+        if (pivotDown != null)
+        {
+            pivotDown.anchoredPosition =
+                Vector2.down *
+                baseDistance;
+        }
+
+        if (pivotLeft != null)
+        {
+            pivotLeft.anchoredPosition =
+                Vector2.left *
+                baseDistance;
+        }
     }
 }

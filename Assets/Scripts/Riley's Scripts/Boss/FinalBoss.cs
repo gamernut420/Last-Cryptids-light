@@ -130,6 +130,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private float energyFieldTimer;
     private EnemyAudioManager enemyAudio;
+    private int spawnAreaMask; 
 
     private Transform PlayerTransform
     {
@@ -145,6 +146,21 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -152,6 +168,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         currentHP = maxHP;
         enemyAudio = GetComponent<EnemyAudioManager>();
 
+        DetectSpawnNavMeshArea();
 
         // ADDED FOR BOSS HEALTH BAR:
         // Show the boss HUD and initialize it at full health.
