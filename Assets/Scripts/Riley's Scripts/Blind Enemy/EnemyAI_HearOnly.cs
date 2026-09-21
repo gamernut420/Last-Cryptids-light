@@ -107,10 +107,9 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 
         if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
         {
-            int areaMask = 1 << hit.mask;
-
-            agent.areaMask = areaMask;
+            return;
         }
+        agent.areaMask = hit.mask;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -736,7 +735,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
         randomDirection += transform.position;
 
         NavMeshHit hitInfo;
-        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, agent.areaMask))
         {
             if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             {
