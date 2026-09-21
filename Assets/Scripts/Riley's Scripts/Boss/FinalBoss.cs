@@ -72,7 +72,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform projectileSpawnPoint;
-    //[SerializeField] private Transform beamCore;
+
     [SerializeField] private ParticleSystem energyBeam;
     [SerializeField] private ParticleSystem energyParticles;
     [SerializeField] private ParticleSystem sparks;
@@ -89,12 +89,14 @@ public class FinalBoss : MonoBehaviour, IDamage
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
 
+
     [Header("Ranged Animation (Rage)")]
     [SerializeField] private string rangeAnimationName = "Rage";
     [SerializeField] private float rangePauseTime = 0f;
 
     private bool rangeAnimationPaused = false;
     private bool beamFired;
+
 
     [Header("Enemy Summoning")]
     [SerializeField] private GameObject enemyPrefab;
@@ -113,10 +115,32 @@ public class FinalBoss : MonoBehaviour, IDamage
     private float summonTimer;
 
 
+    // =========================================================
+    // TELEPORTING
+    // =========================================================
+
     [Header("Teleporting")]
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
     [SerializeField] private float teleportCooldown = 20f;
+
+    // ADDED:
+    // Handles the visual teleport effect and blue material flash.
+    [SerializeField] private BossTeleportVFXController teleportVFXController;
+
+    // ADDED:
+    // Trigger name inside the boss Animator.
+    [SerializeField] private string teleportAnimationTrigger = "Teleport";
+
+    // ADDED:
+    // Destination is calculated first, then the actual teleport
+    // occurs when PerformTeleport() is called.
+    private Vector3 pendingTeleportPosition;
+
+    // ADDED:
+    // Prevents another teleport from being queued while one
+    // is already waiting to happen.
+    private bool teleportPending;
 
     private float teleportTimer;
 
@@ -129,6 +153,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
+
 
     private Transform PlayerTransform
     {
@@ -145,23 +170,26 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // =========================================================
+    // START
+    // =========================================================
+
     void Start()
     {
         currentHP = maxHP;
 
 
-        // ADDED FOR BOSS HEALTH BAR:
-        // Show the boss HUD and initialize it at full health.
         BossFightStarted?.Invoke(
             currentHP,
             maxHP
         );
 
+
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
         }
+
 
         if (agent == null)
         {
@@ -169,10 +197,22 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
+        // ADDED:
+        // Automatically grabs the teleport VFX controller
+        // if it is attached to the boss root.
+        if (teleportVFXController == null)
+        {
+            teleportVFXController =
+                GetComponent<BossTeleportVFXController>();
+        }
+
+
         if (meleeHitbox != null)
         {
             meleeHitbox.SetActive(false);
         }
+
+
         if (meleeHitboxHeavy != null)
         {
             meleeHitboxHeavy.SetActive(false);
@@ -184,25 +224,45 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
-    // Update is called once per frame
+    // =========================================================
+    // UPDATE
+    // =========================================================
+
     void Update()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null)
+            return;
 
-        if (currentPhase == BossPhase.Dead) return;
+        if (currentPhase == BossPhase.Dead)
+            return;
 
-        if (animator != null && agent != null && !chargingRangedAttack)
+
+        if (animator != null &&
+            agent != null &&
+            !chargingRangedAttack)
         {
             if (agent.velocity.magnitude > 0.05f)
-                animator.SetFloat("Walk", 1f);
+            {
+                animator.SetFloat(
+                    "Walk",
+                    1f
+                );
+            }
             else
-                animator.SetFloat("Walk", 0f);
+            {
+                animator.SetFloat(
+                    "Walk",
+                    0f
+                );
+            }
         }
+
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
         teleportTimer -= Time.deltaTime;
         energyFieldTimer -= Time.deltaTime;
+
 
         CheckPhase();
         UpdateSummonTimer();
@@ -217,33 +277,59 @@ public class FinalBoss : MonoBehaviour, IDamage
         switch (currentPhase)
         {
             case BossPhase.Phase1:
+
                 Phase1Behavior();
+
                 break;
+
 
             case BossPhase.Phase2:
+
                 Phase2Behavior();
+
                 break;
 
+
             case BossPhase.Phase3:
+
                 Phase3Behavior();
+
                 break;
         }
     }
 
 
+    // =========================================================
+    // FACE PLAYER
+    // =========================================================
+
     private void FacePlayer()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null)
+            return;
 
-        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
+        if (projectileSpawnPoint == null)
+            return;
+
+
+        Vector3 direction =
+            (
+                PlayerTransform.position -
+                projectileSpawnPoint.position
+            ).normalized;
+
 
         direction.y = 0;
 
-        if (direction.sqrMagnitude <= 0.01f) return;
+
+        if (direction.sqrMagnitude <= 0.01f)
+            return;
 
 
         Quaternion targetRotation =
-            Quaternion.LookRotation(direction);
+            Quaternion.LookRotation(
+                direction
+            );
 
 
         transform.rotation =
@@ -255,13 +341,26 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // CHECK TELEPORT
+    // =========================================================
+
     private void CheckTeleport()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null)
+            return;
 
-        if (teleportTimer > 0f) return;
 
-        if (isShooting) return;
+        if (teleportTimer > 0f)
+            return;
+
+
+        if (isShooting)
+            return;
+
+
+        if (teleportPending)
+            return;
 
 
         float distanceToPlayer =
@@ -278,15 +377,21 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // PHASE CHECK
+    // =========================================================
+
     private void CheckPhase()
     {
         if (currentHP <= 0)
         {
-            currentPhase = BossPhase.Dead;
+            currentPhase =
+                BossPhase.Dead;
         }
         else if (currentHP <= phase3HP)
         {
-            currentPhase = BossPhase.Phase3;
+            currentPhase =
+                BossPhase.Phase3;
         }
         else if (currentHP <= phase2HP)
         {
@@ -297,19 +402,27 @@ public class FinalBoss : MonoBehaviour, IDamage
                 );
             }
 
-            currentPhase = BossPhase.Phase2;
+
+            currentPhase =
+                BossPhase.Phase2;
         }
         else
         {
-            currentPhase = BossPhase.Phase1;
+            currentPhase =
+                BossPhase.Phase1;
         }
     }
 
 
+    // =========================================================
     // PHASE 1
+    // =========================================================
+
     private void Phase1Behavior()
     {
-        agent.speed = phase1Speed;
+        agent.speed =
+            phase1Speed;
+
 
         ChasePlayer();
 
@@ -321,7 +434,8 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer <= meleeRange - 0.1f)
+        if (distanceToPlayer <=
+            meleeRange - 0.1f)
         {
             MeleeAttack();
         }
@@ -332,9 +446,14 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // PHASE 2 TRANSITION
+    // =========================================================
+
     private IEnumerator Phase2Transition()
     {
         phase2Transitioning = true;
+
         phase2Triggered = true;
 
 
@@ -343,7 +462,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         );
 
 
-        agent.isStopped = true;
+        agent.isStopped =
+            true;
 
 
         yield return new WaitForSeconds(
@@ -353,8 +473,13 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (PlayerTransform == null)
         {
-            phase2Transitioning = false;
-            agent.isStopped = false;
+            phase2Transitioning =
+                false;
+
+
+            agent.isStopped =
+                false;
+
 
             yield break;
         }
@@ -369,23 +494,36 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         meleeTimer = 0f;
+
         rangedTimer = 0f;
+
         energyFieldTimer = 0f;
-        teleportTimer = teleportCooldown;
+
+        teleportTimer =
+            teleportCooldown;
 
 
-        agent.isStopped = false;
-        phase2Transitioning = false;
+        phase2Transitioning =
+            false;
     }
 
 
+    // =========================================================
+    // PHASE 2
+    // =========================================================
+
     private void Phase2Behavior()
     {
-        if (phase2Transitioning) return;
+        if (phase2Transitioning)
+            return;
 
 
-        agent.speed = phase2Speed;
-        rangedAttackCooldown = 10f;
+        agent.speed =
+            phase2Speed;
+
+
+        rangedAttackCooldown =
+            10f;
 
 
         ChasePlayer();
@@ -399,7 +537,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         float teleportChance =
-            Random.Range(0, 100);
+            Random.Range(
+                0,
+                100
+            );
 
 
         if (teleportChance < 10)
@@ -414,12 +555,14 @@ public class FinalBoss : MonoBehaviour, IDamage
                 EnergyFieldAttack()
             );
 
+
             energyFieldTimer =
                 energyFieldCooldown;
         }
 
 
-        if (distanceToPlayer < meleeRange - 0.1f)
+        if (distanceToPlayer <
+            meleeRange - 0.1f)
         {
             MeleeAttack();
         }
@@ -430,12 +573,22 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // PHASE 3
+    // =========================================================
+
     private void Phase3Behavior()
     {
-        agent.speed = phase3Speed;
+        agent.speed =
+            phase3Speed;
 
-        attackCooldown *= 0.25f;
-        energyFieldCooldown *= 0.2f;
+
+        attackCooldown *=
+            0.25f;
+
+
+        energyFieldCooldown *=
+            0.2f;
 
 
         Debug.Log(
@@ -454,7 +607,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         float teleportChance =
-            Random.Range(0, 100);
+            Random.Range(
+                0,
+                100
+            );
 
 
         if (teleportChance < 10)
@@ -469,12 +625,14 @@ public class FinalBoss : MonoBehaviour, IDamage
                 EnergyFieldAttack()
             );
 
+
             energyFieldTimer =
                 energyFieldCooldown;
         }
 
 
-        if (distanceToPlayer < meleeRange - 0.1f)
+        if (distanceToPlayer <
+            meleeRange - 0.1f)
         {
             MeleeAttack();
         }
@@ -485,206 +643,512 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
     // MOVEMENT
+    // =========================================================
+
     private void ChasePlayer()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null)
+            return;
 
-        agent.stoppingDistance = meleeRange;
 
-        agent.SetDestination(PlayerTransform.position);
+        agent.stoppingDistance =
+            meleeRange;
+
+
+        agent.SetDestination(
+            PlayerTransform.position
+        );
     }
 
 
+    // =========================================================
     // MELEE ATTACK
+    // =========================================================
+
     private void MeleeAttack()
     {
-        if (meleeTimer > 0f) return;
+        if (meleeTimer > 0f)
+            return;
 
-        attack = Random.Range(0, 100);
+
+        attack =
+            Random.Range(
+                0,
+                100
+            );
+
+
         FacePlayer();
-        Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
-        directionToPlayer.y = 0;
-        float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
-        if (angle > 3f) return;
-        
-        Debug.Log("Boss Melee Attack");
+
+        Vector3 directionToPlayer =
+            (
+                PlayerTransform.position -
+                transform.position
+            ).normalized;
+
+
+        directionToPlayer.y =
+            0;
+
+
+        float angle =
+            Vector3.Angle(
+                transform.forward,
+                directionToPlayer
+            );
+
+
+        if (angle > 3f)
+            return;
+
+
+        Debug.Log(
+            "Boss Melee Attack"
+        );
+
 
         if (agent != null)
-            agent.isStopped = true;
+        {
+            agent.isStopped =
+                true;
+        }
+
 
         if (attack < lightAttackChance)
-            animator.SetTrigger("Hit2");
+        {
+            animator.SetTrigger(
+                "Hit2"
+            );
+        }
         else
-            animator.SetTrigger("Hit1");
-        meleeTimer = attackCooldown;
+        {
+            animator.SetTrigger(
+                "Hit1"
+            );
+        }
+
+
+        meleeTimer =
+            attackCooldown;
     }
+
 
     public void MeleeHit()
     {
-        if (currentPhase == BossPhase.Dead)
+        if (currentPhase ==
+            BossPhase.Dead)
+        {
             return;
+        }
+
 
         if (meleeHitbox != null)
         {
-            if (attack < lightAttackChance)
-                meleeHitbox.SetActive(true);
+            if (attack <
+                lightAttackChance)
+            {
+                meleeHitbox
+                    .SetActive(true);
+            }
             else
-                meleeHitboxHeavy.SetActive(true);
+            {
+                meleeHitboxHeavy
+                    .SetActive(true);
+            }
         }
     }
+
 
     public void EndMeleeHit()
     {
         if (meleeHitbox != null)
         {
-            if (attack < lightAttackChance)
-                meleeHitbox.SetActive(false);
+            if (attack <
+                lightAttackChance)
+            {
+                meleeHitbox
+                    .SetActive(false);
+            }
             else
-                meleeHitboxHeavy.SetActive(false);
+            {
+                meleeHitboxHeavy
+                    .SetActive(false);
+            }
         }
 
+
         if (agent != null)
-            agent.isStopped = false;
+        {
+            agent.isStopped =
+                false;
+        }
     }
+
+
+    // =========================================================
+    // RANGED ANIMATION
+    // =========================================================
 
     private void StartRangeAnimation()
     {
         if (animator == null)
             return;
 
-        beamFired = false;
-        rangeAnimationPaused = false;
-        animator.speed = 1f;
-        animator.ResetTrigger("Rage");
-        animator.SetTrigger("Rage");
+
+        beamFired =
+            false;
+
+
+        rangeAnimationPaused =
+            false;
+
+
+        animator.speed =
+            1f;
+
+
+        animator.ResetTrigger(
+            "Rage"
+        );
+
+
+        animator.SetTrigger(
+            "Rage"
+        );
     }
+
 
     private void PauseRangeAnimation()
     {
         if (animator == null)
             return;
 
-        animator.speed = 0f;
-        rangeAnimationPaused = true;
+
+        animator.speed =
+            0f;
+
+
+        rangeAnimationPaused =
+            true;
     }
+
 
     private void ResumeRangeAnimation()
     {
         if (animator == null)
             return;
 
-        animator.speed = 1f;
-        rangeAnimationPaused = false;
+
+        animator.speed =
+            1f;
+
+
+        rangeAnimationPaused =
+            false;
     }
+
 
     public void FireBeam()
     {
-        if (currentPhase == BossPhase.Dead)
+        if (currentPhase ==
+            BossPhase.Dead)
+        {
             return;
+        }
+
 
         if (!chargingRangedAttack)
             return;
 
+
         if (beamFired)
             return;
 
-        beamFired = true;
+
+        beamFired =
+            true;
+
 
         SpawnBeam();
+
         PauseRangeAnimation();
     }
+
 
     private void SpawnBeam()
     {
         if (PlayerTransform == null)
             return;
 
+
         FacePlayer();
 
-        Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
-        GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-        BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
-        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
-        //Transform core = newProjectile.transform.Find("Beam Core");
-        ParticleSystem core = newProjectile.transform.Find("Beam Particle")?.GetComponent<ParticleSystem>();
-        ParticleSystem energy = newProjectile.transform.Find("Beam Energy")?.GetComponent<ParticleSystem>();
-        ParticleSystem sparkEffect = newProjectile.transform.Find("Beam Sparks")?.GetComponent<ParticleSystem>();
+
+        Vector3 direction =
+            (
+                PlayerTransform.position -
+                projectileSpawnPoint.position
+            ).normalized;
+
+
+        GameObject newProjectile =
+            Instantiate(
+                projectile,
+                projectileSpawnPoint.position,
+                Quaternion.LookRotation(direction)
+            );
+
+
+        BoxCollider hitboxCollider =
+            newProjectile
+                .GetComponent<BoxCollider>();
+
+
+        ProjectileCollision sonicBoom =
+            newProjectile
+                .GetComponent<ProjectileCollision>();
+
+
+        ParticleSystem core =
+            newProjectile
+                .transform
+                .Find("Beam Particle")
+                ?.GetComponent<ParticleSystem>();
+
+
+        ParticleSystem energy =
+            newProjectile
+                .transform
+                .Find("Beam Energy")
+                ?.GetComponent<ParticleSystem>();
+
+
+        ParticleSystem sparkEffect =
+            newProjectile
+                .transform
+                .Find("Beam Sparks")
+                ?.GetComponent<ParticleSystem>();
+
 
         if (hitboxCollider == null)
         {
-            Debug.LogError("Projectile needs a box collider!");
-            Destroy(newProjectile);
+            Debug.LogError(
+                "Projectile needs a box collider!"
+            );
+
+
+            Destroy(
+                newProjectile
+            );
+
+
             return;
         }
 
-        float newLength = 0.1f;
-        hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
-        hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
 
-        StartCoroutine(ExtendBeam(newProjectile, hitboxCollider, core, energy, sparkEffect, sonicBoom));
+        float newLength =
+            0.1f;
+
+
+        hitboxCollider.size =
+            new Vector3(
+                projectileWidth,
+                projectileHeight,
+                newLength
+            );
+
+
+        hitboxCollider.center =
+            new Vector3(
+                0f,
+                0f,
+                newLength / 2f
+            );
+
+
+        StartCoroutine(
+            ExtendBeam(
+                newProjectile,
+                hitboxCollider,
+                core,
+                energy,
+                sparkEffect,
+                sonicBoom
+            )
+        );
     }
 
-    private IEnumerator ExtendBeam(GameObject beam, BoxCollider hitboxCollider, ParticleSystem core, ParticleSystem energy, ParticleSystem sparks, ProjectileCollision sonicBoom)
-    {
-        float newLength = 0.1f;
-        float attackTime = 0f;
 
-        while (attackTime < rangedAttackDuration)
+    private IEnumerator ExtendBeam(
+        GameObject beam,
+        BoxCollider hitboxCollider,
+        ParticleSystem core,
+        ParticleSystem energy,
+        ParticleSystem sparks,
+        ProjectileCollision sonicBoom)
+    {
+        float newLength =
+            0.1f;
+
+
+        float attackTime =
+            0f;
+
+
+        while (attackTime <
+               rangedAttackDuration)
         {
             if (beam == null)
             {
-                chargingRangedAttack = false;
+                chargingRangedAttack =
+                    false;
+
+
                 yield break;
             }
 
-            newLength += hitboxExtendSpeed * Time.deltaTime;
-            hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
-            hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
-            
+
+            newLength +=
+                hitboxExtendSpeed *
+                Time.deltaTime;
+
+
+            hitboxCollider.size =
+                new Vector3(
+                    projectileWidth,
+                    projectileHeight,
+                    newLength
+                );
+
+
+            hitboxCollider.center =
+                new Vector3(
+                    0f,
+                    0f,
+                    newLength / 2f
+                );
+
+
             if (core != null)
             {
-                ParticleSystem.ShapeModule shape = core.shape;
-                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
-                core.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+                ParticleSystem.ShapeModule shape =
+                    core.shape;
+
+
+                shape.scale =
+                    new Vector3(
+                        projectileWidth,
+                        projectileHeight,
+                        newLength
+                    );
+
+
+                core.transform.localPosition =
+                    new Vector3(
+                        0f,
+                        0f,
+                        newLength / 2f
+                    );
             }
+
 
             if (energy != null)
             {
-                ParticleSystem.ShapeModule shape = energy.shape;
-                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
-                energy.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+                ParticleSystem.ShapeModule shape =
+                    energy.shape;
+
+
+                shape.scale =
+                    new Vector3(
+                        projectileWidth,
+                        projectileHeight,
+                        newLength
+                    );
+
+
+                energy.transform.localPosition =
+                    new Vector3(
+                        0f,
+                        0f,
+                        newLength / 2f
+                    );
             }
+
 
             if (sparks != null)
             {
-                ParticleSystem.ShapeModule shape = sparks.shape;
-                shape.scale = new Vector3(projectileWidth, projectileHeight, newLength);
-                sparks.transform.localPosition = new Vector3(0f, 0f, newLength / 2f);
+                ParticleSystem.ShapeModule shape =
+                    sparks.shape;
+
+
+                shape.scale =
+                    new Vector3(
+                        projectileWidth,
+                        projectileHeight,
+                        newLength
+                    );
+
+
+                sparks.transform.localPosition =
+                    new Vector3(
+                        0f,
+                        0f,
+                        newLength / 2f
+                    );
             }
 
-            attackTime += Time.deltaTime;
+
+            attackTime +=
+                Time.deltaTime;
+
+
             yield return null;
         }
-        Debug.Log("Sonic Boom ended");
+
+
+        Debug.Log(
+            "Sonic Boom ended"
+        );
+
 
         if (sonicBoom != null)
+        {
             sonicBoom.StartMoving();
+        }
 
-        agent.isStopped = false;
-        chargingRangedAttack = false;
+
+        agent.isStopped =
+            false;
+
+
+        chargingRangedAttack =
+            false;
+
+
         ResumeRangeAnimation();
     }
 
+
+    // =========================================================
     // RANGED ATTACK
+    // =========================================================
+
     private void RangedAttack()
     {
-        if (rangedTimer > 0) return;
+        if (rangedTimer > 0)
+            return;
 
-        if (chargingRangedAttack) return;
 
-        if (isShooting) return;
+        if (chargingRangedAttack)
+            return;
+
+
+        if (isShooting)
+            return;
+
 
         if (projectile == null ||
             projectileSpawnPoint == null)
@@ -692,14 +1156,25 @@ public class FinalBoss : MonoBehaviour, IDamage
             return;
         }
 
-        StartCoroutine(RangedAttackRoutine());
+
+        StartCoroutine(
+            RangedAttackRoutine()
+        );
     }
 
 
-    // TELEPORT NEAR PLAYER
+    // =========================================================
+    // TELEPORT
+    // =========================================================
+
     private void TeleportNearPlayer()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null)
+            return;
+
+
+        if (teleportPending)
+            return;
 
 
         Vector2 randomDirection =
@@ -710,7 +1185,7 @@ public class FinalBoss : MonoBehaviour, IDamage
             PlayerTransform.position +
             new Vector3(
                 randomDirection.x,
-                0,
+                0f,
                 randomDirection.y
             ) *
             teleportNearPlayerDistance;
@@ -725,30 +1200,151 @@ public class FinalBoss : MonoBehaviour, IDamage
                 5f,
                 NavMesh.AllAreas))
         {
-            transform.position =
+            // Save destination.
+            // Boss does NOT move yet.
+            pendingTeleportPosition =
                 hit.position;
 
 
-            FacePlayer();
-
-
-            agent.Warp(
-                hit.position
-            );
+            teleportPending =
+                true;
 
 
             teleportTimer =
                 teleportCooldown;
 
 
+            if (agent != null)
+            {
+                agent.isStopped =
+                    true;
+
+
+                agent.ResetPath();
+            }
+
+
+            // If there is an Animator, start the teleport animation.
+            if (animator != null &&
+                !string.IsNullOrEmpty(
+                    teleportAnimationTrigger
+                ))
+            {
+                animator.ResetTrigger(
+                    teleportAnimationTrigger
+                );
+
+
+                animator.SetTrigger(
+                    teleportAnimationTrigger
+                );
+            }
+            else
+            {
+                // Fallback for testing without an animation.
+                PerformTeleport();
+            }
+
+
             Debug.Log(
-                "Rift Boss teleported near player!"
+                "Rift Boss preparing to teleport near player!"
             );
         }
     }
 
 
+    // PUBLIC METHOD
+    // Call this from the teleport animation event.
+    public void PerformTeleport()
+    {
+        if (!teleportPending)
+            return;
+
+
+        Vector3 destination =
+            pendingTeleportPosition;
+
+
+        teleportPending =
+            false;
+
+
+        if (teleportVFXController != null)
+        {
+            // BossTeleportVFXController handles:
+            //
+            // 1. Spawn VFX at current location
+            // 2. Flash boss cyan
+            // 3. Hide boss
+            // 4. Warp to destination
+            // 5. Spawn destination VFX
+            // 6. Show boss
+            // 7. Restore boss materials
+
+            teleportVFXController
+                .TeleportTo(
+                    destination
+                );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "FinalBoss: BossTeleportVFXController is missing. " +
+                "Using instant teleport instead."
+            );
+
+
+            if (agent != null &&
+                agent.isOnNavMesh)
+            {
+                agent.Warp(
+                    destination
+                );
+            }
+            else
+            {
+                transform.position =
+                    destination;
+            }
+        }
+
+
+        StartCoroutine(
+            FinishTeleport()
+        );
+    }
+
+
+    private IEnumerator FinishTeleport()
+    {
+        // Gives the VFX controller time to complete
+        // the flash / vanish / reappear sequence.
+        yield return new WaitForSeconds(
+            0.8f
+        );
+
+
+        FacePlayer();
+
+
+        if (agent != null &&
+            agent.isOnNavMesh)
+        {
+            agent.isStopped =
+                false;
+        }
+
+
+        Debug.Log(
+            "Rift Boss teleport completed!"
+        );
+    }
+
+
+    // =========================================================
     // SUMMON ENEMIES
+    // =========================================================
+
     private void SummonEnemies()
     {
         CleanEnemyList();
@@ -761,7 +1357,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (waitingToSummon) return;
+        if (waitingToSummon)
+            return;
 
 
         int enemiesToSpawn =
@@ -772,9 +1369,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        for (int i = 0;
-             i < enemiesToSpawn;
-             i++)
+        for (
+            int i = 0;
+            i < enemiesToSpawn;
+            i++)
         {
             SpawnEnemy();
         }
@@ -819,11 +1417,13 @@ public class FinalBoss : MonoBehaviour, IDamage
                 hit.point;
 
 
-            directionToTarget.y = 0;
+            directionToTarget.y =
+                0;
 
 
             Quaternion spawnRotation =
-                directionToTarget != Vector3.zero
+                directionToTarget !=
+                Vector3.zero
                     ? Quaternion.LookRotation(
                         directionToTarget
                     )
@@ -839,7 +1439,8 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
             BasicEnemy enemyAI =
-                newEnemy.GetComponent<BasicEnemy>();
+                newEnemy
+                    .GetComponent<BasicEnemy>();
 
 
             if (enemyAI != null)
@@ -855,9 +1456,14 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // DAMAGE
+    // =========================================================
+
     public void takeDamage(int amount)
     {
-        if (currentPhase == BossPhase.Dead)
+        if (currentPhase ==
+            BossPhase.Dead)
         {
             return;
         }
@@ -869,11 +1475,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        currentHP -= amount;
+        currentHP -=
+            amount;
 
 
-        // ADDED FOR BOSS HEALTH BAR:
-        // Update the HUD every time boss health changes.
         BossHealthChanged?.Invoke(
             Mathf.Max(
                 currentHP,
@@ -894,7 +1499,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         CheckPhase();
 
 
-        if (currentPhase == BossPhase.Phase2)
+        if (currentPhase ==
+            BossPhase.Phase2)
         {
             Debug.Log(
                 "Rift Boss has entered Phase 2!"
@@ -902,7 +1508,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (currentPhase == BossPhase.Phase3)
+        if (currentPhase ==
+            BossPhase.Phase3)
         {
             Debug.Log(
                 "Rift Boss has entered Phase 3!"
@@ -916,6 +1523,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+
+    // =========================================================
+    // CLEAN SUMMONED ENEMIES
+    // =========================================================
 
     private void CleanEnemyList()
     {
@@ -936,6 +1547,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+
+    // =========================================================
+    // SUMMON TIMER
+    // =========================================================
 
     private void UpdateSummonTimer()
     {
@@ -1000,6 +1615,10 @@ public class FinalBoss : MonoBehaviour, IDamage
     }
 
 
+    // =========================================================
+    // DIE
+    // =========================================================
+
     private void Die()
     {
         currentPhase =
@@ -1019,8 +1638,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        // ADDED FOR BOSS HEALTH BAR:
-        // Hide the HUD when the boss dies.
         BossDefeated?.Invoke();
 
 
@@ -1035,34 +1652,75 @@ public class FinalBoss : MonoBehaviour, IDamage
         );
     }
 
+
+    // =========================================================
+    // RANGED ATTACK ROUTINE
+    // =========================================================
+
     private IEnumerator RangedAttackRoutine()
     {
-        isShooting = true;
-        chargingRangedAttack = true;
+        isShooting =
+            true;
 
-        Debug.Log("Boss is charging ranged attack!");
 
-        agent.isStopped = true;
+        chargingRangedAttack =
+            true;
+
+
+        Debug.Log(
+            "Boss is charging ranged attack!"
+        );
+
+
+        agent.isStopped =
+            true;
+
 
         if (PlayerTransform == null)
         {
-            agent.isStopped = false;
-            chargingRangedAttack = false;
-            isShooting = false;
+            agent.isStopped =
+                false;
+
+
+            chargingRangedAttack =
+                false;
+
+
+            isShooting =
+                false;
+
+
             yield break;
         }
 
+
         StartRangeAnimation();
 
-        yield return new WaitUntil(() => !chargingRangedAttack);
+
+        yield return new WaitUntil(
+            () => !chargingRangedAttack
+        );
+
 
         if (agent != null)
-            agent.isStopped = false;
+        {
+            agent.isStopped =
+                false;
+        }
 
-        isShooting = false;
-        rangedTimer = rangedAttackCooldown;
+
+        isShooting =
+            false;
+
+
+        rangedTimer =
+            rangedAttackCooldown;
     }
 
+
+    // =========================================================
+    // ENERGY FIELD ATTACK
+    // =========================================================
 
     private IEnumerator EnergyFieldAttack()
     {
