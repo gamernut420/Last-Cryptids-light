@@ -72,7 +72,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectile;
     [SerializeField] private Transform projectileSpawnPoint;
-
+    //[SerializeField] private Transform beamCore;
     [SerializeField] private ParticleSystem energyBeam;
     [SerializeField] private ParticleSystem energyParticles;
     [SerializeField] private ParticleSystem sparks;
@@ -125,24 +125,20 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float teleportCooldown = 20f;
 
     // ADDED:
-    // Handles the visual teleport effect and blue material flash.
+    // Handles teleport VFX, boss material flash,
+    // disappearing, moving and reappearing.
     [SerializeField] private BossTeleportVFXController teleportVFXController;
 
-    // ADDED:
-    // Trigger name inside the boss Animator.
-    [SerializeField] private string teleportAnimationTrigger = "Teleport";
-
-    // ADDED:
-    // Destination is calculated first, then the actual teleport
-    // occurs when PerformTeleport() is called.
-    private Vector3 pendingTeleportPosition;
-
-    // ADDED:
-    // Prevents another teleport from being queued while one
-    // is already waiting to happen.
-    private bool teleportPending;
+    // How long FinalBoss waits before allowing movement again.
+    // Current BossTeleportVFXController takes roughly 0.6 seconds
+    // with its default timing, so 0.8 leaves a little safety room.
+    [SerializeField] private float teleportSequenceDuration = 0.8f;
 
     private float teleportTimer;
+
+    // Prevents attacks/movement/another teleport while
+    // the teleport effect is currently happening.
+    private bool teleportPending;
 
 
     [Header("Energy Fields")]
@@ -179,6 +175,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         currentHP = maxHP;
 
 
+        // ADDED FOR BOSS HEALTH BAR:
         BossFightStarted?.Invoke(
             currentHP,
             maxHP
@@ -197,9 +194,9 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        // ADDED:
-        // Automatically grabs the teleport VFX controller
-        // if it is attached to the boss root.
+        // ADDED FOR TELEPORT VFX:
+        // Automatically grabs the controller if it is
+        // attached to the same boss object.
         if (teleportVFXController == null)
         {
             teleportVFXController =
@@ -219,8 +216,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        agent.speed = phase1Speed;
-        agent.stoppingDistance = meleeRange;
+        if (agent != null)
+        {
+            agent.speed = phase1Speed;
+            agent.stoppingDistance = meleeRange;
+        }
     }
 
 
@@ -232,6 +232,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null)
             return;
+
 
         if (currentPhase == BossPhase.Dead)
             return;
@@ -277,23 +278,15 @@ public class FinalBoss : MonoBehaviour, IDamage
         switch (currentPhase)
         {
             case BossPhase.Phase1:
-
                 Phase1Behavior();
-
                 break;
-
 
             case BossPhase.Phase2:
-
                 Phase2Behavior();
-
                 break;
 
-
             case BossPhase.Phase3:
-
                 Phase3Behavior();
-
                 break;
         }
     }
@@ -307,6 +300,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null)
             return;
+
 
         if (projectileSpawnPoint == null)
             return;
@@ -385,13 +379,11 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (currentHP <= 0)
         {
-            currentPhase =
-                BossPhase.Dead;
+            currentPhase = BossPhase.Dead;
         }
         else if (currentHP <= phase3HP)
         {
-            currentPhase =
-                BossPhase.Phase3;
+            currentPhase = BossPhase.Phase3;
         }
         else if (currentHP <= phase2HP)
         {
@@ -434,8 +426,7 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer <=
-            meleeRange - 0.1f)
+        if (distanceToPlayer <= meleeRange - 0.1f)
         {
             MeleeAttack();
         }
@@ -452,9 +443,12 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private IEnumerator Phase2Transition()
     {
-        phase2Transitioning = true;
+        phase2Transitioning =
+            true;
 
-        phase2Triggered = true;
+
+        phase2Triggered =
+            true;
 
 
         Debug.Log(
@@ -462,8 +456,11 @@ public class FinalBoss : MonoBehaviour, IDamage
         );
 
 
-        agent.isStopped =
-            true;
+        if (agent != null)
+        {
+            agent.isStopped =
+                true;
+        }
 
 
         yield return new WaitForSeconds(
@@ -477,8 +474,12 @@ public class FinalBoss : MonoBehaviour, IDamage
                 false;
 
 
-            agent.isStopped =
-                false;
+            if (agent != null &&
+                agent.isOnNavMesh)
+            {
+                agent.isStopped =
+                    false;
+            }
 
 
             yield break;
@@ -493,16 +494,25 @@ public class FinalBoss : MonoBehaviour, IDamage
         TeleportNearPlayer();
 
 
-        meleeTimer = 0f;
+        meleeTimer =
+            0f;
 
-        rangedTimer = 0f;
 
-        energyFieldTimer = 0f;
+        rangedTimer =
+            0f;
+
+
+        energyFieldTimer =
+            0f;
+
 
         teleportTimer =
             teleportCooldown;
 
 
+        // We can leave the phase transition now,
+        // but the teleportPending flag prevents the boss
+        // from attacking/moving until teleport finishes.
         phase2Transitioning =
             false;
     }
@@ -515,6 +525,12 @@ public class FinalBoss : MonoBehaviour, IDamage
     private void Phase2Behavior()
     {
         if (phase2Transitioning)
+            return;
+
+
+        // ADDED:
+        // Do nothing while teleport VFX is running.
+        if (teleportPending)
             return;
 
 
@@ -579,6 +595,12 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private void Phase3Behavior()
     {
+        // ADDED:
+        // Do nothing while teleport VFX is running.
+        if (teleportPending)
+            return;
+
+
         agent.speed =
             phase3Speed;
 
@@ -653,6 +675,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             return;
 
 
+        if (teleportPending)
+            return;
+
+
         agent.stoppingDistance =
             meleeRange;
 
@@ -669,6 +695,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private void MeleeAttack()
     {
+        if (teleportPending)
+            return;
+
+
         if (meleeTimer > 0f)
             return;
 
@@ -738,25 +768,19 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     public void MeleeHit()
     {
-        if (currentPhase ==
-            BossPhase.Dead)
-        {
+        if (currentPhase == BossPhase.Dead)
             return;
-        }
 
 
         if (meleeHitbox != null)
         {
-            if (attack <
-                lightAttackChance)
+            if (attack < lightAttackChance)
             {
-                meleeHitbox
-                    .SetActive(true);
+                meleeHitbox.SetActive(true);
             }
             else
             {
-                meleeHitboxHeavy
-                    .SetActive(true);
+                meleeHitboxHeavy.SetActive(true);
             }
         }
     }
@@ -766,21 +790,19 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (meleeHitbox != null)
         {
-            if (attack <
-                lightAttackChance)
+            if (attack < lightAttackChance)
             {
-                meleeHitbox
-                    .SetActive(false);
+                meleeHitbox.SetActive(false);
             }
             else
             {
-                meleeHitboxHeavy
-                    .SetActive(false);
+                meleeHitboxHeavy.SetActive(false);
             }
         }
 
 
-        if (agent != null)
+        if (agent != null &&
+            !teleportPending)
         {
             agent.isStopped =
                 false;
@@ -853,11 +875,8 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     public void FireBeam()
     {
-        if (currentPhase ==
-            BossPhase.Dead)
-        {
+        if (currentPhase == BossPhase.Dead)
             return;
-        }
 
 
         if (!chargingRangedAttack)
@@ -903,32 +922,27 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
         BoxCollider hitboxCollider =
-            newProjectile
-                .GetComponent<BoxCollider>();
+            newProjectile.GetComponent<BoxCollider>();
 
 
         ProjectileCollision sonicBoom =
-            newProjectile
-                .GetComponent<ProjectileCollision>();
+            newProjectile.GetComponent<ProjectileCollision>();
 
 
         ParticleSystem core =
-            newProjectile
-                .transform
+            newProjectile.transform
                 .Find("Beam Particle")
                 ?.GetComponent<ParticleSystem>();
 
 
         ParticleSystem energy =
-            newProjectile
-                .transform
+            newProjectile.transform
                 .Find("Beam Energy")
                 ?.GetComponent<ParticleSystem>();
 
 
         ParticleSystem sparkEffect =
-            newProjectile
-                .transform
+            newProjectile.transform
                 .Find("Beam Sparks")
                 ?.GetComponent<ParticleSystem>();
 
@@ -1120,8 +1134,12 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        agent.isStopped =
-            false;
+        if (agent != null &&
+            !teleportPending)
+        {
+            agent.isStopped =
+                false;
+        }
 
 
         chargingRangedAttack =
@@ -1138,6 +1156,10 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private void RangedAttack()
     {
+        if (teleportPending)
+            return;
+
+
         if (rangedTimer > 0)
             return;
 
@@ -1200,97 +1222,68 @@ public class FinalBoss : MonoBehaviour, IDamage
                 5f,
                 NavMesh.AllAreas))
         {
-            // Save destination.
-            // Boss does NOT move yet.
-            pendingTeleportPosition =
-                hit.position;
-
-
-            teleportPending =
-                true;
-
-
             teleportTimer =
                 teleportCooldown;
 
 
-            if (agent != null)
-            {
-                agent.isStopped =
-                    true;
-
-
-                agent.ResetPath();
-            }
-
-
-            // If there is an Animator, start the teleport animation.
-            if (animator != null &&
-                !string.IsNullOrEmpty(
-                    teleportAnimationTrigger
-                ))
-            {
-                animator.ResetTrigger(
-                    teleportAnimationTrigger
-                );
-
-
-                animator.SetTrigger(
-                    teleportAnimationTrigger
-                );
-            }
-            else
-            {
-                // Fallback for testing without an animation.
-                PerformTeleport();
-            }
-
-
-            Debug.Log(
-                "Rift Boss preparing to teleport near player!"
+            PerformTeleport(
+                hit.position
             );
         }
     }
 
 
-    // PUBLIC METHOD
-    // Call this from the teleport animation event.
-    public void PerformTeleport()
+    // PUBLIC METHOD:
+    // Can also be called by another script if we ever want
+    // to force the boss to teleport to a specific position.
+    public void PerformTeleport(
+        Vector3 destination)
     {
-        if (!teleportPending)
+        if (teleportPending)
             return;
 
 
-        Vector3 destination =
-            pendingTeleportPosition;
-
-
         teleportPending =
-            false;
+            true;
+
+
+        if (agent != null &&
+            agent.isOnNavMesh)
+        {
+            agent.isStopped =
+                true;
+
+
+            agent.ResetPath();
+        }
+
+
+        Debug.Log(
+            "Rift Boss beginning teleport!"
+        );
 
 
         if (teleportVFXController != null)
         {
-            // BossTeleportVFXController handles:
+            // BossTeleportVFXController performs:
             //
-            // 1. Spawn VFX at current location
+            // 1. Spawn teleport VFX at boss
             // 2. Flash boss cyan
-            // 3. Hide boss
-            // 4. Warp to destination
-            // 5. Spawn destination VFX
-            // 6. Show boss
-            // 7. Restore boss materials
+            // 3. Hide boss renderers
+            // 4. Warp boss
+            // 5. Spawn VFX at destination
+            // 6. Re-enable boss renderers
+            // 7. Fade boss back to normal
 
-            teleportVFXController
-                .TeleportTo(
-                    destination
-                );
+            teleportVFXController.TeleportTo(
+                destination
+            );
         }
         else
         {
             Debug.LogWarning(
                 "FinalBoss: BossTeleportVFXController is missing. " +
-                "Using instant teleport instead."
+                "Boss will teleport instantly."
             );
 
 
@@ -1317,11 +1310,13 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private IEnumerator FinishTeleport()
     {
-        // Gives the VFX controller time to complete
-        // the flash / vanish / reappear sequence.
         yield return new WaitForSeconds(
-            0.8f
+            teleportSequenceDuration
         );
+
+
+        teleportPending =
+            false;
 
 
         FacePlayer();
@@ -1422,8 +1417,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
             Quaternion spawnRotation =
-                directionToTarget !=
-                Vector3.zero
+                directionToTarget != Vector3.zero
                     ? Quaternion.LookRotation(
                         directionToTarget
                     )
@@ -1439,8 +1433,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
             BasicEnemy enemyAI =
-                newEnemy
-                    .GetComponent<BasicEnemy>();
+                newEnemy.GetComponent<BasicEnemy>();
 
 
             if (enemyAI != null)
@@ -1625,8 +1618,11 @@ public class FinalBoss : MonoBehaviour, IDamage
             BossPhase.Dead;
 
 
-        agent.isStopped =
-            true;
+        if (agent != null)
+        {
+            agent.isStopped =
+                true;
+        }
 
 
         if (bossObjective != null)
@@ -1702,7 +1698,8 @@ public class FinalBoss : MonoBehaviour, IDamage
         );
 
 
-        if (agent != null)
+        if (agent != null &&
+            !teleportPending)
         {
             agent.isStopped =
                 false;

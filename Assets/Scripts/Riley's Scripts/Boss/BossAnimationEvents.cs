@@ -37,16 +37,4 @@ public class BossAnimationEvents : MonoBehaviour
             boss.FireBeam();
         }
     }
-
-
-    // ADDED:
-    // Called by an Animation Event during
-    // the boss teleport animation.
-    public void Teleport()
-    {
-        if (boss != null)
-        {
-            boss.PerformTeleport();
-        }
-    }
 }
