@@ -1,8 +1,9 @@
 using UnityEngine.AI;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
-public class EnemyAI_HearOnly : MonoBehaviour, IDamage
+public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 {
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
@@ -73,6 +74,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
     private bool dead;
     private bool throwing;
     private int spawnAreaMask;
+    private bool playerHiding;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -101,18 +103,13 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private void DetectSpawnNavMeshArea()
     {
-        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
         {
             return;
         }
-
-        int areaIndex = hit.mask;
-        spawnAreaMask = areaIndex;
-
-        if (agent != null)
-        {
-            agent.areaMask = spawnAreaMask;
-        }
+        agent.areaMask = hit.mask;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -146,6 +143,13 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
         if (PlayerTransform == null) return;
 
+        if (playerHiding)
+        {
+            currentState = State.Patrol;
+            PatrolLogic();
+            return;
+        }
+
         projectileTimer -= Time.deltaTime;
 
         TrackPlayerMovement();
@@ -176,6 +180,27 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    public void LosePlayer()
+    {
+        if (dead)
+            return;
+
+        DisableAllAttackHitboxes();
+        currentState = State.Patrol;
+        playerHiding = true;
+        attacking = false;
+        throwing = false;
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (dead)
+            return;
+
+        agent.isStopped = false;
+        playerHiding = false;
     }
 
     private void DisableAllAttackHitboxes()
@@ -710,7 +735,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         randomDirection += transform.position;
 
         NavMeshHit hitInfo;
-        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, agent.areaMask))
         {
             if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             {

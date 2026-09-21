@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class BasicEnemy : MonoBehaviour, IDamage
+public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
 {
     public enum AIType 
     { 
@@ -91,6 +91,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private bool bossEnemy = false;
     private bool dead;
+    private bool playerHidden;
 
     public void SetBossEnemy()
     {
@@ -125,7 +126,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private void Start()
     {
         footstepAudio = GetComponent<AudioManager>();
-        DetectSpawnNavMeshArea();
         RandomizeEnemyType();
 
         if (animator == null)
@@ -160,6 +160,8 @@ public class BasicEnemy : MonoBehaviour, IDamage
             agent = GetComponent<NavMeshAgent>();
         }
 
+        DetectSpawnNavMeshArea();
+
         if (agent != null)
         {
             agent.speed = speed;
@@ -179,18 +181,13 @@ public class BasicEnemy : MonoBehaviour, IDamage
     
     private void DetectSpawnNavMeshArea()
     {
-        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        NavMeshHit hit;
+
+        if (!NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
         {
             return;
         }
-
-        int areaIndex = hit.mask;
-        spawnAreaMask = areaIndex;
-
-        if (agent != null)
-        {
-            agent.areaMask = spawnAreaMask;
-        }
+        agent.areaMask = hit.mask;
     }
 
     private void Update()
@@ -199,14 +196,21 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         if (dead)
             return;
-
+        
+        UpdateAnimation();
         attackTimer -= Time.deltaTime;
         aggroTimer -= Time.deltaTime;
         throwTimer += Time.deltaTime;
 
-        CalculatePlayerVelocity();
-        UpdateAnimation();
+        if (playerHidden)
+        {
+            Roam();
+            animationFinished = false;
+            return;
+        }
 
+        CalculatePlayerVelocity();
+        
         if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
             float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
@@ -233,6 +237,35 @@ public class BasicEnemy : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    public void LosePlayer()
+    {
+        if (dead)
+            return;
+
+        playerHidden = true;
+
+        aggroTimer = 0f;
+        attacking = false;
+        animationFinished = true;
+
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            agent.ResetPath();
+        }
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (dead)
+            return;
+
+        playerHidden = false;
     }
 
     private void UpdateAnimation()
@@ -275,7 +308,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
             randomDirection.y = transform.position.y;
 
             NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomDirection, out hit, roamRadius, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomDirection, out hit, roamRadius, agent.areaMask))
             {
                 roamPosition = hit.position;
                 agent.SetDestination(roamPosition);
