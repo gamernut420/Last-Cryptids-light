@@ -169,3 +169,6 @@ Packages/packages-lock.json linguist-generated
 
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
+# Binary Unity TerrainData - MUST NOT be text normalized
+"Assets/Environment/Terrain 0 0.asset" -unity-yaml filter=lfs diff=lfs merge=lfs -text
+Assets/Environment/CaveFloor.asset -unity-yaml filter=lfs diff=lfs merge=lfs -text
