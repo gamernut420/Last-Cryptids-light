@@ -755,6 +755,8 @@ MonoBehaviour:
   teleportDistance: 30
   teleportNearPlayerDistance: 8
   teleportCooldown: 20
+  teleportVFXController: {fileID: -1397720699205223780}
+  teleportAnimationTrigger: Teleport
   energyFieldPrefab: {fileID: 7060007482161181010, guid: a28a77c5071645041a88169ee8ddfa67, type: 3}
   energyFieldSpawnPoints: []
   energyFieldsPerAttack: 2
@@ -772,7 +774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1e80ef54e2e5764c8822c851b321294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossTeleportVFXController
-  agent: {fileID: 0}
+  agent: {fileID: 7543238301187523072}
   bossRenderers: []
   teleportVfxPrefab: {fileID: 3896313733284202852, guid: 4799e107b3da37248801d08cacdc3199, type: 3}
   effectOrigin: {fileID: 0}
