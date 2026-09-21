@@ -90,7 +90,6 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     private int spawnAreaMask;
 
     private bool bossEnemy = false;
-    private EnemyAudioManager enemyAudio;
     private bool dead;
     private bool playerHidden;
 
@@ -126,11 +125,6 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
 
     private void Start()
     {
-        enemyAudio = GetComponent<EnemyAudioManager>();
-        aiType = AIType.Melee;
-        footstepAudio = GetComponent<AudioManager>();
-        DetectSpawnNavMeshArea();
-        RandomizeEnemyType();
         footstepAudio = GetComponent<AudioManager>();
         RandomizeEnemyType();
 
@@ -443,8 +437,6 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
         StopMovement();
         FaceTarget();
 
-        yield return new WaitForSeconds(0.2f);
-        enemyAudio?.PlayMeleeAttack();
         if (animator != null)
         {
             animator.SetTrigger("sword attack");
@@ -508,8 +500,6 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
 
         GameObject thrownObj = Instantiate(projectilePrefab, throwPoint.position, Quaternion.LookRotation(launchVelocity));
 
-        enemyAudio?.PlayProjectileAttack();
-        
         Rigidbody rb = thrownObj.GetComponent<Rigidbody>();
 
         if (rb != null)

@@ -73,7 +73,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 
     private bool dead;
     private bool throwing;
-    private EnemyAudioManager enemyAudio;
     private int spawnAreaMask;
     private bool playerHiding;
 
@@ -116,7 +115,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        enemyAudio = GetComponent<EnemyAudioManager>();
         agent = GetComponent<NavMeshAgent>();
         DetectSpawnNavMeshArea();
 
@@ -358,7 +356,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
         Quaternion spawnRotation = projectileSpawnPoint.transform.rotation;
         if (handBall != null)
             handBall.enabled = false;
-        enemyAudio?.PlayProjectileAttack();
+
         ThrowProjectile(spawnPosition, spawnRotation);
         StartCoroutine(ProjectileReturnTimeout());
     }
@@ -635,7 +633,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
                 PlayAnimation("Demon|Punch3");
                 break;
         }
-        enemyAudio?.PlayMeleeAttack();
 
         yield return new WaitUntil(() => animationFinished);
 

@@ -65,8 +65,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
     [SerializeField] float audStepsVol;
     private AudioManager footstepAudio;
     bool isPlayingStep;
-    private EnemyAudioManager enemyAudio;
-
 
     private enum StalkerState
     {
@@ -112,7 +110,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 
     void Start()
     {
-        enemyAudio = GetComponent<EnemyAudioManager>();
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
@@ -697,10 +694,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 
         FacePlayer();
 
-        if (attackHitbox1 != null)
-        {
-            enemyAudio?.PlayMeleeAttack();            
-        }
         PlayAnimation(attackTrigger);
 
         yield return new WaitForSeconds(1.5f);
