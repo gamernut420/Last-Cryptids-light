@@ -646,10 +646,9 @@ public class EnemyStalk : MonoBehaviour, IDamage
 
         FacePlayer();
 
-        if (attackHitbox != null)
+        if (attackHitbox1 != null)
         {
             enemyAudio?.PlayMeleeAttack();
-            attackHitbox.SetActive(true);
         }
         PlayAnimation(attackTrigger);
 
