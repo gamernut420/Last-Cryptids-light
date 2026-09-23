@@ -129,7 +129,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
-    private EnemyAudioManager enemyAudio;
+    private int spawnAreaMask; 
 
     private Transform PlayerTransform
     {
@@ -145,13 +145,27 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currentHP = maxHP;
-        enemyAudio = GetComponent<EnemyAudioManager>();
-
+        DetectSpawnNavMeshArea();
 
         // ADDED FOR BOSS HEALTH BAR:
         // Show the boss HUD and initialize it at full health.
@@ -193,6 +207,17 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (currentPhase == BossPhase.Dead) return;
 
+        float distanceToPlayer =
+            Vector3.Distance(
+                transform.position,
+                PlayerTransform.position
+            );
+
+        if (distanceToPlayer < 500f)
+        {
+            return;
+        }
+
         if (animator != null && agent != null && !chargingRangedAttack)
         {
             if (agent.velocity.magnitude > 0.05f)
@@ -200,6 +225,10 @@ public class FinalBoss : MonoBehaviour, IDamage
             else
                 animator.SetFloat("Walk", 0f);
         }
+
+        
+     
+
 
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
@@ -338,7 +367,6 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         phase2Transitioning = true;
         phase2Triggered = true;
-        enemyAudio?.PlayPhaseChange();
 
 
         Debug.Log(
@@ -531,8 +559,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (currentPhase == BossPhase.Dead)
             return;
 
-        enemyAudio?.PlayMeleeAttack();
-
         if (meleeHitbox != null)
         {
             if (attack < lightAttackChance)
@@ -598,8 +624,6 @@ public class FinalBoss : MonoBehaviour, IDamage
             return;
 
         beamFired = true;
-
-        enemyAudio?.PlayProjectileAttack();
 
         SpawnBeam();
         PauseRangeAnimation();
@@ -736,7 +760,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             transform.position =
                 hit.position;
-            enemyAudio?.PlayTeleport();
+
 
             FacePlayer();
 
@@ -780,11 +804,6 @@ public class FinalBoss : MonoBehaviour, IDamage
                 spawnedEnemies.Count
             );
 
-        if (enemiesToSpawn > 0)
-        {
-            enemyAudio?.PlaySummon();
-        }
-
 
         for (int i = 0;
              i < enemiesToSpawn;
@@ -792,7 +811,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             SpawnEnemy();
         }
-
     }
 
 
@@ -1061,9 +1079,17 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
+
+
         // ADDED FOR BOSS HEALTH BAR:
         // Hide the HUD when the boss dies.
         BossDefeated?.Invoke();
+
+        // Show extraction win screen
+        if (gameManager.instance != null)
+        {
+            gameManager.instance.extractionWin();
+        }
 
         Debug.Log("Rift Boss Defeated!");
 
@@ -1184,10 +1210,6 @@ public class FinalBoss : MonoBehaviour, IDamage
                 availablePoints.Count
             );
 
-        if (fieldsToSpawn > 0)
-        {
-            enemyAudio?.PlayEnergyFieldAttack();
-        }
 
         for (
             int i = 0;
