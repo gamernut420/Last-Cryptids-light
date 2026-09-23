@@ -374,13 +374,14 @@ public class gameManager : MonoBehaviour
         if (show)
         {
             statePause();
+            menuActive = ShopUI;
+            menuActive.SetActive(true);
         }
         else
         {
             stateUnpause();
+            ShopUI.SetActive(show);
         }
-
-        ShopUI.SetActive(show);
 
         ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), items, _spawnLocation);
     }
@@ -390,13 +391,14 @@ public class gameManager : MonoBehaviour
         if (show)
         {
             statePause();
+            menuActive = UpgradeUI;
+            menuActive.SetActive(true);
         }
         else
         {
             stateUnpause();
+            UpgradeUI.SetActive(show);
         }
-
-        UpgradeUI.SetActive(show);
     }
 
     public void UpdateStaminaBar(float ammount, bool show)

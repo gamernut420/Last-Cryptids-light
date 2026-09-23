@@ -27,28 +27,31 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        CheckForInteractable();
+        if (!gameManager.instance.isPaused)
+        {
+            CheckForInteractable();
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            TryInteract();
-        }
-        else if (Input.GetKeyUp(KeyCode.E))
-        {
-            if (isHolding)
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                isHolding = false;
-                interactable.StopHold();
+                TryInteract();
+            }
+            else if (Input.GetKeyUp(KeyCode.E))
+            {
+                if (isHolding)
+                {
+                    isHolding = false;
+                    interactable.StopHold();
 
-                ShowHold?.Invoke(isHolding);
+                    ShowHold?.Invoke(isHolding);
+                }
+
+                interactable = null;
             }
 
-            interactable = null;
-        }
-
-        if (isHolding)
-        {
-            TryInteract();
+            if (isHolding)
+            {
+                TryInteract();
+            }
         }
     }
 
