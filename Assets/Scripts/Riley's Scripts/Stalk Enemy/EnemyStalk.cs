@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
+public class EnemyStalk : MonoBehaviour, IDamage
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
@@ -65,6 +65,8 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
     [SerializeField] float audStepsVol;
     private AudioManager footstepAudio;
     bool isPlayingStep;
+    private EnemyAudioManager enemyAudio;
+
 
     private enum StalkerState
     {
@@ -83,8 +85,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
     private bool attacking = false;
     private bool hasStalkPosition;
     private bool isDead;
-    private int spawnAreaMask;
-    private bool playerHidden;
 
     private Transform PlayerTransform
     {
@@ -110,10 +110,9 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 
     void Start()
     {
+        enemyAudio = GetComponent<EnemyAudioManager>();
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
-
-        DetectSpawnNavMeshArea();
         agent = GetComponent<NavMeshAgent>();
         currentHP = maxHP;
         agent.speed = stalkSpeed;
@@ -132,6 +131,11 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
         if (playerCamera == null)
         {
             playerCamera = PlayerTransform.GetComponentInChildren<Camera>(true);
+        }
+
+        if (PlayerTransform == null)
+        {
+            Debug.LogWarning("Stalker AI could not find the player.");
         }
 
         lastPlayerPosition = PlayerTransform.position;
@@ -177,11 +181,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
         bool attackPlayer = CanAttack();
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
-        if (playerHidden)
-        {
-            playerIsMoving = false;
-        }
-
         if (currentState == StalkerState.Hiding && distanceToPlayer >= maxStalkDistance && !playerCanSeeMe)
         {
             currentState = StalkerState.Stalking;
@@ -225,6 +224,7 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 
         if (playerCanSeeMe && !attacking)
         {
+            Debug.Log("Player is looking at stalker");
             if (!wasVisible || ReachedStalkPosition())
             {
                 EnterHiding();
@@ -251,56 +251,6 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
         HandleStalking(playerIsMoving);
         lastPlayerPosition = PlayerTransform.position;
         playerWasMoving = playerIsMoving;
-    }
-
-    public void LosePlayer()
-    {
-        if (isDead)
-            return;
-
-        playerHidden = true;
-        attacking = false;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
-        if (distanceToPlayer < maxStalkDistance)
-            MoveAwayFromPlayer();
-        else
-            agent.isStopped = true;
-
-        if (attackHitbox1 != null && attackHitbox2 != null)
-            attackHitbox1.SetActive(false);
-            attackHitbox2.SetActive(false);
-
-        if (agent != null)
-        {
-            agent.isStopped = false;
-            agent.ResetPath();
-        }
-    }
-
-    public void ResumePlayerDetection()
-    {
-        if (isDead)
-            return;
-
-        agent.isStopped = false;
-        playerHidden = false;
-    }
-
-    private void DetectSpawnNavMeshArea()
-    {
-        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            return;
-        }
-
-        int areaIndex = hit.mask;
-        spawnAreaMask = areaIndex;
-
-        if (agent != null)
-        {
-            agent.areaMask = spawnAreaMask;
-        }
     }
 
     private void PlayAnimation(string animationName)
@@ -602,6 +552,8 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
             return false;
 
         float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker.normalized);
+        Debug.Log($"Looking: {angle} degrees");
+        Debug.DrawRay(playerCamera.transform.position, directionToStalker.normalized * distance, Color.red);
 
         if (angle > playerViewAngle)
             return false;
@@ -694,6 +646,10 @@ public class EnemyStalk : MonoBehaviour, IDamage, IEnemyAI
 
         FacePlayer();
 
+        if (attackHitbox1 != null)
+        {
+            enemyAudio?.PlayMeleeAttack();
+        }
         PlayAnimation(attackTrigger);
 
         yield return new WaitForSeconds(1.5f);
