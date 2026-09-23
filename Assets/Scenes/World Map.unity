@@ -44476,6 +44476,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8934660675530961686}
     m_Modifications:
+    - target: {fileID: 3886115197612766226, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: m_Convex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3886115197612766226, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4064160908673528260, guid: b580d556915509645ba24ef8abe35b98, type: 3}
       propertyPath: m_Name
       value: MarTerrainMeshNoholes
@@ -44519,6 +44527,50 @@ PrefabInstance:
     - target: {fileID: 4382811031267962752, guid: b580d556915509645ba24ef8abe35b98, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: hasEdgeFall
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: hasPerChunkUV
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: autoFixOnStart
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: isLowpolyStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: meshIsCompressed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: meshes.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: meshLODs.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: pivotPointOffset.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: pivotPointOffset.Array.data[0].x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: pivotPointOffset.Array.data[0].y
+      value: 5555
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092516922620264072, guid: b580d556915509645ba24ef8abe35b98, type: 3}
+      propertyPath: pivotPointOffset.Array.data[0].z
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
