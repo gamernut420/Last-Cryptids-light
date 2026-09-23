@@ -422,7 +422,7 @@ public class gameManager : MonoBehaviour
 
     public void UpdateStaminaBar(float ammount, bool show)
     {
-        staminaUI.SetActive(show);
+        //staminaUI.SetActive(show);
 
         staminaBar.fillAmount = ammount;
     }
