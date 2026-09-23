@@ -490,6 +490,13 @@ public class gameManager : MonoBehaviour
         }
     }
 
+    public void UpdateActiveWep(string weaponName)
+    {
+        if (weaponHUDController != null)
+        {
+            weaponHUDController.SetWeapon(weaponName);
+        }
+    }
 
     public void UpdateWeaponInv(
         GameObject[] inv,

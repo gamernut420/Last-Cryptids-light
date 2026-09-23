@@ -15,16 +15,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     PlayerUpgrades upgradeManager;
 
-
     [Header("Inventory")]
     [SerializeField]
     PlayerInventory Inventory;
 
-
     [Header("Audio")]
     public float walkHearingRadius = 5f;
     public float sprintHearingRadius = 10f;
-
 
     [Header("Weapon")]
     [SerializeField]
@@ -33,20 +30,21 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField]
     GameObject WeaponGrip;
 
+    [SerializeField]
+    Transform thirdPersonWeaponGrip;
+
+    GameObject thirdPersonWeaponVisual;
 
     GameObject ActiveItem;
 
     GameObject[] hotbar =
         new GameObject[4];
 
-
     int activeItemSlot =
         -1;
 
-
     public static System.Action<bool>
         ShowAmmoUI;
-
 
     int jumpCount;
 
@@ -56,14 +54,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     int points = 12345;
 
-
     Vector3 moveDir;
 
     Vector3 playerVel;
 
-
     bool isDead = false;
-
 
     bool stimulantMode =
         false;
@@ -77,21 +72,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         currentHP =
             MaxHP;
 
-
         currentSpeed =
             BaseSpeed;
 
-
         upgradeManager =
             GetComponent<PlayerUpgrades>();
-
 
         if (upgradeManager != null)
         {
             upgradeManager
                 .ApplyUpgrades();
         }
-
 
         UpdateWeaponUI();
     }
@@ -129,9 +120,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             }
         }
 
-
         sprint();
-
 
         if (gameManager.instance != null &&
             gameManager.instance.isPaused)
@@ -139,19 +128,16 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         if (isDead)
         {
             return;
         }
-
 
         GadgetUse();
 
         CheckSwapItem();
 
         movement();
-
 
         if (Input.GetKey(
             KeyCode.LeftShift))
@@ -161,7 +147,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 sprintHearingRadius
             );
         }
-
 
         if (Input.GetKeyDown(
             KeyCode.K))
@@ -180,7 +165,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             playerVel.y = 0;
         }
 
-
         moveDir =
             Input.GetAxis("Horizontal") *
             transform.right +
@@ -188,22 +172,18 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             Input.GetAxis("Vertical") *
             transform.forward;
 
-
         controller.Move(
             moveDir *
             currentSpeed *
             Time.deltaTime
         );
 
-
         jump();
-
 
         controller.Move(
             playerVel *
             Time.deltaTime
         );
-
 
         playerVel.y -=
             gravity *
@@ -214,7 +194,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     void sprint()
     {
         float targetSpeed;
-
 
         if (Input.GetKey(
             KeyCode.LeftShift))
@@ -228,13 +207,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 BaseSpeed;
         }
 
-
         if (stimulantMode)
         {
             targetSpeed *=
                 stimulantMultiplier;
         }
-
 
         currentSpeed =
             targetSpeed;
@@ -271,19 +248,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         currentHP -=
             amount;
 
-
         updatePlayerUI();
 
-
-        // Normal physical/enemy damage triggers this.
-        // Exposure-style damage can pass false.
         if (showFlash)
         {
             StartCoroutine(
                 flashDamage()
             );
         }
-
 
         if (currentHP <= 0)
         {
@@ -308,9 +280,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     .SetActive(true);
             }
 
-
-            // ADDED:
-            // Shows orange damage arc above crosshair.
             if (gameManager.instance
                 .damageIndicator != null)
             {
@@ -320,11 +289,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             }
         }
 
-
         yield return new WaitForSeconds(
             0.15f
         );
-
 
         if (gameManager.instance != null)
         {
@@ -335,7 +302,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     .damageFlashPanel
                     .SetActive(false);
             }
-
 
             if (gameManager.instance
                 .damageIndicator != null)
@@ -385,11 +351,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
 
-
         IWeapon wep =
             ActiveItem
                 .GetComponent<IWeapon>();
-
 
         if (wep != null)
         {
@@ -398,7 +362,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     amount
                 );
         }
-
 
         return false;
     }
@@ -412,7 +375,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         if (WeaponGrip == null)
         {
             Debug.LogError(
@@ -422,19 +384,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         int arrayStart = -1;
 
         int arrayEnd = -1;
 
-
         IWeapon wep =
             Item.GetComponent<IWeapon>();
 
-
         IGadget gadget =
             Item.GetComponent<IGadget>();
-
 
         if (wep != null)
         {
@@ -455,10 +413,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         bool hadEmpty =
             false;
-
 
         for (int i = arrayStart;
              i <= arrayEnd;
@@ -469,36 +425,29 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 hadEmpty =
                     true;
 
-
                 if (ActiveItem != null)
                 {
                     ActiveItem
                         .SetActive(false);
                 }
 
-
                 hotbar[i] =
                     Item;
-
 
                 ActiveItem =
                     Item;
 
-
                 activeItemSlot =
                     i;
-
 
                 break;
             }
         }
 
-
         if (!hadEmpty)
         {
             int slotToUse =
                 activeItemSlot;
-
 
             if (slotToUse < arrayStart ||
                 slotToUse > arrayEnd)
@@ -507,45 +456,36 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     arrayStart;
             }
 
-
             if (ActiveItem != null)
             {
                 DropWeapon();
             }
 
-
             hotbar[slotToUse] =
                 Item;
-
 
             ActiveItem =
                 Item;
 
-
             activeItemSlot =
                 slotToUse;
         }
-
 
         Item.transform.SetParent(
             WeaponGrip.transform,
             false
         );
 
-
         Item.transform.localPosition =
             Vector3.zero;
 
-
         Item.transform.localRotation =
             Quaternion.identity;
-
 
         if (wep != null)
         {
             Camera playerCamera =
                 Camera.main;
-
 
             if (playerCamera != null)
             {
@@ -558,24 +498,131 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 );
             }
 
-
             wep.SetWeaponUse(
                 true
             );
         }
 
-
         ActiveItem.SetActive(
             false
         );
-
 
         ActiveItem.SetActive(
             true
         );
 
+        RefreshThirdPersonWeaponVisual();
 
         UpdateWeaponUI();
+    }
+
+
+    void CreateThirdPersonWeaponVisual(
+        GameObject weapon)
+    {
+        ClearThirdPersonWeaponVisual();
+
+        if (thirdPersonWeaponGrip == null ||
+            weapon == null)
+        {
+            return;
+        }
+
+        MeshFilter sourceMeshFilter =
+            weapon.GetComponent<MeshFilter>();
+
+        MeshRenderer sourceMeshRenderer =
+            weapon.GetComponent<MeshRenderer>();
+
+        if (sourceMeshFilter == null ||
+            sourceMeshRenderer == null)
+        {
+            Debug.LogWarning(
+                "playerController: Equipped weapon does not contain a MeshFilter and MeshRenderer for the third-person visual."
+            );
+
+            return;
+        }
+
+        thirdPersonWeaponVisual =
+            new GameObject(
+                weapon.name +
+                "_ThirdPersonVisual"
+            );
+
+        thirdPersonWeaponVisual.layer =
+            thirdPersonWeaponGrip
+                .gameObject
+                .layer;
+
+        thirdPersonWeaponVisual.transform
+            .SetParent(
+                thirdPersonWeaponGrip,
+                false
+            );
+
+        thirdPersonWeaponVisual.transform
+            .localPosition =
+                Vector3.zero;
+
+        thirdPersonWeaponVisual.transform
+            .localRotation =
+                Quaternion.identity;
+
+        thirdPersonWeaponVisual.transform
+            .localScale =
+                Vector3.one;
+
+        MeshFilter visualMeshFilter =
+            thirdPersonWeaponVisual
+                .AddComponent<MeshFilter>();
+
+        MeshRenderer visualMeshRenderer =
+            thirdPersonWeaponVisual
+                .AddComponent<MeshRenderer>();
+
+        visualMeshFilter.sharedMesh =
+            sourceMeshFilter.sharedMesh;
+
+        visualMeshRenderer.sharedMaterials =
+            sourceMeshRenderer.sharedMaterials;
+    }
+
+
+    void RefreshThirdPersonWeaponVisual()
+    {
+        ClearThirdPersonWeaponVisual();
+
+        if (ActiveItem == null)
+        {
+            return;
+        }
+
+        IWeapon weapon =
+            ActiveItem.GetComponent<IWeapon>();
+
+        if (weapon == null)
+        {
+            return;
+        }
+
+        CreateThirdPersonWeaponVisual(
+            ActiveItem
+        );
+    }
+
+
+    void ClearThirdPersonWeaponVisual()
+    {
+        if (thirdPersonWeaponVisual != null)
+        {
+            Destroy(
+                thirdPersonWeaponVisual
+            );
+
+            thirdPersonWeaponVisual =
+                null;
+        }
     }
 
 
@@ -586,11 +633,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         IWeapon wep =
             ActiveItem
                 .GetComponent<IWeapon>();
-
 
         if (wep != null)
         {
@@ -598,28 +643,22 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 false
             );
 
-
             wep.SetPlayerVariables();
         }
-
 
         RaycastHit frontRay;
 
         RaycastHit downRay;
 
-
         Vector3 traceStart =
             transform.position;
-
 
         Vector3 traceEnd =
             traceStart +
             transform.forward *
             3;
 
-
         Vector3 dropLocation;
-
 
         if (Physics.Linecast(
             traceStart,
@@ -635,12 +674,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 traceEnd;
         }
 
-
         traceEnd =
             traceStart +
             Vector3.down *
             100;
-
 
         if (Physics.Linecast(
             traceStart,
@@ -656,17 +693,14 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 traceEnd;
         }
 
-
         ActiveItem.transform
             .SetParent(
                 null,
                 true
             );
 
-
         ActiveItem.transform.position =
             dropLocation;
-
 
         ActiveItem.transform.rotation =
             Quaternion.Euler(
@@ -675,24 +709,20 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 0
             );
 
-
         Collider itemCollider =
             ActiveItem
                 .GetComponent<Collider>();
-
 
         if (itemCollider != null)
         {
             itemCollider.enabled =
                 true;
 
-
             float posOffset =
                 itemCollider
                     .bounds
                     .extents
                     .y;
-
 
             ActiveItem.transform.position +=
                 new Vector3(
@@ -701,7 +731,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     0
                 );
         }
-
 
         if (activeItemSlot >= 0 &&
             activeItemSlot <
@@ -712,14 +741,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             ] = null;
         }
 
-
         ActiveItem =
             null;
-
 
         activeItemSlot =
             -1;
 
+        ClearThirdPersonWeaponVisual();
 
         UpdateWeaponUI();
     }
@@ -763,13 +791,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         if (hotbar[index] == null ||
             activeItemSlot == index)
         {
             return;
         }
-
 
         if (ActiveItem != null)
         {
@@ -778,19 +804,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             );
         }
 
-
         ActiveItem =
             hotbar[index];
 
-
         activeItemSlot =
             index;
-
 
         ActiveItem.SetActive(
             true
         );
 
+        RefreshThirdPersonWeaponVisual();
 
         UpdateWeaponUI();
     }
@@ -804,23 +828,19 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         if (ActiveItem == null)
         {
             return;
         }
 
-
         IGadget gadget =
             ActiveItem
                 .GetComponent<IGadget>();
-
 
         if (gadget == null)
         {
             return;
         }
-
 
         if (gadget.UseGadget(
             gameObject))
@@ -830,10 +850,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     null
                 );
 
-
             ActiveItem =
                 null;
-
 
             if (activeItemSlot >= 0 &&
                 activeItemSlot <
@@ -844,10 +862,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 ] = null;
             }
 
-
             activeItemSlot =
                 -1;
 
+            ClearThirdPersonWeaponVisual();
 
             UpdateWeaponUI();
         }
@@ -862,7 +880,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 ActiveItem
                     .GetComponent<IWeapon>();
 
-
             if (wep != null)
             {
                 ShowAmmoUI
@@ -873,7 +890,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 IGadget gadget =
                     ActiveItem
                         .GetComponent<IGadget>();
-
 
                 if (gadget != null)
                 {
@@ -887,7 +903,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             activeItemSlot =
                 -1;
 
-
             if (gameManager.instance != null)
             {
                 gameManager.instance
@@ -896,11 +911,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     );
             }
 
-
             ShowAmmoUI
                 ?.Invoke(false);
         }
-
 
         if (gameManager.instance != null)
         {
@@ -940,18 +953,15 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 string.Empty;
         }
 
-
         IWeapon weapon =
             ActiveItem
                 .GetComponent<IWeapon>();
-
 
         if (weapon != null)
         {
             return weapon
                 .GetWeaponName();
         }
-
 
         return string.Empty;
     }
@@ -969,15 +979,12 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
 
-
         IWeapon weapon =
             weaponObject
                 .GetComponent<IWeapon>();
 
-
         Camera playerCamera =
             Camera.main;
-
 
         if (weapon == null ||
             playerCamera == null ||
@@ -986,10 +993,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return false;
         }
 
-
         hotbar[slot] =
             weaponObject;
-
 
         weaponObject.transform
             .SetParent(
@@ -997,16 +1002,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 false
             );
 
-
         weaponObject.transform
             .localPosition =
                 Vector3.zero;
 
-
         weaponObject.transform
             .localRotation =
                 Quaternion.identity;
-
 
         weapon.SetPlayerVariables(
             GetComponent<IPlayer>(),
@@ -1016,16 +1018,13 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             Vector3.zero
         );
 
-
         weapon.SetWeaponUse(
             true
         );
 
-
         weaponObject.SetActive(
             false
         );
-
 
         return true;
     }
@@ -1041,7 +1040,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             return;
         }
 
-
         for (int slot = 0;
              slot < hotbar.Length;
              slot++)
@@ -1053,7 +1051,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             }
         }
 
-
         for (int slot = 0;
              slot < hotbar.Length;
              slot++)
@@ -1063,11 +1060,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 continue;
             }
 
-
             IWeapon weapon =
                 hotbar[slot]
                     .GetComponent<IWeapon>();
-
 
             if (weapon == null ||
                 weapon.GetWeaponName() !=
@@ -1076,33 +1071,28 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 continue;
             }
 
-
             if (ActiveItem != null)
             {
                 ActiveItem
                     .SetActive(false);
             }
 
-
             ActiveItem =
                 hotbar[slot];
 
-
             activeItemSlot =
                 slot;
-
 
             ActiveItem.SetActive(
                 true
             );
 
+            RefreshThirdPersonWeaponVisual();
 
             ShowAmmoUI
                 ?.Invoke(true);
 
-
             UpdateWeaponUI();
-
 
             return;
         }
@@ -1117,6 +1107,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 ActiveItem != null
             );
 
+        RefreshThirdPersonWeaponVisual();
 
         UpdateWeaponUI();
     }
@@ -1145,9 +1136,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                     currentHP
                 );
 
-
             updatePlayerUI();
-
 
             return true;
         }
@@ -1156,13 +1145,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             currentHP +=
                 amount;
 
-
             updatePlayerUI();
-
 
             return true;
         }
-
 
         return false;
     }
@@ -1186,7 +1172,6 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     {
         stimulantMode =
             enabled;
-
 
         if (enabled)
         {
