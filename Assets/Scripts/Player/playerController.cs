@@ -626,6 +626,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         MaxStamina = ammount;
     }
 
+    public float GetCurrentStamina()
+    {
+        return currentStamina;
+    }
+
     public void SetStimulantMode(bool active, float speedMult)
     {
         isStimed = active;

@@ -16,8 +16,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private LayerMask sightBlocker;
-    [SerializeField] Renderer model;
-    private Material modelMat;
+    [SerializeField] private Animator animator;
 
     [Header("Roaming")]
     [SerializeField] private float roamRadius = 10f;
@@ -44,6 +43,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float aggroTimer;
     private float attackTimer;
     private bool attacking;
+    private bool animationFinished;
 
     [Header("Range")]
 
@@ -61,7 +61,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
     [SerializeField] private float throwCooldown = 3f;
     [SerializeField] private float rangedAttackRange = 15f;
     [SerializeField] private float minimumRangedDistance = 8f;
-    [SerializeField] private float launchAngle = 45f;
+    [SerializeField] private float throwSpeed = 20f;
     [SerializeField] private float projectileLifetime = 5f;
 
     [Header("Prediction")]
@@ -79,15 +79,18 @@ public class BasicEnemy : MonoBehaviour, IDamage
     private float maxHP;
     private float currentHP;
     private float speed;
+    private float currentDetectionRange;
+    private float currentFieldOfView;
 
     [Header("Audio")]
     [Range(0f, 1f)]
     [SerializeField] private float audStepsVol;
     private bool isPlayingStep;
     private AudioManager footstepAudio;
+    private int spawnAreaMask;
 
-    Color colorOrig;
     private bool bossEnemy = false;
+    private bool dead;
 
     public void SetBossEnemy()
     {
@@ -121,9 +124,14 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private void Start()
     {
-        RandomizeEnemyType();
-        SetEnemyColor();
         footstepAudio = GetComponent<AudioManager>();
+        DetectSpawnNavMeshArea();
+        RandomizeEnemyType();
+
+        if (animator == null)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
 
         if (aiType == AIType.Melee)
         {
@@ -168,6 +176,23 @@ public class BasicEnemy : MonoBehaviour, IDamage
             lastPlayerPosition = PlayerTransform.position;
         }
     }
+    
+    private void DetectSpawnNavMeshArea()
+    {
+        if (!NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            Debug.LogWarning(gameObject.name + " could not find a NavMesh at spawn position.");
+            return;
+        }
+
+        int areaIndex = hit.mask;
+        spawnAreaMask = areaIndex;
+
+        if (agent != null)
+        {
+            agent.areaMask = spawnAreaMask;
+        }
+    }
 
     private void Update()
     {
@@ -178,6 +203,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
         throwTimer += Time.deltaTime;
 
         CalculatePlayerVelocity();
+        UpdateAnimation();
 
         if (CanSeePlayer() || aggroTimer > 0f || bossEnemy)
         {
@@ -207,26 +233,27 @@ public class BasicEnemy : MonoBehaviour, IDamage
         }
     }
 
-    void SetEnemyColor()
+    private void UpdateAnimation()
     {
-        if (model != null)
+        if (animator == null || agent == null)
+            return;
+
+        if (dead)
+            return;
+
+        float currentSpeed = agent.velocity.magnitude;
+
+        if (currentSpeed < 0.1f)
         {
-            modelMat = model.material;
-            modelMat.EnableKeyword("_EMISSION");
-
-            switch (aiType)
-            {
-                case AIType.Melee:
-                    modelMat.color = Color.blue;
-                    modelMat.SetColor("_EmissionColor", Color.blue);
-                    break;
-                case AIType.Range:
-                    modelMat.color = Color.yellow;
-                    modelMat.SetColor("_EmissionColor", Color.yellow);
-                    break;
-            }
-
-            colorOrig = modelMat.color;
+            animator.SetFloat("Speed", 0f);
+        }
+        else if (currentSpeed < 5f)
+        {
+            animator.SetFloat("Speed", 1f);
+        }
+        else
+        {
+            animator.SetFloat("Speed", 2f);
         }
     }
 
@@ -262,9 +289,6 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private bool CanSeePlayer()
     {
-        float currentDetectionRange;
-        float currentFieldOfView;
-
         if (aiType == AIType.Melee)
         {
             currentDetectionRange = detectionRange;
@@ -280,14 +304,14 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        if (distanceToPlayer > detectionRange) return false;
+        if (distanceToPlayer > currentDetectionRange) return false;
 
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
-        if (angle > fieldOfView / 2f) return false;
+        if (angle > currentFieldOfView / 2f) return false;
 
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, directionToPlayer.normalized, out hit, detectionRange))
+        if (Physics.Raycast(transform.position, directionToPlayer.normalized, out hit, currentDetectionRange))
         {
             if (hit.transform.CompareTag("Player"))
             {
@@ -326,8 +350,9 @@ public class BasicEnemy : MonoBehaviour, IDamage
         {
             BackAwayFromPlayer();
         }
-        else if (distanceToPlayer > rangedAttackRange - minimumRangedDistance)
+        else if (distanceToPlayer > rangedAttackRange)
         {
+            agent.isStopped = false;
             agent.SetDestination(PlayerTransform.position);
         }
         else
@@ -347,30 +372,49 @@ public class BasicEnemy : MonoBehaviour, IDamage
         if (attacking) return;
 
         StartCoroutine(AttackRoutine());
+    }
 
-        attackTimer = attackCooldown;
+    public void EnableAttackHitbox()
+    {
+      if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(true);
+        }
+    }
+
+    public void DisableAttackHitbox()
+    {
+        if (attackHitbox != null)
+        {
+            attackHitbox.SetActive(false);
+        }
+    }
+
+    public void EndAttack()
+    {
+        animationFinished = true;
     }
 
     private IEnumerator AttackRoutine()
     {
         attacking = true;
+        animationFinished = false;
         StopMovement();
         FaceTarget();
 
-        yield return new WaitForSeconds(0.2f);
-
-        if (attackHitbox != null)
+        if (animator != null)
         {
-            attackHitbox.SetActive(true);
-            yield return new WaitForSeconds(attackDuration);
-            attackHitbox.SetActive(false);
+            animator.SetTrigger("sword attack");
         }
+
+        yield return new WaitUntil(() => animationFinished);
 
         if (agent != null)
         {
             agent.isStopped = false;
         }
         attacking = false;
+        attackTimer = attackCooldown;
     }
 
     private void RangedAttack()
@@ -379,8 +423,34 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         if (projectilePrefab == null || throwPoint == null) return;
 
-        ThrowObject();
+        StartCoroutine(RangedAttackRoutine());
         throwTimer = 0f;
+    }
+
+    private IEnumerator RangedAttackRoutine()
+    {
+        attacking = true;
+        animationFinished = false;
+        StopMovement();
+        FaceTarget();
+
+        if (animator != null)
+            animator.SetTrigger("shoots gun_2");
+
+        yield return new WaitUntil(() => animationFinished);
+
+        if (agent != null)
+            agent.isStopped = false;
+
+        attacking = false;
+    }
+
+    public void FireProjectile()
+    {
+        if (dead)
+            return;
+
+        ThrowObject();
     }
 
     private void ThrowObject()
@@ -389,8 +459,7 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
         Vector3 targetPosition = PredictTargetPosition();
 
-        Vector3 launchVelocity =
-            CalculateLaunchVelocity(throwPoint.position, targetPosition, launchAngle);
+        Vector3 launchVelocity = CalculateLaunchVelocity(throwPoint.position, targetPosition, throwSpeed);
 
         if (launchVelocity.sqrMagnitude <= 0.01f) return;
 
@@ -435,66 +504,69 @@ public class BasicEnemy : MonoBehaviour, IDamage
         for (int i = 0; i < 5; i++)
         {
             Vector3 direction = targetPosition - throwPoint.position;
-
             float horizontalDistance = new Vector3(direction.x, 0f, direction.z).magnitude;
-
             float verticalDistance = direction.y;
 
-            float angle = launchAngle * Mathf.Deg2Rad;
+            if (horizontalDistance < 0.01f)
+                return targetPosition;
 
             float gravity = Mathf.Abs(Physics.gravity.y);
-
-            float cosAngle = Mathf.Cos(angle);
-            float sinAngle = Mathf.Sin(angle);
-
-            float denominator = 2f * cosAngle * cosAngle * (horizontalDistance * Mathf.Tan(angle) - verticalDistance);
-
-            if (denominator <= 0.01f) return PlayerTransform.position;
-
-            float projectileSpeed = Mathf.Sqrt(gravity * horizontalDistance * horizontalDistance / denominator);
-
-            if (float.IsNaN(projectileSpeed) || float.IsInfinity(projectileSpeed) || projectileSpeed <= 0f)
-            {
+            float speedSquared = throwSpeed * throwSpeed;
+            float discriminant = speedSquared * speedSquared - gravity *
+                (gravity * horizontalDistance * horizontalDistance + 2f * verticalDistance * speedSquared);
+            
+            if (discriminant <= 0f) 
                 return PlayerTransform.position;
-            }
 
-            float horizontalSpeed = projectileSpeed * cosAngle;
+            float sqrtDiscriminant = Mathf.Sqrt(discriminant);
+            float tanAngle = (speedSquared - sqrtDiscriminant) / (gravity * horizontalDistance);
+            float angle = Mathf.Atan(tanAngle);
+            float horizontalSpeed = throwSpeed * Mathf.Cos(angle);
 
-            if (horizontalSpeed <= 0.01f) return PlayerTransform.position;
-
+            if (horizontalSpeed <= 0.01f)
+                return PlayerTransform.position;
+          
             float flightTime = horizontalDistance / horizontalSpeed;
-
             targetPosition = PlayerTransform.position + velocity * flightTime;
-
             targetPosition.y = PlayerTransform.position.y;
         }
 
         return targetPosition;
     }
 
-    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float angleInDegrees)
+    private Vector3 CalculateLaunchVelocity(Vector3 startPoint, Vector3 targetPoint, float speed)
     {
-        Vector3 playerXZ = new Vector3(targetPoint.x, startPoint.y, targetPoint.z);
-        float distanceXZ = Vector3.Distance(startPoint, playerXZ);
-        float deltaY = targetPoint.y - startPoint.y;
+        Vector3 displacement = targetPoint - startPoint;
+        Vector3 horizontalDisplacement = new Vector3(displacement.x, 0f, displacement.z);
 
-        float radAngle = angleInDegrees * Mathf.Deg2Rad;
-        float gravity = Physics.gravity.y;
+        float distance = horizontalDisplacement.magnitude;
+        float heightDifference = displacement.y;
 
-        float velocitySquared = (gravity * distanceXZ * distanceXZ) / (2 * Mathf.Cos(radAngle) * Mathf.Cos(radAngle) * (deltaY - distanceXZ * Mathf.Tan(radAngle)));
-
-        if (velocitySquared <= 0)
+        if (distance < 0.01f)
         {
-            return (targetPoint - startPoint).normalized * 10f;
+            return displacement.normalized * speed;
         }
 
-        float totalSpeed = Mathf.Sqrt(velocitySquared);
-        float forwardSpeed = totalSpeed * Mathf.Cos(radAngle);
-        float verticalSpeed = totalSpeed * Mathf.Sin(radAngle);
+        float gravity = Mathf.Abs(Physics.gravity.y);
+        float speedSquared = speed * speed;
 
-        Vector3 directionXZ = (playerXZ - startPoint).normalized;
-        Vector3 launchVelocity = directionXZ * forwardSpeed + Vector3.up * verticalSpeed;
-        return launchVelocity;
+        float discriminant = speedSquared * speedSquared - gravity * 
+            (gravity * distance * distance + 2f * heightDifference * speedSquared);
+
+        if (discriminant < 0f)
+        {
+            Debug.LogWarning("Projectile target is unreachable at speed " + speed);
+            return displacement.normalized * speed;
+        }
+
+        float sqrtDiscriminant = Mathf.Sqrt(discriminant);
+
+        float angle = Mathf.Atan((speedSquared - sqrtDiscriminant) / (gravity * distance));
+        Vector3 horizontalDirection = horizontalDisplacement.normalized;
+        Vector3 velocity = horizontalDirection * (speed * Mathf.Cos(angle));
+        velocity.y = speed * Mathf.Sin(angle);
+
+        return velocity;
     }
 
     private void BackAwayFromPlayer()
@@ -556,9 +628,11 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     public void takeDamage(int amount)
     {
+        if (dead)
+            return;
+
         currentHP -= amount;
         Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
-        StartCoroutine(flashRed());
 
         if (currentHP <= 0)
         {
@@ -568,10 +642,13 @@ public class BasicEnemy : MonoBehaviour, IDamage
 
     private void Die()
     {
+        if (dead)
+            return;
+
+        dead = true;
         Debug.Log("Basic Enemy Defeated!");
 
         gameManager.instance.playerScript.ModifyPlayerFunds(10);
-
         gameManager.instance.AddKill();
 
         if (attackHitbox != null)
@@ -579,16 +656,25 @@ public class BasicEnemy : MonoBehaviour, IDamage
             attackHitbox.SetActive(false);
         }
 
-        Destroy(gameObject);
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+
+        StartCoroutine(DestroyAfterDeath());
     }
 
-    IEnumerator flashRed()
+    private IEnumerator DestroyAfterDeath()
     {
-        modelMat.color = Color.red;
-        modelMat.SetColor("_EmissionColor", Color.red);
-        yield return new WaitForSeconds(0.1f);
-        modelMat.color = colorOrig;
-        modelMat.SetColor("_EmissionColor", colorOrig);
+        if (agent != null)
+            agent.isStopped = true;
+
+        animator.ResetTrigger("sword attack");
+        animator.ResetTrigger("shoots gun_2");
+        animator.SetTrigger("Death");
+        yield return new WaitForSeconds(4f);
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
@@ -596,16 +682,16 @@ public class BasicEnemy : MonoBehaviour, IDamage
         Gizmos.color = Color.yellow;
 
         // Draw detection range
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(transform.position, currentDetectionRange);
 
         // Draw the two edges of the field of view
-        Vector3 leftDirection = Quaternion.Euler(0f, -fieldOfView / 2f, 0f) * transform.forward;
+        Vector3 leftDirection = Quaternion.Euler(0f, -currentFieldOfView / 2f, 0f) * transform.forward;
 
-        Vector3 rightDirection = Quaternion.Euler(0f, fieldOfView / 2f, 0f) * transform.forward;
+        Vector3 rightDirection = Quaternion.Euler(0f, currentFieldOfView / 2f, 0f) * transform.forward;
 
-        Gizmos.DrawRay(transform.position, leftDirection * detectionRange);
+        Gizmos.DrawRay(transform.position, leftDirection * currentDetectionRange);
 
-        Gizmos.DrawRay(transform.position, rightDirection * detectionRange);
+        Gizmos.DrawRay(transform.position, rightDirection * currentDetectionRange);
     }
 }
 
