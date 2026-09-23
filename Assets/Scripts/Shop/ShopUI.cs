@@ -13,6 +13,9 @@ public class ShopUI : MonoBehaviour
     [SerializeField] GameObject CategoryUIPrefab;
     [SerializeField] GameObject ItemUIPrefab;
 
+    [SerializeField] AudioSource ShopAudio;
+    [SerializeField] AudioClip PurchaceAudio;
+
     List<ShopItem> AvailableItems;
 
     ItemCatagory SelectedCategory;
@@ -175,6 +178,11 @@ public class ShopUI : MonoBehaviour
 
     void PurchaseItem()
     {
+        if (ShopAudio != null && PurchaceAudio != null)
+        {
+            ShopAudio.PlayOneShot(PurchaceAudio);
+        }
+
         Player.ModifyPlayerFunds(-SelectedItem.Price);
 
         //Add spawning of items here

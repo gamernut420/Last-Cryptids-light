@@ -151,7 +151,7 @@ public class gameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (menuActive == null)
+            if (menuActive == null && !isPaused)
             {
                 // stateUnpause(); //Removed to move down, trust - Sean
                 // pause the game
@@ -163,7 +163,7 @@ public class gameManager : MonoBehaviour
                 menuActive = menuPause;
                 menuActive.SetActive(true);
             }
-            else if (menuActive == menuPause)
+            else if (isPaused)
             {
                 stateUnpause();
             }
