@@ -1250,10 +1250,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
-        m_MethodName: OpenSettings
-        m_Mode: 1
+      - m_Target: {fileID: 462871928824267564}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 1
+      - m_Target: {fileID: 5239378456708463841}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1261,7 +1273,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!1 &1129062812570973886
 GameObject:
   m_ObjectHideFlags: 0
@@ -1992,10 +2004,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
-        m_MethodName: CloseSettings
-        m_Mode: 1
+      - m_Target: {fileID: 5239378456708463841}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 462871928824267564}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9092,6 +9116,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2297457184334866758}
     m_Modifications:
+    - target: {fileID: 471573527991475426, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 549872049105585579, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9174,11 +9202,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2673611908065331309, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2673611908065331309, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351755954577955627, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: craftingPanel
@@ -9190,39 +9218,47 @@ PrefabInstance:
       objectReference: {fileID: 1734095105437554052}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 391.40588
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -117.4168
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 142.83275
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -117.415
       objectReference: {fileID: 0}
     - target: {fileID: 6683593713132057006, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_Name
       value: CraftingPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683593713132057006, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7696770918067835603, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -115.28138
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10316,7 +10352,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -29.463135
+      value: -29.463013
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.y

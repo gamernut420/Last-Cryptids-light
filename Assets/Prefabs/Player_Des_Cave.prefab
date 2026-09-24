@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3563367224639979229}
+  - component: {fileID: 4361631017419949329}
   - component: {fileID: 6587136580913785902}
   - component: {fileID: 6159239590703302178}
   - component: {fileID: 6389188412056558501}
@@ -29,11 +30,24 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.66323423, z: 0, w: 0.7484119}
   m_LocalPosition: {x: 2365.53, y: 59.46, z: 2629.31}
-  m_LocalScale: {x: 1.2413001, y: 2.9476252, z: 5.683355}
+  m_LocalScale: {x: 6.846914, y: 6.5825534, z: 12.908091}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -83.094, z: 0}
+--- !u!114 &4361631017419949329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3265495073735822289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b8fa30eb1c38ab4980bbb93bc0e377d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeleportWall
+  teleportDestination: {fileID: 0}
 --- !u!33 &6587136580913785902
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -49,7 +63,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3265495073735822289}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -67,7 +81,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: effae37996bce824b8c9e95967f3b40b, type: 2}
+  - {fileID: 8503493444247837096, guid: 5e4e95cec5ddac443ae3d8b5fb2873e6, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,9 +120,9 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
