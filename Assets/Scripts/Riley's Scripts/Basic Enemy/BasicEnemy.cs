@@ -17,6 +17,7 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private LayerMask sightBlocker;
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform damageNumberPoint;
 
     [Header("Roaming")]
     [SerializeField] private float roamRadius = 10f;
@@ -641,7 +642,7 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
         if (direction.sqrMagnitude <= 0.01f) return;
 
         Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
     }
 
     private IEnumerator PlayStep()
@@ -667,7 +668,13 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
             return;
 
         currentHP -= amount;
-        Debug.Log("Basic Enemy Health: " + currentHP + "/" + maxHP);
+        aggroTimer = 2f;
+
+        if (DamageNumberManager.instance != null)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.35f, 0.35f), Random.Range(-0.1f, 0.15f), 0f);
+            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount);
+        }
 
         if (currentHP <= 0)
         {

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4389776413631290063}
   - component: {fileID: 8321381260975538539}
   m_Layer: 6
-  m_Name: Projectile
+  m_Name: Blind Enemy Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HearOnlyProjectile
   returnLayers:
     serializedVersion: 2
-    m_Bits: 9
+    m_Bits: 447
 --- !u!114 &-2405982533766684192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damage
   type: 1
-  affectedByDifficulty: 0
+  affectedByDifficulty: 1
   rb: {fileID: 4132429242358103269}
   damageAmount: 4
   damageRate: 0

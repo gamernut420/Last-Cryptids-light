@@ -305,6 +305,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &4050752036405508476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4720969838712814785}
+  m_Layer: 6
+  m_Name: damageTextPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4720969838712814785
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4050752036405508476}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.829, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4367710256569807001}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4968294969025963930
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,6 +368,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7534365008226106564}
+  - {fileID: 4720969838712814785}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6894607293878914897
@@ -357,6 +389,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   animator: {fileID: 0}
+  damageNumberPoint: {fileID: 4720969838712814785}
   roamRadius: 15
   roamWaitTime: 2
   meleeMaxHP: 50
@@ -364,13 +397,13 @@ MonoBehaviour:
   detectionRange: 15
   fieldOfView: 90
   attackHitbox: {fileID: 1518429027932855137}
-  attackRange: 3
+  attackRange: 2.5
   attackSpeed: 6
-  attackCooldown: 1.5
+  attackCooldown: 1
   attackDuration: 0.5
   loseAggro: 2
   rangeMaxHP: 30
-  RmoveSpeed: 3.5
+  RmoveSpeed: 4
   RdetectionRange: 30
   RfieldOfView: 90
   projectilePrefab: {fileID: 7792910582156755231, guid: 79eafe39c72db8e4abbe713cf4fd4a45, type: 3}
