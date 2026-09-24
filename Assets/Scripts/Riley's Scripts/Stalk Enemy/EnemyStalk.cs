@@ -12,6 +12,7 @@ public class EnemyStalk : MonoBehaviour, IDamage
     [SerializeField] private Animator animator;
     [SerializeField] private LayerMask sightBlocker;
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private Transform damageNumberPoint;
 
     [Header("Animation Parameters")]
     [SerializeField] private string speedParameter = "Speed";
@@ -268,6 +269,9 @@ public class EnemyStalk : MonoBehaviour, IDamage
 
     private void UpdateAnimation()
     {
+        if (isDead)
+            return;
+
         if (animator == null || agent == null)
             return;
 
@@ -552,7 +556,6 @@ public class EnemyStalk : MonoBehaviour, IDamage
             return false;
 
         float angle = Vector3.Angle(playerCamera.transform.forward, directionToStalker.normalized);
-        Debug.Log($"Looking: {angle} degrees");
         Debug.DrawRay(playerCamera.transform.position, directionToStalker.normalized * distance, Color.red);
 
         if (angle > playerViewAngle)
@@ -701,7 +704,12 @@ public class EnemyStalk : MonoBehaviour, IDamage
         if (currentHP <= 0) return;
 
         currentHP -= amount;
-        Debug.Log($"{gameObject.name} took {amount} damage. HP: {currentHP} / {maxHP}");
+
+        if (DamageNumberManager.instance != null)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.35f, 0.35f), Random.Range(-0.1f, 0.15f), 0f);
+            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount);
+        }
 
         if (currentHP <= 0)
         {
@@ -717,8 +725,8 @@ public class EnemyStalk : MonoBehaviour, IDamage
         isDead = true;
         currentState = StalkerState.Dead;
         attacking = false;
+
         DisableAttackHitbox();
-        StopAllCoroutines();
 
         if (agent != null)
         {
@@ -729,22 +737,14 @@ public class EnemyStalk : MonoBehaviour, IDamage
         if (animator != null)
         {
             animator.ResetTrigger(attackTrigger);
-            animator.SetTrigger(dieTrigger);
-            StartCoroutine(DeathRoutine());
+
+            animator.CrossFade("Die", 0.05f);
         }
-        else
-            Destroy(gameObject, 2f);
+        StartCoroutine(DeathRoutine());
     }
 
     private IEnumerator DeathRoutine()
     {
-        isDead = true;
-
-        if (agent != null)
-            agent.isStopped = true;
-
-        animator.ResetTrigger(attackTrigger);
-        animator.SetTrigger(dieTrigger);
         yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
