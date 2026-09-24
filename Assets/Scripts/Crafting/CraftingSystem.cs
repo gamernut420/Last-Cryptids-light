@@ -109,7 +109,8 @@ public static class CraftingSystem
         }
 
 
-        // CHANGED FOR HUD QUICK SLOTS:
+        // Add the successfully crafted item
+        // to the player's inventory.
         inventory.AddCraftedItem(
             recipe.craftedItemData,
             1
@@ -120,6 +121,24 @@ public static class CraftingSystem
             "Crafted: " +
             recipe.craftedItemData.itemName
         );
+
+
+        // ADDED:
+        // Any successful craft completes the
+        // "Craft an Item" objective.
+        //
+        // ObjectiveManager handles:
+        // - marking the objective complete
+        // - unlocking the next objective
+        // - updating the compass target
+        // - triggering the mission UI state change
+        if (ObjectiveManager.Instance != null)
+        {
+            ObjectiveManager.Instance
+                .CompleteObjective(
+                    "secondary_craft_an_item"
+                );
+        }
 
 
         return true;
