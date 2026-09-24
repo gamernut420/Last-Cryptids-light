@@ -5,14 +5,19 @@ using UnityEngine;
 
 public class ShopUI : MonoBehaviour
 {
+    [SerializeField] ObjectiveData ShopObjective;
+
+    [Header("----- UI References -----")]
     [SerializeField] TextMeshProUGUI Funds;
     [SerializeField] Transform CategoryUIRoot;
     [SerializeField] Transform ItemUIRoot;
     [SerializeField] Button PurchaseButton;
 
+    [Header("----- Prefabs -----")]
     [SerializeField] GameObject CategoryUIPrefab;
     [SerializeField] GameObject ItemUIPrefab;
 
+    [Header("----- Audio -----")]
     [SerializeField] AudioSource ShopAudio;
     [SerializeField] AudioClip PurchaceAudio;
 
@@ -178,6 +183,11 @@ public class ShopUI : MonoBehaviour
 
     void PurchaseItem()
     {
+        if(SelectedItem.Catagory.CatagoryName == "Weapon")
+        {
+            ObjectiveManager.Instance.CompleteObjective(ShopObjective.name);
+        }
+
         if (ShopAudio != null && PurchaceAudio != null)
         {
             ShopAudio.PlayOneShot(PurchaceAudio);
