@@ -7,7 +7,6 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
-
     [Header("Menu references")]
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -62,9 +61,8 @@ public class gameManager : MonoBehaviour
 
 
     [Header("Stamina")]
-    [SerializeField]
-    Image staminaBar;
-
+    [SerializeField] GameObject staminaUI;
+    [SerializeField] Image staminaBar;
 
     [Header("Auto Set Variables (No need to touch)")]
     public GameObject beacon;
@@ -257,7 +255,7 @@ public class gameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if (menuActive == null)
+            if (menuActive == null && !isPaused)
             {
                 statePause();
 
@@ -275,7 +273,7 @@ public class gameManager : MonoBehaviour
 
                 menuActive.SetActive(true);
             }
-            else if (menuActive == menuPause)
+            else if (isPaused)
             {
                 stateUnpause();
             }
@@ -534,38 +532,7 @@ public class gameManager : MonoBehaviour
 
                 if (wep != null)
                 {
-                    Sprite weaponSprite =
-                        null;
-
-
-                    if (weaponHUDController != null)
-                    {
-                        weaponSprite =
-                            weaponHUDController
-                                .GetWeaponSprite(
-                                    wep.GetWeaponName()
-                                );
-                    }
-
-
-                    if (i == slotInUse)
-                    {
-                        slots[i].UpdateSlot(
-                            weaponSprite,
-                            wep.GetWeaponName(),
-                            1,
-                            Color.darkRed
-                        );
-                    }
-                    else
-                    {
-                        slots[i].UpdateSlot(
-                            weaponSprite,
-                            wep.GetWeaponName(),
-                            1,
-                            Color.gray2
-                        );
-                    }
+                    slots[i].UpdateSlot(wep.GetWeaponImage(), wep.GetWeaponName(), 1, i == slotInUse ? Color.darkRed : Color.white);
                 }
                 else
                 {
@@ -578,69 +545,18 @@ public class gameManager : MonoBehaviour
                     {
                         if (gadget.GetItemInfo() != null)
                         {
-                            if (i == slotInUse)
-                            {
-                                slots[i].UpdateSlot(
-                                    gadget
-                                        .GetItemInfo()
-                                        .itemIcon,
-
-                                    gadget
-                                        .GetGadgetName(),
-
-                                    1,
-
-                                    Color.darkRed
-                                );
-                            }
-                            else
-                            {
-                                slots[i].UpdateSlot(
-                                    gadget
-                                        .GetItemInfo()
-                                        .itemIcon,
-
-                                    gadget
-                                        .GetGadgetName(),
-
-                                    1,
-
-                                    Color.gray2
-                                );
-                            }
+                            slots[i].UpdateSlot(gadget.GetItemInfo().itemIcon, gadget.GetGadgetName(), 1, i == slotInUse ? Color.darkRed : Color.green);
                         }
                         else
                         {
-                            if (i == slotInUse)
-                            {
-                                slots[i].UpdateSlot(
-                                    null,
-                                    gadget.GetGadgetName(),
-                                    1,
-                                    Color.darkRed
-                                );
-                            }
-                            else
-                            {
-                                slots[i].UpdateSlot(
-                                    null,
-                                    gadget.GetGadgetName(),
-                                    1,
-                                    Color.gray2
-                                );
-                            }
+                            slots[i].UpdateSlot(null, gadget.GetGadgetName(), 1, i == slotInUse ? Color.darkRed : Color.green);
                         }
                     }
                 }
             }
             else
             {
-                slots[i].UpdateSlot(
-                    null,
-                    null,
-                    0,
-                    Color.gray2
-                );
+                slots[i].UpdateSlot(null, null, 0, i > 1 ? Color.green : Color.white);
             }
         }
     }
@@ -705,23 +621,16 @@ public class gameManager : MonoBehaviour
         if (show)
         {
             statePause();
+            menuActive = ShopUI;
+            menuActive.SetActive(true);
         }
         else
         {
             stateUnpause();
+            ShopUI.SetActive(show);
         }
 
-
-        ShopUI.SetActive(show);
-
-
-        ShopUI
-            .GetComponent<ShopUI>()
-            .SetStation(
-                player.GetComponent<IPlayer>(),
-                items,
-                _spawnLocation
-            );
+        ShopUI.GetComponent<ShopUI>().SetStation(player.GetComponent<IPlayer>(), items, _spawnLocation);
     }
 
 
@@ -730,22 +639,20 @@ public class gameManager : MonoBehaviour
         if (show)
         {
             statePause();
+            menuActive = UpgradeUI;
+            menuActive.SetActive(true);
         }
         else
         {
             stateUnpause();
+            UpgradeUI.SetActive(show);
         }
-
-
-        UpgradeUI.SetActive(show);
     }
 
-
-    public void UpdateStaminaBar(
-        float ammount,
-        bool show)
+    public void UpdateStaminaBar(float ammount, bool show)
     {
-        staminaBar.fillAmount =
-            ammount;
+        staminaBar.fillAmount = ammount;
+
+        //UpgradeUI.SetActive(show);
     }
 }

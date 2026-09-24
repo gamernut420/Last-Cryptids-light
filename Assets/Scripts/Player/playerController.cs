@@ -13,6 +13,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [Range(1, 3)][SerializeField] int jumpMax = 2;
     [Range(15, 45)][SerializeField] int gravity = 35;
 
+    [SerializeField][Min(0)] int StartingPoints = 0;
+
+    int jumpMax = 1;
     PlayerUpgrades upgradeManager;
 
 
@@ -92,6 +95,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
                 .ApplyUpgrades();
         }
 
+        points = StartingPoints;
 
         UpdateWeaponUI();
     }
