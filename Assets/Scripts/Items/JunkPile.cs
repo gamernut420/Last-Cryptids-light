@@ -26,7 +26,9 @@ public class JunkPile : MonoBehaviour, IInteract
     [Header("References")]
     [SerializeField] string PromptMessage = "Press E to pick up";
 
-    float currentHoldTimer;
+    [Header("Objective Settings")]
+    public ObjectiveData targetObjective;
+    public int searchProgressAmount;    float currentHoldTimer;
     string currentPropmt;
 
     private void Start()
@@ -67,6 +69,9 @@ public class JunkPile : MonoBehaviour, IInteract
             Debug.Log($"Scavenged {quantity}x {selectedLoot.itemData.itemName} form junk pile.");
         }
         hasBeenSearched = true;
+        if (targetObjective != null && ObjectiveManager.Instance != null)
+            ObjectiveManager.Instance.AddObjectiveProgress(targetObjective.objectiveID, searchProgressAmount);
+
     }
 
     private int LootCountSafe(List<LootItem> list) => list.Count;
