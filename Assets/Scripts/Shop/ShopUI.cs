@@ -183,7 +183,7 @@ public class ShopUI : MonoBehaviour
 
     void PurchaseItem()
     {
-        if(SelectedItem.Catagory.CatagoryName == "Weapon")
+        if(SelectedItem.Catagory.CatagoryName == "Weapon" && ShopObjective != null)
         {
             ObjectiveManager.Instance.CompleteObjective(ShopObjective.name);
         }

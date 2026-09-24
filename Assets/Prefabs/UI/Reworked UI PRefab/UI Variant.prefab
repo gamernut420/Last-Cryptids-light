@@ -2128,9 +2128,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
   activeObjectives:
-  - {fileID: 11400000, guid: 043e98f878af08f4c9cc22aecb157b11, type: 2}
-  - {fileID: 11400000, guid: 1a012f1c93ba2a44eafefc836c8f3ad9, type: 2}
-  - {fileID: 11400000, guid: e8475490310a1f546b434985ff8d6f95, type: 2}
+  - {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a1bcc7c93c3b5f64d9f814286f7863ee, type: 2}
   hideUIin: 2
   currentCompassTarget: {fileID: 0}
@@ -9154,7 +9154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 549872049105585579, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 54.157776
+      value: 54.157715
       objectReference: {fileID: 0}
     - target: {fileID: 549872049105585579, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -9174,11 +9174,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2673611908065331309, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2673611908065331309, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351755954577955627, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: craftingPanel
@@ -9190,39 +9190,43 @@ PrefabInstance:
       objectReference: {fileID: 1734095105437554052}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 391.40588
       objectReference: {fileID: 0}
     - target: {fileID: 4040800823690245066, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -117.4168
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 142.83275
       objectReference: {fileID: 0}
     - target: {fileID: 4532562285457589220, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -117.415
       objectReference: {fileID: 0}
     - target: {fileID: 6683593713132057006, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_Name
       value: CraftingPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683593713132057006, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10223,6 +10227,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7509100260170851847}
     - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: menuWin
+      value: 
+      objectReference: {fileID: 7813459565382971537}
+    - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: menuPause
       value: 
       objectReference: {fileID: 1329495584058008825}
@@ -10258,6 +10266,10 @@ PrefabInstance:
       propertyPath: killCounterText
       value: 
       objectReference: {fileID: 1710013449083125654}
+    - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: menuExtractionWin
+      value: 
+      objectReference: {fileID: 7813459565382971537}
     - target: {fileID: 6527832685153877172, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: weaponHUDController
       value: 
@@ -10308,7 +10320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -29.463074
+      value: -29.463135
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -10341,9 +10353,14 @@ PrefabInstance:
     - {fileID: 871133043131415204, guid: e65246918bff51042a211786b1266831, type: 3}
     - {fileID: 5239129728815898585, guid: e65246918bff51042a211786b1266831, type: 3}
     - {fileID: 6697131576738316134, guid: e65246918bff51042a211786b1266831, type: 3}
+    - {fileID: 1645653295722047563, guid: e65246918bff51042a211786b1266831, type: 3}
+    - {fileID: 5969908958412533803, guid: e65246918bff51042a211786b1266831, type: 3}
+    - {fileID: 3117807314358043075, guid: e65246918bff51042a211786b1266831, type: 3}
+    - {fileID: 6196293076657574345, guid: e65246918bff51042a211786b1266831, type: 3}
+    - {fileID: 6636216825321088011, guid: e65246918bff51042a211786b1266831, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4983294185658442017, guid: e65246918bff51042a211786b1266831, type: 3}
-      insertIndex: 9
+      insertIndex: 8
       addedObject: {fileID: 3131740221994526616}
     - targetCorrespondingSourceObject: {fileID: 4983294185658442017, guid: e65246918bff51042a211786b1266831, type: 3}
       insertIndex: -1
@@ -10383,6 +10400,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 169dc114634f9124cb1636b720c8e33a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::buttonFunctions
+--- !u!1 &7813459565382971537 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3937551911473232118, guid: e65246918bff51042a211786b1266831, type: 3}
+  m_PrefabInstance: {fileID: 6542044201469741159}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8797557831667629474
 PrefabInstance:
   m_ObjectHideFlags: 0
