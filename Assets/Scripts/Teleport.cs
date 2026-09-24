@@ -8,7 +8,14 @@ public class TeleportWall : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.transform.position = teleportDestination.position;
+            CharacterController playerController = other.GetComponent<CharacterController>();
+
+            if (playerController != null)
+            {
+                playerController.enabled = false;
+                other.transform.position = teleportDestination.position;
+                playerController.enabled = true;
+            }
         }
     }
 }

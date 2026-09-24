@@ -110,7 +110,8 @@ public class AmbiencePlaylist : MonoBehaviour
         }
 
         ambienceSource.clip = clip;
-        ambienceSource.volume = volume;
+        ApplySourceVolume();
+        //ambienceSource.volume = volume;
         pausedPlaybackTime = 0f;
         ambienceSource.Play();
     }

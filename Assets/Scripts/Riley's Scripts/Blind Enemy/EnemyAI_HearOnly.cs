@@ -1,8 +1,9 @@
 using UnityEngine.AI;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
-public class EnemyAI_HearOnly : MonoBehaviour, IDamage
+public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 {
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
@@ -72,7 +73,8 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
 
     private bool dead;
     private bool throwing;
-    private EnemyAudioManager enemyAudio;
+    private int spawnAreaMask;
+    private bool playerHiding;
 
     public enum State { Patrol, InvestigateSound, Attack }
     public State currentState = State.Patrol;
@@ -99,11 +101,22 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         NoiseManager.OnNoiseMade -= HearNoise;
     }
 
+    private void DetectSpawnNavMeshArea()
+    {
+        NavMeshHit hit;
+
+        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
+        {
+            return;
+        }
+        agent.areaMask = hit.mask;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        enemyAudio = GetComponent<EnemyAudioManager>();
         agent = GetComponent<NavMeshAgent>();
+        DetectSpawnNavMeshArea();
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
@@ -129,6 +142,13 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         if (dead) return;
 
         if (PlayerTransform == null) return;
+
+        if (playerHiding)
+        {
+            currentState = State.Patrol;
+            PatrolLogic();
+            return;
+        }
 
         projectileTimer -= Time.deltaTime;
 
@@ -160,6 +180,27 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 StartCoroutine(PlayStep());
             }
         }
+    }
+
+    public void LosePlayer()
+    {
+        if (dead)
+            return;
+
+        DisableAllAttackHitboxes();
+        currentState = State.Patrol;
+        playerHiding = true;
+        attacking = false;
+        throwing = false;
+    }
+
+    public void ResumePlayerDetection()
+    {
+        if (dead)
+            return;
+
+        agent.isStopped = false;
+        playerHiding = false;
     }
 
     private void DisableAllAttackHitboxes()
@@ -315,7 +356,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         Quaternion spawnRotation = projectileSpawnPoint.transform.rotation;
         if (handBall != null)
             handBall.enabled = false;
-        enemyAudio?.PlayProjectileAttack();
+
         ThrowProjectile(spawnPosition, spawnRotation);
         StartCoroutine(ProjectileReturnTimeout());
     }
@@ -592,7 +633,6 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
                 PlayAnimation("Demon|Punch3");
                 break;
         }
-        enemyAudio?.PlayMeleeAttack();
 
         yield return new WaitUntil(() => animationFinished);
 
@@ -695,7 +735,7 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage
         randomDirection += transform.position;
 
         NavMeshHit hitInfo;
-        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hitInfo, patrolRadius, agent.areaMask))
         {
             if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             {
