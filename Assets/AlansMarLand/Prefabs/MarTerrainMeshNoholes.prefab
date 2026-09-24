@@ -42,7 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4382811031267962752}
   - component: {fileID: 7092516922620264072}
-  - component: {fileID: 3886115197612766226}
   m_Layer: 0
   m_Name: MarTerrainMeshNoholes
   m_TagString: Untagged
@@ -88,37 +87,13 @@ MonoBehaviour:
   vertexCountVertical: 0
   splitCountHorizontal: 0
   splitCountVertical: 0
-  isLowpolyStyle: 0
-  hasEdgeFall: 0
-  hasPerChunkUV: 0
+  isLowpolyStyle: 1
+  hasEdgeFall: 1
+  hasPerChunkUV: 1
   meshIsCompressed: 1
-  meshes:
-  - {fileID: -105442772541680190, guid: 4d39fa963a633d74aa5dfd6174b70eb5, type: 2}
-  meshLODs:
-  - {fileID: -105442772541680190, guid: 4d39fa963a633d74aa5dfd6174b70eb5, type: 2}
+  meshes: []
+  meshLODs: []
   pivotPointOffset: []
---- !u!64 &3886115197612766226
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4064160908673528260}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -105442772541680190, guid: 4d39fa963a633d74aa5dfd6174b70eb5, type: 2}
 --- !u!1 &6465179367945119666
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,6 +105,8 @@ GameObject:
   - component: {fileID: 7479535773085542985}
   - component: {fileID: 6467748765893432193}
   - component: {fileID: 2734684147955547947}
+  - component: {fileID: 4124170033553729266}
+  - component: {fileID: 5811490543824393284}
   m_Layer: 0
   m_Name: MapMagicDefaultTerrainData(Clone)
   m_TagString: Untagged
@@ -209,3 +186,52 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!54 &4124170033553729266
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6465179367945119666}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!64 &5811490543824393284
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6465179367945119666}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -105442772541680190, guid: 4d39fa963a633d74aa5dfd6174b70eb5, type: 2}
