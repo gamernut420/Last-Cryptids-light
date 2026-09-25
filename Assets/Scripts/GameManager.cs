@@ -7,7 +7,6 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
-
     [Header("Menu references")]
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -59,9 +58,7 @@ public class gameManager : MonoBehaviour
 
     float timeScaleOrig;
 
-
     int waveCounter;
-
 
     // Sets up references
     void Awake()
