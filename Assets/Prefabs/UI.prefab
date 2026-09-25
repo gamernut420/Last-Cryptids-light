@@ -1899,10 +1899,12 @@ MonoBehaviour:
   killCounterText: {fileID: 2275060472359848795}
   exposurePromptObject: {fileID: 2408728424504453974}
   promptDuration: 1
+  weaponHUDController: {fileID: 0}
   killCount: 0
   checkpointManager: {fileID: 6966736145444322220}
   playerHPBar: {fileID: 8874341501033032826}
   damageFlashPanel: {fileID: 5872003117020856513}
+  damageIndicator: {fileID: 0}
   staminaUI: {fileID: 1481427973979042915}
   staminaBar: {fileID: 3076804687420395710}
   beacon: {fileID: 0}
@@ -5803,7 +5805,6 @@ RectTransform:
   - {fileID: 4140542039896310136}
   - {fileID: 7427182130421907043}
   - {fileID: 1569193261263739583}
-  - {fileID: 626119579668115918}
   - {fileID: 2837053065798238328}
   - {fileID: 2640068699162174154}
   - {fileID: 8946846462447600526}
@@ -8643,7 +8644,7 @@ GameObject:
   - component: {fileID: 1768547816302670124}
   - component: {fileID: 1920169974656344294}
   m_Layer: 5
-  m_Name: FearModule
+  m_Name: Kill Count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8660,7 +8661,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 626119579668115918}
   m_Father: {fileID: 8480310862760911945}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11587,7 +11589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0.11764706, g: 0.654902, b: 0.84705883, a: 0.5}
+  m_EffectColor: {r: 0, g: 0.9411765, b: 1, a: 1}
   m_EffectDistance: {x: 1.5, y: 10}
   m_UseGraphicAlpha: 1
 --- !u!1 &8549432967107649407
@@ -12746,7 +12748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21960784, g: 0.7411765, b: 0.972549, a: 0.5882353}
+  m_Color: {r: 0, g: 0.9411765, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14879,6 +14881,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8389840847476430431}
     m_Modifications:
+    - target: {fileID: 4702131893489105171, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4702131893489105171, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 4702131893489105171, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5011637235539848064, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -14958,6 +14972,26 @@ PrefabInstance:
     - target: {fileID: 5011637235539848064, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506553869583230406, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_EffectColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506553869583230406, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_EffectColor.g
+      value: 0.94117653
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506553869583230406, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_EffectColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506553869583230406, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 1.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 5506553869583230406, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
+      propertyPath: m_EffectDistance.y
+      value: -0.96
       objectReference: {fileID: 0}
     - target: {fileID: 9186572895572729294, guid: 9be4c65bdffb6054296cf1a497601137, type: 3}
       propertyPath: m_Name
@@ -15117,11 +15151,23 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 4983294185658442017}
+    m_TransformParent: {fileID: 3938818238349428953}
     m_Modifications:
     - target: {fileID: 7267638418772092727, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_Name
       value: KillCountText
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902695915146461748, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902695915146461748, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902695915146461748, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294963200
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_Pivot.x
@@ -15173,23 +15219,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 20
+      value: 73
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -100
+      value: -59
       objectReference: {fileID: 0}
     - target: {fileID: 8831219197938645153, guid: 8832bac0b49d10f4b9f7a5b74ecda978, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

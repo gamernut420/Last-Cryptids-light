@@ -9,6 +9,9 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     [SerializeField][Min(1f)] float MaxHP = 100;
     [SerializeField] float BaseSpeed = 5;
     [SerializeField] float MaxSpeed = 15;
+    [SerializeField] float MaxStamina = 5;
+    [SerializeField] float StaminaCoolDown = 2;
+    [SerializeField] float StaminaChargeRate = 5;
     [Range(8, 15)][SerializeField] int jumpSpeed = 10;
     [Range(15, 45)][SerializeField] int gravity = 35;
 
@@ -17,395 +20,215 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     int jumpMax = 1;
     PlayerUpgrades upgradeManager;
 
-
     [Header("Inventory")]
-    [SerializeField]
-    PlayerInventory Inventory;
-
+    [SerializeField] PlayerInventory Inventory;
 
     [Header("Audio")]
     public float walkHearingRadius = 5f;
     public float sprintHearingRadius = 10f;
 
-
     [Header("Weapon")]
-    [SerializeField]
-    ProjectileManager projectileManager;
-
-    [SerializeField]
-    GameObject WeaponGrip;
-
-
+    [SerializeField] ProjectileManager projectileManager;
+    [SerializeField] GameObject WeaponGrip;
     GameObject ActiveItem;
-
-    GameObject[] hotbar =
-        new GameObject[4];
-
-
-    int activeItemSlot =
-        -1;
-
-
-    public static System.Action<bool>
-        ShowAmmoUI;
-
+    GameObject[] hotbar = new GameObject[4];
+    int activeItemSlot;
+    public static System.Action<bool> ShowAmmoUI;
 
     int jumpCount;
-
     float currentHP;
-
     float currentSpeed;
+    float currentStamina;
+    float currentStamCoolDown;
+    bool isStimed;
+    float stimMult;
+    bool isSprinting;
 
-    int points = 12345;
-
+    //Set for testing this will be used alongside kills
+    int points;
 
     Vector3 moveDir;
-
     Vector3 playerVel;
 
 
     bool isDead = false;
 
-
-    bool stimulantMode =
-        false;
-
-    float stimulantMultiplier =
-        1f;
-
-
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        currentHP =
-            MaxHP;
+        currentHP = MaxHP;
+        currentSpeed = BaseSpeed;
 
+        currentStamina = MaxStamina;
 
-        currentSpeed =
-            BaseSpeed;
+        currentStamCoolDown = StaminaCoolDown;
 
+        isSprinting = false;
 
-        upgradeManager =
-            GetComponent<PlayerUpgrades>();
+        upgradeManager = GetComponent<PlayerUpgrades>();
 
-
-        if (upgradeManager != null)
-        {
-            upgradeManager
-                .ApplyUpgrades();
-        }
+        upgradeManager.ApplyUpgrades();
 
         points = StartingPoints;
 
         UpdateWeaponUI();
     }
 
-
+    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(
-            KeyCode.U))
-        {
-            if (upgradeManager != null)
-            {
-                upgradeManager
-                    .ModifyHPUpgrades(1);
-
-                updatePlayerUI();
-            }
-        }
-        else if (Input.GetKeyDown(
-            KeyCode.I))
-        {
-            if (upgradeManager != null)
-            {
-                upgradeManager
-                    .ModifySpeedUpgrades(1);
-            }
-        }
-        else if (Input.GetKeyDown(
-            KeyCode.O))
-        {
-            if (upgradeManager != null)
-            {
-                upgradeManager
-                    .ModifyStaminaUpgrades(1);
-            }
-        }
-
-
         sprint();
 
+        if (gameManager.instance.isPaused) return;
 
-        if (gameManager.instance != null &&
-            gameManager.instance.isPaused)
-        {
-            return;
-        }
+        if (isDead) return;
 
-
-        if (isDead)
-        {
-            return;
-        }
-
+        movement();
 
         GadgetUse();
 
         CheckSwapItem();
 
-        movement();
-
-
-        if (Input.GetKey(
-            KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            NoiseManager.MakeNoise(
-                transform.position,
-                sprintHearingRadius
-            );
+            NoiseManager.MakeNoise(transform.position, sprintHearingRadius);
         }
+        ///////   Testing Logic    ///////
 
-
-        if (Input.GetKeyDown(
-            KeyCode.K))
-        {
-            takeDamage(1);
-        }
+        // Testing key: 'K' to instantly kill the playerand test the death screen
+        if (Input.GetKeyDown(KeyCode.K)) takeDamage(1);
     }
-
 
     void movement()
     {
         if (controller.isGrounded)
         {
             jumpCount = 0;
-
             playerVel.y = 0;
         }
 
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        moveDir =
-            Input.GetAxis("Horizontal") *
-            transform.right +
+        moveDir = horizontal * transform.right + vertical * transform.forward;
+        controller.Move(moveDir * currentSpeed * Time.deltaTime);
 
-            Input.GetAxis("Vertical") *
-            transform.forward;
-
-
-        controller.Move(
-            moveDir *
-            currentSpeed *
-            Time.deltaTime
-        );
-
+        CheckStamina(horizontal != 0 || vertical != 0);
 
         jump();
-
-
-        controller.Move(
-            playerVel *
-            Time.deltaTime
-        );
-
-
-        playerVel.y -=
-            gravity *
-            Time.deltaTime;
+        controller.Move(playerVel * Time.deltaTime);
+        playerVel.y -= gravity * Time.deltaTime;
     }
 
+    void CheckStamina(bool isMoving)
+    {
+        if (isMoving && isSprinting && !isStimed)
+        {
+            currentStamCoolDown = StaminaCoolDown;
+            currentStamina -= Time.deltaTime;
+        }
+        else if (currentStamCoolDown > 0 && !isStimed)
+        {
+            currentStamCoolDown -= Time.deltaTime;
+        }
+        else if (currentStamina < MaxStamina)
+        {
+            float regenRate = MaxStamina / StaminaChargeRate;
+
+            currentStamina += regenRate * Time.deltaTime;
+        }
+
+        currentStamina = Mathf.Clamp(currentStamina, 0, MaxStamina);
+        currentStamCoolDown = Mathf.Clamp(currentStamCoolDown, 0, StaminaCoolDown);
+
+        gameManager.instance.UpdateStaminaBar(currentStamina / MaxStamina, currentStamina < MaxStamina);
+    }
 
     void sprint()
     {
-        float targetSpeed;
-
-
-        if (Input.GetKey(
-            KeyCode.LeftShift))
+        if (currentStamina > 0)
         {
-            targetSpeed =
-                MaxSpeed;
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                isSprinting = true;
+                currentSpeed = MaxSpeed * (isStimed ? stimMult : 1);
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                isSprinting = false;
+                currentSpeed = BaseSpeed * (isStimed ? stimMult : 1);
+            }
         }
         else
         {
-            targetSpeed =
-                BaseSpeed;
+            isSprinting = false;
+            currentSpeed = BaseSpeed;
         }
-
-
-        if (stimulantMode)
-        {
-            targetSpeed *=
-                stimulantMultiplier;
-        }
-
-
-        currentSpeed =
-            targetSpeed;
     }
-
 
     void jump()
     {
-        if (Input.GetButtonDown(
-                "Jump") &&
-            jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
-
-            playerVel.y =
-                jumpSpeed;
+            playerVel.y = jumpSpeed;
         }
     }
-
-
     public void takeDamage(int amount)
     {
-        takeDamage(
-            amount,
-            true
-        );
+        takeDamage(amount, true);
     }
 
-
-    public void takeDamage(
-        int amount,
-        bool showFlash = true)
+    public void takeDamage(int amount, bool showFlash = true)
     {
-        currentHP -=
-            amount;
 
-
+        currentHP -= amount;
         updatePlayerUI();
-
-
-        // Normal physical/enemy damage triggers this.
-        // Exposure-style damage can pass false.
         if (showFlash)
-        {
-            StartCoroutine(
-                flashDamage()
-            );
-        }
-
+            StartCoroutine(flashDamage());
 
         if (currentHP <= 0)
         {
-            if (gameManager.instance != null)
-            {
-                gameManager.instance
-                    .youLose();
-            }
+            // you i'm dead!!!
+            gameManager.instance.youLose();
         }
     }
-
 
     IEnumerator flashDamage()
     {
-        if (gameManager.instance != null)
-        {
-            if (gameManager.instance
-                .damageFlashPanel != null)
-            {
-                gameManager.instance
-                    .damageFlashPanel
-                    .SetActive(true);
-            }
-
-
-            // ADDED:
-            // Shows orange damage arc above crosshair.
-            if (gameManager.instance
-                .damageIndicator != null)
-            {
-                gameManager.instance
-                    .damageIndicator
-                    .SetActive(true);
-            }
-        }
-
-
-        yield return new WaitForSeconds(
-            0.15f
-        );
-
-
-        if (gameManager.instance != null)
-        {
-            if (gameManager.instance
-                .damageFlashPanel != null)
-            {
-                gameManager.instance
-                    .damageFlashPanel
-                    .SetActive(false);
-            }
-
-
-            if (gameManager.instance
-                .damageIndicator != null)
-            {
-                gameManager.instance
-                    .damageIndicator
-                    .SetActive(false);
-            }
-        }
+        gameManager.instance.damageFlashPanel.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gameManager.instance.damageFlashPanel.SetActive(false);
     }
-
 
     public void updatePlayerUI()
     {
-        if (gameManager.instance != null &&
-            gameManager.instance
-                .playerHPBar != null)
-        {
-            gameManager.instance
-                .playerHPBar
-                .fillAmount =
-                    currentHP /
-                    MaxHP;
-        }
+        gameManager.instance.playerHPBar.fillAmount = (float)currentHP / MaxHP;
     }
 
-
-    public void PlayerAddItem(
-        ScriptableItem itemName,
-        int amount)
+    public void PlayerAddItem(ScriptableItem itemName, int amount)
     {
-        if (Inventory != null)
-        {
-            Inventory.AddItem(
-                itemName,
-                amount
-            );
-        }
+        Inventory.AddItem(itemName, amount);
     }
 
-
-    public bool PlayerRefillAmmo(
-        int amount)
+    public bool PlayerRefillAmmo(int amount)
     {
-        if (ActiveItem == null)
+        if (ActiveItem != null)
         {
-            return false;
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
+
+            if (wep != null)
+            {
+                return wep.WeaponRefillAmmo(amount);
+            }
+            else
+            {
+                return false;
+            }
         }
-
-
-        IWeapon wep =
-            ActiveItem
-                .GetComponent<IWeapon>();
-
-
-        if (wep != null)
-        {
-            return wep
-                .WeaponRefillAmmo(
-                    amount
-                );
-        }
-
 
         return false;
     }
-
 
     public void PlayerAddItem(GameObject Item)
     {
@@ -539,564 +362,300 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
         }
     }
 
-
     void CheckSwapItem()
     {
-        if (Input.GetKeyDown(
-            KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SwapItem(0);
         }
-        else if (Input.GetKeyDown(
-            KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             SwapItem(1);
         }
-        else if (Input.GetKeyDown(
-            KeyCode.Alpha3))
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             SwapItem(2);
         }
-        else if (Input.GetKeyDown(
-            KeyCode.Alpha4))
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SwapItem(3);
         }
-        else if (Input.GetKeyDown(
-            KeyCode.Backspace))
+        else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             DropWeapon();
         }
     }
 
-
     void SwapItem(int index)
     {
-        if (index < 0 ||
-            index >= hotbar.Length)
+        if (hotbar[index] != null && activeItemSlot != index)
         {
-            return;
-        }
-
-
-        if (hotbar[index] == null ||
-            activeItemSlot == index)
-        {
-            return;
-        }
-
-
-        if (ActiveItem != null)
-        {
-            ActiveItem.SetActive(
-                false
-            );
-        }
-
-
-        ActiveItem =
-            hotbar[index];
-
-
-        activeItemSlot =
-            index;
-
-
-        ActiveItem.SetActive(
-            true
-        );
-
-
-        UpdateWeaponUI();
-    }
-
-
-    void GadgetUse()
-    {
-        if (!Input.GetKeyDown(
-            KeyCode.Mouse0))
-        {
-            return;
-        }
-
-
-        if (ActiveItem == null)
-        {
-            return;
-        }
-
-
-        IGadget gadget =
-            ActiveItem
-                .GetComponent<IGadget>();
-
-
-        if (gadget == null)
-        {
-            return;
-        }
-
-
-        if (gadget.UseGadget(
-            gameObject))
-        {
-            ActiveItem.transform
-                .SetParent(
-                    null
-                );
-
-
-            ActiveItem =
-                null;
-
-
-            if (activeItemSlot >= 0 &&
-                activeItemSlot <
-                hotbar.Length)
+            if (ActiveItem != null)
             {
-                hotbar[
-                    activeItemSlot
-                ] = null;
+                ActiveItem.SetActive(false);
             }
 
+            ActiveItem = hotbar[index];
 
-            activeItemSlot =
-                -1;
+            activeItemSlot = index;
 
+            ActiveItem.SetActive(true);
 
             UpdateWeaponUI();
         }
     }
 
+    void GadgetUse()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            if (ActiveItem != null)
+            {
+                IGadget gadget = ActiveItem.GetComponent<IGadget>();
+
+                if (gadget != null)
+                {
+                    if (gadget.UseGadget(gameObject))
+                    {
+                        ActiveItem.transform.SetParent(null);
+                        ActiveItem = null;
+                        hotbar[activeItemSlot] = null;
+
+                        UpdateWeaponUI();
+                    }
+                }
+            }
+        }
+    }
 
     void UpdateWeaponUI()
     {
         if (ActiveItem != null)
         {
-            IWeapon wep =
-                ActiveItem
-                    .GetComponent<IWeapon>();
-
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
 
             if (wep != null)
             {
-                ShowAmmoUI
-                    ?.Invoke(true);
+                ShowAmmoUI?.Invoke(true);
             }
             else
             {
-                IGadget gadget =
-                    ActiveItem
-                        .GetComponent<IGadget>();
-
+                IGadget gadget = ActiveItem.GetComponent<IGadget>();
 
                 if (gadget != null)
                 {
-                    ShowAmmoUI
-                        ?.Invoke(false);
+                    ShowAmmoUI?.Invoke(false);
                 }
             }
         }
         else
         {
-            activeItemSlot =
-                -1;
-
-
-            if (gameManager.instance != null)
-            {
-                gameManager.instance
-                    .ShowReloadPrompt(
-                        false
-                    );
-            }
-
-
-            ShowAmmoUI
-                ?.Invoke(false);
+            activeItemSlot = -1;
+            gameManager.instance.ShowReloadPrompt(false);
+            ShowAmmoUI?.Invoke(false);
         }
 
-
-        if (gameManager.instance != null)
-        {
-            gameManager.instance
-                .UpdateWeaponInv(
-                    hotbar,
-                    activeItemSlot
-                );
-        }
+        gameManager.instance.UpdateWeaponInv(hotbar, activeItemSlot);
     }
 
-
-    public GameObject[]
-        GetPlayerHotbar()
+    public GameObject[] GetWeaponsForCheckpoint()
     {
-        return
-            (GameObject[])
-            hotbar.Clone();
+        return (GameObject[])hotbar.Clone();
     }
 
-
-    public GameObject[]
-        GetWeaponsForCheckpoint()
+    public string GetActiveItemNameForCheckpoint()
     {
-        return
-            (GameObject[])
-            hotbar.Clone();
+        if (ActiveItem == null) return string.Empty;
+
+        IWeapon weapon = ActiveItem.GetComponent<IWeapon>();
+        return weapon != null ? weapon.GetWeaponName() : string.Empty;
     }
 
-
-    public string
-        GetActiveItemNameForCheckpoint()
+    public bool RestoreWeaponSlotForCheckpoint(GameObject weaponObject, int slot)
     {
-        if (ActiveItem == null)
-        {
-            return
-                string.Empty;
-        }
-
-
-        IWeapon weapon =
-            ActiveItem
-                .GetComponent<IWeapon>();
-
-
-        if (weapon != null)
-        {
-            return weapon
-                .GetWeaponName();
-        }
-
-
-        return string.Empty;
-    }
-
-
-    public bool
-        RestoreWeaponSlotForCheckpoint(
-            GameObject weaponObject,
-            int slot)
-    {
-        if (weaponObject == null ||
-            slot < 0 ||
-            slot >= hotbar.Length)
-        {
+        if (weaponObject == null || slot < 0 || slot >= hotbar.Length)
             return false;
-        }
-
-
-        IWeapon weapon =
-            weaponObject
-                .GetComponent<IWeapon>();
-
-
-        Camera playerCamera =
-            Camera.main;
-
-
-        if (weapon == null ||
-            playerCamera == null ||
-            WeaponGrip == null)
-        {
+        IWeapon weapon = weaponObject.GetComponent<IWeapon>();
+        Camera playerCamera = Camera.main;
+        if (weapon == null || playerCamera == null || WeaponGrip == null)
             return false;
-        }
-
-
-        hotbar[slot] =
-            weaponObject;
-
-
-        weaponObject.transform
-            .SetParent(
-                WeaponGrip.transform,
-                false
-            );
-
-
-        weaponObject.transform
-            .localPosition =
-                Vector3.zero;
-
-
-        weaponObject.transform
-            .localRotation =
-                Quaternion.identity;
-
+        hotbar[slot] = weaponObject;
 
         weapon.SetPlayerVariables(
             GetComponent<IPlayer>(),
-            playerCamera
-                .GetComponent<ICamera>(),
+            playerCamera.GetComponent<ICamera>(),
             projectileManager,
-            Vector3.zero
+            WeaponGrip.transform.localPosition
         );
 
-
-        weapon.SetWeaponUse(
-            true
-        );
-
-
-        weaponObject.SetActive(
-            false
-        );
-
-
+        weapon.SetWeaponUse(true);
+        weaponObject.transform.SetParent(playerCamera.transform);
+        weaponObject.transform.localPosition = WeaponGrip.transform.localPosition;
+        weaponObject.transform.localRotation = Quaternion.identity;
+        weaponObject.SetActive(false);
         return true;
     }
 
-
-    public void
-        EquipWeaponForCheckpoint(
-            string weaponName)
+    public void EquipWeaponForCheckpoint(string weaponName)
     {
-        if (string.IsNullOrEmpty(
-            weaponName))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(weaponName)) return;
 
-
-        for (int slot = 0;
-             slot < hotbar.Length;
-             slot++)
+        for (int slot = 0; slot < hotbar.Length; slot++)
         {
             if (hotbar[slot] != null)
             {
-                hotbar[slot]
-                    .SetActive(false);
+                hotbar[slot].SetActive(false);
             }
         }
-
-
-        for (int slot = 0;
-             slot < hotbar.Length;
-             slot++)
+        for (int slot = 0; slot < hotbar.Length; slot++)
         {
-            if (hotbar[slot] == null)
-            {
+            if (hotbar[slot] == null) continue;
+            IWeapon weapon = hotbar[slot].GetComponent<IWeapon>();
+
+            if (weapon == null || weapon.GetWeaponName() != weaponName)
                 continue;
-            }
-
-
-            IWeapon weapon =
-                hotbar[slot]
-                    .GetComponent<IWeapon>();
-
-
-            if (weapon == null ||
-                weapon.GetWeaponName() !=
-                weaponName)
-            {
-                continue;
-            }
-
 
             if (ActiveItem != null)
             {
-                ActiveItem
-                    .SetActive(false);
+                ActiveItem.SetActive(false);
             }
 
+            ActiveItem = hotbar[slot];
+            activeItemSlot = slot;
+            ActiveItem.SetActive(true);
 
-            ActiveItem =
-                hotbar[slot];
-
-
-            activeItemSlot =
-                slot;
-
-
-            ActiveItem.SetActive(
-                true
-            );
-
-
-            ShowAmmoUI
-                ?.Invoke(true);
-
-
+            ShowAmmoUI?.Invoke(true);
             UpdateWeaponUI();
-
-
             return;
         }
     }
 
-
-    public void
-        RefreshWeaponUIForCheckpoint()
+    public void RefreshWeaponUIForCheckpoint()
     {
-        ShowAmmoUI
-            ?.Invoke(
-                ActiveItem != null
-            );
-
-
+        ShowAmmoUI?.Invoke(ActiveItem != null);
         UpdateWeaponUI();
     }
 
-
-    public ProjectileManager
-        GetProjectileManager()
+    public ProjectileManager GetProjectileManager()
     {
-        return
-            projectileManager;
+        return projectileManager;
     }
 
-
-    public bool HealPlayer(
-        int amount,
-        bool overHeal = false)
+    public bool HealPlayer(int amount, bool overHeal = false)
     {
-        if (currentHP < MaxHP &&
-            !overHeal)
+        if (currentHP < MaxHP && !overHeal)
         {
-            currentHP +=
-                Mathf.Clamp(
-                    amount,
-                    0,
-                    MaxHP -
-                    currentHP
-                );
-
+            currentHP += Mathf.Clamp(amount, 0, MaxHP - currentHP);
 
             updatePlayerUI();
-
 
             return true;
         }
         else if (overHeal)
         {
-            currentHP +=
-                amount;
-
+            currentHP += amount;
 
             updatePlayerUI();
-
 
             return true;
         }
 
-
         return false;
     }
 
-
-    public void SetMaxJumps(
-        int amount)
-    {
-        jumpMax =
-            Mathf.Clamp(
-                amount,
-                1,
-                3
-            );
-    }
-
-
-    public void SetStimulantMode(
-        bool enabled,
-        float speedMultiplier)
-    {
-        stimulantMode =
-            enabled;
-
-
-        if (enabled)
-        {
-            stimulantMultiplier =
-                Mathf.Max(
-                    1f,
-                    speedMultiplier
-                );
-        }
-        else
-        {
-            stimulantMultiplier =
-                1f;
-        }
-    }
-
-
+    //HP getters and setters
     public float GetCurrentHP()
     {
-        return currentHP;
+        return (float)currentHP;
     }
 
-
-    public void SetCurrentHP(
-        float ammount)
+    public void SetCurrentHP(float ammount)
     {
-        currentHP =
-            ammount;
+        currentHP = (int)ammount;
     }
-
 
     public float GetMaxHP()
     {
-        return MaxHP;
+        return (float)MaxHP;
     }
 
-
-    public void SetMaxHP(
-        float ammount)
+    public void SetMaxHP(float ammount)
     {
-        MaxHP =
-            ammount;
+        MaxHP = (int)ammount;
     }
 
-
+    //Speed getters and setters
     public float GetBaseSpeed()
     {
         return BaseSpeed;
     }
 
-
-    public void SetBaseSpeed(
-        float speed)
+    public void SetBaseSpeed(float speed)
     {
-        BaseSpeed =
-            speed;
+        BaseSpeed = speed;
     }
-
 
     public float GetMaxSpeed()
     {
         return MaxSpeed;
     }
 
-
-    public void SetMaxSpeed(
-        float speed)
+    public void SetMaxSpeed(float speed)
     {
-        MaxSpeed =
-            speed;
+        MaxSpeed = speed;
     }
 
-
+    //Stamina getters and setters
     public float GetMaxStamina()
     {
-        return 1;
+        return MaxStamina;
     }
 
-
-    public void SetMaxStamina(
-        float ammount)
+    public void SetMaxStamina(float ammount)
     {
+        MaxStamina = ammount;
     }
 
+    public float GetCurrentStamina()
+    {
+        return currentStamina;
+    }
+
+    public void SetStimulantMode(bool active, float speedMult)
+    {
+        isStimed = active;
+
+        stimMult = speedMult;
+
+        stimMult = Mathf.Clamp(stimMult, 0, float.MaxValue);
+
+        if (!active)
+        {
+            currentSpeed = isSprinting ? MaxSpeed : BaseSpeed;
+        }
+        else
+        {
+            currentSpeed *= stimMult;
+        }
+    }
+
+    public void SetMaxJumps(int jumps)
+    {
+        jumpMax = jumps;
+    }
 
     public int GetPlayerFunds()
     {
         return points;
     }
 
-
-    public void ModifyPlayerFunds(
-        int ammount)
+    public void ModifyPlayerFunds(int ammount)
     {
-        points +=
-            ammount;
+        points += ammount;
+    }
+
+    public GameObject[] GetPlayerHotbar()
+    {
+        return hotbar;
     }
 }
