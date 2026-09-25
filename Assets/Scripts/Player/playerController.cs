@@ -407,40 +407,24 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     }
 
 
-    public void PlayerAddItem(
-        GameObject Item)
+    public void PlayerAddItem(GameObject Item)
     {
-        if (Item == null)
-        {
-            return;
-        }
-
-
-        if (WeaponGrip == null)
-        {
-            Debug.LogError(
-                "playerController: WeaponGrip is not assigned."
-            );
-
-            return;
-        }
-
-
         int arrayStart = -1;
-
         int arrayEnd = -1;
 
-
-        IWeapon wep =
-            Item.GetComponent<IWeapon>();
-
-
-        IGadget gadget =
-            Item.GetComponent<IGadget>();
-
+        IWeapon wep = Item.GetComponent<IWeapon>();
+        IGadget gadget = Item.GetComponent<IGadget>();
 
         if (wep != null)
         {
+            wep.SetPlayerVariables(
+                GetComponent<IPlayer>(),
+                Camera.main.GetComponent<ICamera>(),
+                projectileManager,
+                WeaponGrip.transform.localPosition);
+
+            wep.SetWeaponUse(true);
+
             arrayStart = 0;
             arrayEnd = 1;
         }
@@ -449,282 +433,110 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
             arrayStart = 2;
             arrayEnd = 3;
         }
-        else
-        {
-            Debug.LogWarning(
-                "playerController: Item does not implement IWeapon or IGadget."
-            );
 
-            return;
-        }
+        bool hadEmpty = false;
 
-
-        bool hadEmpty =
-            false;
-
-
-        for (int i = arrayStart;
-             i <= arrayEnd;
-             i++)
+        for (int i = arrayStart; i <= arrayEnd; i++)
         {
             if (hotbar[i] == null)
             {
-                hadEmpty =
-                    true;
-
+                hadEmpty = true;
 
                 if (ActiveItem != null)
                 {
-                    ActiveItem
-                        .SetActive(false);
+                    ActiveItem.SetActive(false);
                 }
 
+                hotbar[i] = Item;
 
-                hotbar[i] =
-                    Item;
-
-
-                ActiveItem =
-                    Item;
-
-
-                activeItemSlot =
-                    i;
-
+                SwapItem(i);
 
                 break;
             }
         }
 
-
-        if (!hadEmpty)
+        if (hadEmpty == false)
         {
-            int slotToUse =
-                activeItemSlot;
+            int slotToUse = activeItemSlot;
 
+            DropWeapon();
 
-            if (slotToUse < arrayStart ||
-                slotToUse > arrayEnd)
-            {
-                slotToUse =
-                    arrayStart;
-            }
+            hotbar[slotToUse] = Item;
 
+            ActiveItem = hotbar[slotToUse];
 
-            if (ActiveItem != null)
-            {
-                DropWeapon();
-            }
-
-
-            hotbar[slotToUse] =
-                Item;
-
-
-            ActiveItem =
-                Item;
-
-
-            activeItemSlot =
-                slotToUse;
+            activeItemSlot = slotToUse;
         }
 
+        Item.transform.SetParent(Camera.main.transform);
 
-        Item.transform.SetParent(
-            WeaponGrip.transform,
-            false
-        );
+        Item.transform.localPosition = WeaponGrip.transform.localPosition;
 
+        Item.transform.localRotation = Quaternion.identity;
 
-        Item.transform.localPosition =
-            Vector3.zero;
-
-
-        Item.transform.localRotation =
-            Quaternion.identity;
-
-
-        if (wep != null)
-        {
-            Camera playerCamera =
-                Camera.main;
-
-
-            if (playerCamera != null)
-            {
-                wep.SetPlayerVariables(
-                    GetComponent<IPlayer>(),
-                    playerCamera
-                        .GetComponent<ICamera>(),
-                    projectileManager,
-                    Vector3.zero
-                );
-            }
-
-
-            wep.SetWeaponUse(
-                true
-            );
-        }
-
-
-        ActiveItem.SetActive(
-            false
-        );
-
-
-        ActiveItem.SetActive(
-            true
-        );
-
+        ActiveItem.SetActive(false);
+        ActiveItem.SetActive(true);
 
         UpdateWeaponUI();
     }
 
-
     void DropWeapon()
     {
-        if (ActiveItem == null)
+        if (ActiveItem != null)
         {
-            return;
+            IWeapon wep = ActiveItem.GetComponent<IWeapon>();
+
+            if (wep != null)
+            {
+                wep.SetWeaponUse(false);
+                wep.SetPlayerVariables();
+            }
+
+            RaycastHit frontRay;
+            RaycastHit downRay;
+
+            Vector3 traceStart = transform.position;
+            Vector3 traceEnd = traceStart + (transform.forward * 3);
+
+            Vector3 dropLocation;
+
+            if (Physics.Linecast(traceStart, traceEnd, out frontRay))
+            {
+                traceStart = frontRay.point;
+            }
+            else
+            {
+                traceStart = traceEnd;
+
+            }
+
+            traceEnd = traceStart + (Vector3.down * 100);
+
+            if (Physics.Linecast(traceStart, traceEnd, out downRay))
+            {
+                dropLocation = downRay.point;
+            }
+            else
+            {
+                dropLocation = traceEnd;
+            }
+
+            ActiveItem.transform.SetParent(null);
+            ActiveItem.transform.position = dropLocation;
+            ActiveItem.transform.localRotation = Quaternion.Euler(0, ActiveItem.transform.localEulerAngles.y, 0);
+
+            ActiveItem.GetComponent<Collider>().enabled = true;
+
+            float posOffset = ActiveItem.GetComponent<Collider>().bounds.extents.y;
+
+            ActiveItem.transform.position += new Vector3(0, posOffset, 0);
+
+            ActiveItem = null;
+            hotbar[activeItemSlot] = null;
+            activeItemSlot = -1;
+
+            UpdateWeaponUI();
         }
-
-
-        IWeapon wep =
-            ActiveItem
-                .GetComponent<IWeapon>();
-
-
-        if (wep != null)
-        {
-            wep.SetWeaponUse(
-                false
-            );
-
-
-            wep.SetPlayerVariables();
-        }
-
-
-        RaycastHit frontRay;
-
-        RaycastHit downRay;
-
-
-        Vector3 traceStart =
-            transform.position;
-
-
-        Vector3 traceEnd =
-            traceStart +
-            transform.forward *
-            3;
-
-
-        Vector3 dropLocation;
-
-
-        if (Physics.Linecast(
-            traceStart,
-            traceEnd,
-            out frontRay))
-        {
-            traceStart =
-                frontRay.point;
-        }
-        else
-        {
-            traceStart =
-                traceEnd;
-        }
-
-
-        traceEnd =
-            traceStart +
-            Vector3.down *
-            100;
-
-
-        if (Physics.Linecast(
-            traceStart,
-            traceEnd,
-            out downRay))
-        {
-            dropLocation =
-                downRay.point;
-        }
-        else
-        {
-            dropLocation =
-                traceEnd;
-        }
-
-
-        ActiveItem.transform
-            .SetParent(
-                null,
-                true
-            );
-
-
-        ActiveItem.transform.position =
-            dropLocation;
-
-
-        ActiveItem.transform.rotation =
-            Quaternion.Euler(
-                0,
-                transform.eulerAngles.y,
-                0
-            );
-
-
-        Collider itemCollider =
-            ActiveItem
-                .GetComponent<Collider>();
-
-
-        if (itemCollider != null)
-        {
-            itemCollider.enabled =
-                true;
-
-
-            float posOffset =
-                itemCollider
-                    .bounds
-                    .extents
-                    .y;
-
-
-            ActiveItem.transform.position +=
-                new Vector3(
-                    0,
-                    posOffset,
-                    0
-                );
-        }
-
-
-        if (activeItemSlot >= 0 &&
-            activeItemSlot <
-            hotbar.Length)
-        {
-            hotbar[
-                activeItemSlot
-            ] = null;
-        }
-
-
-        ActiveItem =
-            null;
-
-
-        activeItemSlot =
-            -1;
-
-
-        UpdateWeaponUI();
     }
 
 
