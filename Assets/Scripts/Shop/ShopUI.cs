@@ -186,6 +186,8 @@ public class ShopUI : MonoBehaviour
         if(SelectedItem.Catagory.CatagoryName == "Weapon" && ShopObjective != null)
         {
             ObjectiveManager.Instance.CompleteObjective(ShopObjective.name);
+
+            ShopObjective.isCompleted = true;
         }
 
         if (ShopAudio != null && PurchaceAudio != null)
