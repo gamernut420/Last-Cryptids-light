@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class cameraController : MonoBehaviour, ICamera
 {
-    [SerializeField] int sens;
+    [SerializeField] float sens;
     [SerializeField] int lockVertMin, lockVertMax;
 
     ICamera camInterface;
@@ -30,6 +30,11 @@ public class cameraController : MonoBehaviour, ICamera
             camInterface.ModifyCameraPitch(mouseY);
             camInterface.ModifyCameraYaw(mouseX);
         }
+    }
+
+    public void SetCamSensitivity(float value)
+    {
+        sens = value;
     }
     
     //Left Right
