@@ -57,6 +57,10 @@ public class CheckpointManager : MonoBehaviour
     {
         restoreAfterSceneLoad = hasCheckpoint;
         Time.timeScale = 1f;
+        FinalBoss boss = GetComponentInParent<FinalBoss>();
+
+        if (boss != null)
+            boss.ResetBoss();
 
         if (hasCheckpoint && !string.IsNullOrEmpty(checkpointSceneName))
         {

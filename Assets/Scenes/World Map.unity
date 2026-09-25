@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &854348 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+  m_PrefabInstance: {fileID: 1541097845}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &2165078
 Mesh:
   m_ObjectHideFlags: 0
@@ -5503,6 +5508,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5623744cf97837248ac3ad480fb76faf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
+--- !u!1 &275549398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 275549399}
+  m_Layer: 0
+  m_Name: energyfieldSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &275549399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275549398}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -55.809998, y: -18.5, z: 13.669922}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 854348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &280689819
 Mesh:
   m_ObjectHideFlags: 0
@@ -13488,6 +13524,58 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+--- !u!1 &799236719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 799236720}
+  m_Layer: 0
+  m_Name: energyfieldSpawn (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &799236720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799236719}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -55.809998, y: -18.5, z: 29.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 854348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &806319639 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5878459771673870818, guid: d0477789ea414ab43acc698988824d27, type: 3}
+  m_PrefabInstance: {fileID: 1541097845}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &806319641
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806319639}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!43 &824310029
 Mesh:
   m_ObjectHideFlags: 0
@@ -15760,15 +15848,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 501.46
+      value: 404.6
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.15
+      value: -16.71
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 786.59
+      value: 3477.96
       objectReference: {fileID: 0}
     - target: {fileID: 2483160741635494670, guid: f63b1a18123c4fb449d79971febcf7dc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18754,6 +18842,37 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 5.184, z: -1.5000001}
   m_TimeToStationary: 0.5
+--- !u!1 &1127770846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1127770847}
+  m_Layer: 6
+  m_Name: Boss SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1127770847
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127770846}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.36577913, z: -0, w: 0.93070173}
+  m_LocalPosition: {x: 827.8433, y: -16.112202, z: 3572.7642}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1130134251
 Mesh:
   m_ObjectHideFlags: 0
@@ -22174,6 +22293,70 @@ MonoBehaviour:
   m_Center: {x: 0, y: 1, z: 0}
   m_Area: 1
   m_AffectedAgents: ffffffff
+--- !u!1 &1324690283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1324690284}
+  - component: {fileID: 1324690285}
+  m_Layer: 0
+  m_Name: NavMesh Surface (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1324690284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324690283}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -309, y: -21.9, z: -35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 854348}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1324690285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324690283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 1
+  m_Size: {x: 950, y: 50, z: 950}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 439
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: cde41511f99446a4ba6b5f435caad31d, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!114 &1355650741 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2977352354894403921, guid: b59ed662fedc3ca42ad7fa98716049cb, type: 3}
@@ -23930,6 +24113,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 7543238301187523072, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: m_WalkableMask
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: energyFieldSpawnPoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 275549399}
+    - target: {fileID: 8247278831405509372, guid: af7e996665d888d448382b77955699e3, type: 3}
+      propertyPath: 'energyFieldSpawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 799236720}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -26303,8 +26506,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1324690284}
+    - targetCorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 275549399}
+    - targetCorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 799236720}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5878459771673870818, guid: d0477789ea414ab43acc698988824d27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 806319641}
   m_SourcePrefab: {fileID: 100100000, guid: d0477789ea414ab43acc698988824d27, type: 3}
 --- !u!43 &1547319037
 Mesh:
@@ -37464,6 +37679,7 @@ SceneRoots:
   - {fileID: 473422779}
   - {fileID: 506494176}
   - {fileID: 923073281}
+  - {fileID: 1127770847}
   - {fileID: 1408073921}
   - {fileID: 2074180708}
   - {fileID: 1297726490}

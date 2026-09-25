@@ -129,7 +129,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldDuration = 6f;
 
     private float energyFieldTimer;
-    private int spawnAreaMask; 
+    private int spawnAreaMask;
+    private Vector3 startPosition;
+    private Quaternion startRotation;
 
     private Transform PlayerTransform
     {
@@ -164,6 +166,8 @@ public class FinalBoss : MonoBehaviour, IDamage
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        startPosition = transform.position;
+        startRotation = transform.rotation;
         currentHP = maxHP;
         DetectSpawnNavMeshArea();
 
@@ -352,7 +356,7 @@ public class FinalBoss : MonoBehaviour, IDamage
             );
 
 
-        if (distanceToPlayer < meleeRange - 0.1f)
+        if (distanceToPlayer < meleeRange)
         {
             MeleeAttack();
         }
@@ -450,7 +454,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer < meleeRange - 0.1f)
+        if (distanceToPlayer < meleeRange)
         {
             MeleeAttack();
         }
@@ -505,7 +509,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
 
 
-        if (distanceToPlayer < meleeRange - 0.1f)
+        if (distanceToPlayer < meleeRange)
         {
             MeleeAttack();
         }
@@ -521,7 +525,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
-        agent.stoppingDistance = meleeRange;
+        agent.stoppingDistance = meleeRange - 0.25f;
 
         agent.SetDestination(PlayerTransform.position);
     }
@@ -541,8 +545,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
         if (angle > 3f) return;
-        
-        Debug.Log("Boss Melee Attack");
 
         if (agent != null)
             agent.isStopped = true;
@@ -734,19 +736,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) return;
 
+        Vector2 randomDirection = Random.insideUnitCircle.normalized;
 
-        Vector2 randomDirection =
-            Random.insideUnitCircle.normalized;
-
-
-        Vector3 teleportPosition =
-            PlayerTransform.position +
-            new Vector3(
-                randomDirection.x,
-                0,
-                randomDirection.y
-            ) *
-            teleportNearPlayerDistance;
+        Vector3 teleportPosition = PlayerTransform.position + new Vector3(randomDirection.x, 0, randomDirection.y) * teleportNearPlayerDistance;
 
 
         NavMeshHit hit;
@@ -755,7 +747,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         if (NavMesh.SamplePosition(
                 teleportPosition,
                 out hit,
-                5f,
+                8f,
                 NavMesh.AllAreas))
         {
             transform.position =
@@ -1252,5 +1244,82 @@ public class FinalBoss : MonoBehaviour, IDamage
                 0.25f
             );
         }
+    }
+
+    public void ResetBoss()
+    {
+        StopAllCoroutines();
+        currentHP = maxHP;
+        currentPhase = BossPhase.Phase1;
+
+        phase2Transitioning = false;
+        phase2Triggered = false;
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            agent.speed = phase1Speed;
+            agent.stoppingDistance = meleeRange;
+            agent.Warp(startPosition);
+        }
+        else
+        {
+            transform.position = startPosition;
+        }
+
+        transform.rotation = startRotation;
+
+        meleeTimer = 0f;
+        rangedTimer = 5f;
+        teleportTimer = 0f;
+
+        chargingRangedAttack = false;
+        isShooting = false;
+        beamFired = false;
+        rangeAnimationPaused = false;
+
+        if (meleeHitbox != null)
+            meleeHitbox.SetActive(false);
+
+        if (meleeHitboxHeavy != null)
+            meleeHitboxHeavy.SetActive(false);
+
+        if (energyBeam != null)
+            energyBeam.Stop();
+
+        if (energyParticles != null)
+            energyParticles.Stop();
+
+        if (sparks != null)
+            sparks.Stop();
+
+        foreach (GameObject enemy in spawnedEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+
+        spawnedEnemies.Clear();
+
+        waitingToSummon = false;
+        maxEnemies = false;
+
+        summonTimer = summonCooldown;
+        energyFieldTimer = energyFieldCooldown;
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+
+            animator.ResetTrigger("Hit1");
+            animator.ResetTrigger("Hit2");
+            animator.ResetTrigger("Rage");
+            animator.ResetTrigger("Die");
+
+            animator.Rebind();
+            animator.Update(0f);
+        }
+
+        BossHealthChanged?.Invoke(currentHP, maxHP);
     }
 }
