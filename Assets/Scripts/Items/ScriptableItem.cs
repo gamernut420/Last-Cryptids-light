@@ -10,4 +10,7 @@ public class ScriptableItem : ScriptableObject
     public string itemDescription;
     public Sprite itemIcon;
     public int stackCount;
+    [Header("Objective Settings")]
+    public ObjectiveData targetObjective;
+    public int amountPicked;
 }
