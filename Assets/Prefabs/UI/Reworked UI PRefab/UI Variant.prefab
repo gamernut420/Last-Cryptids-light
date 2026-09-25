@@ -1250,22 +1250,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 462871928824267564}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 1
-      - m_Target: {fileID: 5239378456708463841}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
+        m_MethodName: OpenSettings
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1273,7 +1261,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
 --- !u!1 &1129062812570973886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2004,22 +1992,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5239378456708463841}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 462871928824267564}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
+        m_MethodName: CloseSettings
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2152,11 +2128,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveManager
   activeObjectives:
-  - {fileID: 11400000, guid: ca5f08c396c98ec4394337b57108168a, type: 2}
-  - {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
-  - {fileID: 11400000, guid: 57d9c4b86ce3e864b8a6cfe3697d9501, type: 2}
-  - {fileID: 11400000, guid: 8421bea2f19413b4daaa4339663ca7d5, type: 2}
-  - {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
+  - {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: a1bcc7c93c3b5f64d9f814286f7863ee, type: 2}
   hideUIin: 2
   currentCompassTarget: {fileID: 0}
 --- !u!1 &2090240571822792405
@@ -9117,10 +9092,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2297457184334866758}
     m_Modifications:
-    - target: {fileID: 471573527991475426, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
-      propertyPath: m_Value
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 549872049105585579, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9256,10 +9227,6 @@ PrefabInstance:
     - target: {fileID: 6683593713132057006, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7696770918067835603, guid: bb0a7c14c750d074ea0ac21880959706, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -115.28138
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10353,11 +10320,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -29.462708
+      value: -29.463135
       objectReference: {fileID: 0}
     - target: {fileID: 9077029042336397990, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -18.303345
+      value: -18.303223
       objectReference: {fileID: 0}
     - target: {fileID: 9218725309886192421, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: m_AnchorMax.y
