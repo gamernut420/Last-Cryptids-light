@@ -8,6 +8,9 @@ public class InventoryToggle : MonoBehaviour
     [Header("Input Key")]
     public KeyCode toggleKey;
 
+    [Header("Other UI")]
+    [SerializeField] private GameObject[] otherUI;
+
 
     void Start()
     {
@@ -70,6 +73,15 @@ public class InventoryToggle : MonoBehaviour
     private void SetInventoryState(
         bool isActive)
     {
+        if (isActive)
+        {
+            Cursor.lockState =
+                CursorLockMode.None;
+
+            Cursor.visible =
+                true;
+        }
+
         if (inventoryPanel == null)
         {
             return;
@@ -83,6 +95,17 @@ public class InventoryToggle : MonoBehaviour
 
         if (isActive)
         {
+
+            gameManager.instance.statePause();
+
+            gameManager.instance.playerScript.enabled = false;
+
+            for (int i = 0; i < otherUI.Length; i++)
+            {
+                otherUI[i].SetActive(false);
+            }
+
+
             Cursor.lockState =
                 CursorLockMode.None;
 
@@ -91,6 +114,16 @@ public class InventoryToggle : MonoBehaviour
         }
         else
         {
+            gameManager.instance.stateUnpause();
+
+            gameManager.instance.playerScript.enabled = true;
+
+            for (int i = 0; i < otherUI.Length; i++)
+            {
+                otherUI[i].SetActive(true);
+            }
+
+
             Cursor.lockState =
                 CursorLockMode.Locked;
 
