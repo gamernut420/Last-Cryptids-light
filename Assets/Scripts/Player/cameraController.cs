@@ -2,17 +2,20 @@ using UnityEngine;
 
 public class cameraController : MonoBehaviour, ICamera
 {
-    [SerializeField] int sens;
+    [SerializeField] float sens = 2f;
     [SerializeField] int lockVertMin, lockVertMax;
 
     ICamera camInterface;
     float camRotX;
+    private const string SensitivityKey = "MouseSensitivity";
+    private const float MinimumSensitivity = 0.5f;
+    private const float MaximumSensitivity = 5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         camInterface = this;
-
+        sens = PlayerPrefs.GetFloat(SensitivityKey, sens);
         camRotX = 45;
 
         Cursor.visible = false;
@@ -44,5 +47,10 @@ public class cameraController : MonoBehaviour, ICamera
         camRotX -= pitch;
         camRotX = Mathf.Clamp(camRotX, lockVertMin, lockVertMax);
         transform.localRotation = Quaternion.Euler(camRotX, 0, 0);
+    }
+
+    public void SetSensitivity(float sensitivity)
+    {
+        sens = Mathf.Clamp(sensitivity, MinimumSensitivity, MaximumSensitivity);
     }
 }
