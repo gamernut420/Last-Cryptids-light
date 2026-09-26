@@ -1177,6 +1177,94 @@ MonoBehaviour:
   m_Center: {x: 0, y: 1, z: 0}
   m_Area: 1
   m_AffectedAgents: ffffffff
+--- !u!1 &1005838501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1005838504}
+  - component: {fileID: 1005838503}
+  - component: {fileID: 1005838502}
+  m_Layer: 0
+  m_Name: GameObject (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1005838502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005838501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+  - {fileID: 2896155888527484136, guid: cc308a9056c9667469f04e66435bfd1a, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 1005838503}
+  maxSpawnAttempts: 10
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 10
+  spawnRate: 1
+  maxTotalSpawns: 10
+  randomEnemyType: 1
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 1
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 100
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5
+--- !u!65 &1005838503
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005838501}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1005838504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005838501}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 190.01114, y: 1.64, z: 178.94957}
+  m_LocalScale: {x: 28.478357, y: 3.373, z: 26.149035}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1157430890
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3020,3 +3108,4 @@ SceneRoots:
   - {fileID: 3576032810007097308}
   - {fileID: 1529493102}
   - {fileID: 1657274992}
+  - {fileID: 1005838504}
