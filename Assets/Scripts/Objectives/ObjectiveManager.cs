@@ -12,71 +12,49 @@ public class ObjectiveManager : MonoBehaviour
 
 
     [Header("Active Objectives")]
-
-    public List<ObjectiveData>
-        activeObjectives =
-            new List<ObjectiveData>();
+    public List<ObjectiveData> activeObjectives = new List<ObjectiveData>();
 
 
-    [Tooltip(
-        "Seconds a completed objective remains visible."
-    )]
+    [Tooltip("Seconds a completed objective remains visible.")]
     public int hideUIin = 2;
 
-
     [Header("Compass")]
-
     public Transform currentCompassTarget;
 
 
     private void Awake()
     {
-        if (Instance != null &&
-            Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
-
             return;
         }
 
-
         Instance = this;
 
-
-        foreach (
-            ObjectiveData obj
-            in activeObjectives)
+        foreach (ObjectiveData obj in activeObjectives)
         {
             if (obj == null)
             {
                 continue;
             }
 
-
-            obj.shouldHideFromUI =
-                false;
-
-            obj.isCompleted =
-                false;
-
+            obj.shouldHideFromUI = false;
+            obj.isCompleted = false;
 
             // ADDED:
             // Reset runtime objective progress whenever
             // the scene starts.
-            obj.currentProgress =
-                0;
+            obj.currentProgress = 0;
 
 
-            if (obj.prerequisiteObjective ==
-                null)
+            if (obj.prerequisiteObjective == null)
             {
-                obj.isUnlocked =
-                    true;
+                obj.isUnlocked = true;
             }
             else
             {
-                obj.isUnlocked =
-                    false;
+                obj.isUnlocked = false;
             }
         }
     }
@@ -97,20 +75,14 @@ public class ObjectiveManager : MonoBehaviour
         }
 
 
-        if (!activeObjectives.Contains(
-                newObj))
+        if (!activeObjectives.Contains(newObj))
         {
-            activeObjectives.Add(
-                newObj
-            );
+            activeObjectives.Add(newObj);
         }
 
-
-        if (newObj.prerequisiteObjective ==
-            null)
+        if (newObj.prerequisiteObjective == null)
         {
-            newObj.isUnlocked =
-                true;
+            newObj.isUnlocked = true;
         }
 
 
@@ -125,50 +97,22 @@ public class ObjectiveManager : MonoBehaviour
     // Clear Bases 0/3
     //
     // Each trigger can add one or more points of progress.
-    public void AddObjectiveProgress(
-        string objectiveID,
-        int amount = 1)
+    public void AddObjectiveProgress(string objectiveID, int amount = 1)
     {
-        ObjectiveData targetObjective =
-            activeObjectives.Find(
-                o =>
-                    o != null &&
-                    o.objectiveID ==
-                    objectiveID
-            );
-
-
+        ObjectiveData targetObjective = activeObjectives.Find(o => o != null && o.objectiveID == objectiveID);
+        
         if (targetObjective == null)
         {
             return;
         }
 
-
-        if (!targetObjective.isUnlocked ||
-            targetObjective.isCompleted)
+        if (!targetObjective.isUnlocked || targetObjective.isCompleted)
         {
             return;
         }
 
 
-        targetObjective.currentProgress =
-            Mathf.Clamp(
-                targetObjective.currentProgress +
-                amount,
-                0,
-                targetObjective.requiredProgress
-            );
-
-
-        Debug.Log(
-            "Objective Progress: " +
-            targetObjective.objectiveTitle +
-            " " +
-            targetObjective.currentProgress +
-            "/" +
-            targetObjective.requiredProgress
-        );
-
+        targetObjective.currentProgress = Mathf.Clamp(targetObjective.currentProgress + amount, 0, targetObjective.requiredProgress);
 
         // ADDED:
         // Automatically finish the objective once
@@ -176,33 +120,21 @@ public class ObjectiveManager : MonoBehaviour
         if (targetObjective.currentProgress >=
             targetObjective.requiredProgress)
         {
-            CompleteObjective(
-                objectiveID
-            );
+            CompleteObjective(objectiveID);
         }
     }
 
 
-    public void CompleteObjective(
-        string objectiveID)
+    public void CompleteObjective(string objectiveID)
     {
-        ObjectiveData targetObjective =
-            activeObjectives.Find(
-                o =>
-                    o != null &&
-                    o.objectiveID ==
-                    objectiveID
-            );
-
+        ObjectiveData targetObjective = activeObjectives.Find(o => o != null && o.objectiveID == objectiveID);
 
         if (targetObjective == null)
         {
             return;
         }
 
-
-        if (!targetObjective.isUnlocked ||
-            targetObjective.isCompleted)
+        if (!targetObjective.isUnlocked || targetObjective.isCompleted)
         {
             return;
         }
@@ -212,53 +144,24 @@ public class ObjectiveManager : MonoBehaviour
         // If this is a progress-based objective and something
         // completes it directly, make sure its progress also
         // reaches the required amount.
-        targetObjective.currentProgress =
-            targetObjective.requiredProgress;
+        targetObjective.currentProgress = targetObjective.requiredProgress;
 
-
-        targetObjective.isCompleted =
-            true;
-
-
-        Debug.Log(
-            "Objective Completed: " +
-            targetObjective.objectiveTitle
-        );
-
-
-        UnlockNextObjective(
-            targetObjective
-        );
-
-
+        targetObjective.isCompleted = true;
+        
+        UnlockNextObjective(targetObjective);
         UpdateCompassTarget();
-
-
-        StartCoroutine(
-            HideObjectiveRoutine(
-                targetObjective,
-                hideUIin
-            )
-        );
+        StartCoroutine(HideObjectiveRoutine(targetObjective,hideUIin));
     }
 
-
     private System.Collections.IEnumerator
-        HideObjectiveRoutine(
-            ObjectiveData objectiveToHide,
-            float delay)
+        HideObjectiveRoutine(ObjectiveData objectiveToHide,float delay)
     {
-        yield return
-            new WaitForSeconds(
-                delay
-            );
+        yield return new WaitForSeconds(delay);
 
 
         if (objectiveToHide != null)
         {
-            objectiveToHide
-                .shouldHideFromUI =
-                true;
+            objectiveToHide.shouldHideFromUI =true;
         }
 
 
@@ -269,9 +172,7 @@ public class ObjectiveManager : MonoBehaviour
     private void UnlockNextObjective(
         ObjectiveData completedObjective)
     {
-        foreach (
-            ObjectiveData obj
-            in activeObjectives)
+        foreach (ObjectiveData obj in activeObjectives)
         {
             if (obj == null)
             {
@@ -279,18 +180,9 @@ public class ObjectiveManager : MonoBehaviour
             }
 
 
-            if (!obj.isUnlocked &&
-                obj.prerequisiteObjective ==
-                completedObjective)
+            if (!obj.isUnlocked && obj.prerequisiteObjective == completedObjective)
             {
-                obj.isUnlocked =
-                    true;
-
-
-                Debug.Log(
-                    "Objective Unlocked: " +
-                    obj.objectiveTitle
-                );
+                obj.isUnlocked = true;
             }
         }
     }
@@ -298,13 +190,10 @@ public class ObjectiveManager : MonoBehaviour
 
     private void UpdateCompassTarget()
     {
-        currentCompassTarget =
-            null;
+        currentCompassTarget = null;
 
 
-        foreach (
-            ObjectiveData obj
-            in activeObjectives)
+        foreach (ObjectiveData obj in activeObjectives)
         {
             if (obj == null)
             {
@@ -312,35 +201,27 @@ public class ObjectiveManager : MonoBehaviour
             }
 
 
-            if (!obj.isUnlocked ||
-                obj.isCompleted ||
-                obj.shouldHideFromUI)
+            if (!obj.isUnlocked || obj.isCompleted || obj.shouldHideFromUI)
             {
                 continue;
             }
 
 
-            if (obj.targetLocation ==
-                null)
+            if (obj.targetLocation == null)
             {
                 continue;
             }
 
-
-            currentCompassTarget =
-                obj.targetLocation;
+            currentCompassTarget = obj.targetLocation;
 
             return;
         }
     }
 
 
-    public ObjectiveData
-        GetCurrentObjective()
+    public ObjectiveData GetCurrentObjective()
     {
-        foreach (
-            ObjectiveData obj
-            in activeObjectives)
+        foreach (ObjectiveData obj in activeObjectives)
         {
             if (obj == null)
             {
@@ -348,15 +229,11 @@ public class ObjectiveManager : MonoBehaviour
             }
 
 
-            if (obj.isUnlocked &&
-                !obj.isCompleted &&
-                !obj.shouldHideFromUI)
+            if (obj.isUnlocked && !obj.isCompleted && !obj.shouldHideFromUI)
             {
                 return obj;
             }
         }
-
-
         return null;
     }
 }
