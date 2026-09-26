@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 0
 --- !u!136 &6443589694411557211
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -227,13 +228,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4407936073208036790}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.00564, z: -0.00318}
-  m_LocalScale: {x: 0.013382397, y: 0.013410416, z: 0.008544165}
+  m_LocalRotation: {x: -0.075344265, y: -0, z: 1.136868e-13, w: 0.9971576}
+  m_LocalPosition: {x: 0, y: 0.0027, z: -0.0018}
+  m_LocalScale: {x: 0.006088054, y: 0.010269051, z: 0.0075471383}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4186670407997535099}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -8.642, y: 0, z: 0}
 --- !u!114 &8549970054016927577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 1
 --- !u!65 &8026710561044402036
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -462,6 +464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 0
 --- !u!136 &9120359029103941684
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -632,6 +635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 0
 --- !u!65 &2900182120068220995
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -698,6 +702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 0
 --- !u!136 &1593815662723062469
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -766,6 +771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c154aaccfd80c643b0eec967aa2f7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StalkDamageReciever
+  isHead: 0
 --- !u!136 &2063613891388792350
 CapsuleCollider:
   m_ObjectHideFlags: 0

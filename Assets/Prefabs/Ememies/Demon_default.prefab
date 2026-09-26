@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &1167723043731311786
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -175,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &3449529162098909139
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -575,6 +577,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &887265469085468883
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -643,6 +646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &1470493760239289543
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -711,6 +715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &1269964489900623594
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -743,6 +748,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8992174485219063727}
+  - component: {fileID: 2598908134327028335}
   - component: {fileID: 6065115378183063541}
   m_Layer: 6
   m_Name: headHitbox
@@ -766,6 +772,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7439134103552694270}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2598908134327028335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5041107863821708811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 1
 --- !u!65 &6065115378183063541
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -934,6 +953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &7432816613316739443
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1002,6 +1022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &4346360824895412579
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1070,6 +1091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &3071029094013311569
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1138,6 +1160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &7742398351626150225
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1206,6 +1229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!136 &4982139923814032847
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1376,6 +1400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8ec5c8f522a14faa87042ff270778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindDamageReciever
+  isHead: 0
 --- !u!65 &2791268724400102510
 BoxCollider:
   m_ObjectHideFlags: 0

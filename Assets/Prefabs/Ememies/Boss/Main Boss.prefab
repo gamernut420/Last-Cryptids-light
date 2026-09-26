@@ -129,8 +129,8 @@ Transform:
   m_GameObject: {fileID: 946006901868029483}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000000933665, y: -0.000000041099685, z: -0.15670697, w: 0.98764515}
-  m_LocalPosition: {x: 0.131, y: -0.024, z: -0}
-  m_LocalScale: {x: 0.2167693, y: 0.26477903, z: 0.21716172}
+  m_LocalPosition: {x: 0.156, y: -0.008, z: -0}
+  m_LocalScale: {x: 0.19816615, y: 0.22485036, z: 0.21716172}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8312031679973131212}
@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 1
 --- !u!65 &6899103842961761353
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -213,6 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &4977660425434599598
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -312,6 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &606819457644015982
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -380,6 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &2615949905675678877
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -550,6 +554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &5418321956712229584
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -618,6 +623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &9124747565583736233
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -641,6 +647,37 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &4669540009043075326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5535355770025143335}
+  m_Layer: 6
+  m_Name: DamageNumber
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5535355770025143335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4669540009043075326}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.12153772, y: 0.6965834, z: 0.1215379, w: -0.6965836}
+  m_LocalPosition: {x: 0.234, y: 0.309, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5000002, z: 0.5000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8312031679973131212}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5331241819255924531
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,7 +734,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1
-  m_WalkableMask: 8
+  m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &5648085785668082399
 MonoBehaviour:
@@ -753,6 +790,7 @@ MonoBehaviour:
     m_Bits: 8
   turnSpeed: 8
   animator: {fileID: 0}
+  damageNumberPoint: {fileID: 5535355770025143335}
   bossObjective: {fileID: 0}
   maxHP: 1000
   phase2HP: 500
@@ -780,7 +818,7 @@ MonoBehaviour:
   hitboxExtendSpeed: 20
   rangeAnimationName: Rage
   rangePauseTime: 2
-  enemyPrefab: {fileID: 7071000206556148062, guid: 557117ecd7ed2774f80dc8844a3d8e16, type: 3}
+  enemyPrefab: {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
   spawnRadius: 30
   minSpawnDistance: 5
   maxEnemiesAlive: 6
@@ -802,6 +840,7 @@ MonoBehaviour:
   energyFieldsPerAttack: 2
   energyFieldCooldown: 10
   energyFieldDuration: 6
+  wakeDistance: 50
 --- !u!82 &121539999577291986
 AudioSource:
   m_ObjectHideFlags: 0
@@ -944,6 +983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!136 &9062068615664243901
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1012,6 +1052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2659659378d28d4085693912513028c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossDamageReceiver
+  isHeadHitbox: 0
 --- !u!65 &3024418133820436914
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1201,6 +1242,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 400012, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3629165960916894894}
+    - targetCorrespondingSourceObject: {fileID: 400012, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5535355770025143335}
     - targetCorrespondingSourceObject: {fileID: 400020, guid: d19f0e375a0203a4ca72964404dbd39e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3639657572453321960}

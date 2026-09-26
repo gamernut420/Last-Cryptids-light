@@ -10,14 +10,19 @@ public class DamageNumberManager : MonoBehaviour
     {
         instance = this;
     }
-    
+
     public void ShowDamage(Vector3 position, int damage)
+    {
+        ShowDamage(position, damage, false);
+    }
+    
+    public void ShowDamage(Vector3 position, int damage, bool isCritical)
     {
         if (damageNumberPrefab == null)
             return;
 
         GameObject number = Instantiate(damageNumberPrefab, position, Quaternion.identity);
         DamageNumber damageNumber = number.GetComponent<DamageNumber>();
-        damageNumber.SetDamage(damage);
+        damageNumber.SetDamage(damage, isCritical);
     }
 }

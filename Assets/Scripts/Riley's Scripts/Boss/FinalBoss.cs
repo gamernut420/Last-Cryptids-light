@@ -31,16 +31,14 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] LayerMask playerLayer;
     [SerializeField] private float turnSpeed = 8f;
     [SerializeField] private Animator animator;
-
+    [SerializeField] private Transform damageNumberPoint;
 
     [Header("Objective")]
     [SerializeField] private ObjectiveData bossObjective;
 
-
     [Header("Health")]
     [SerializeField] private float maxHP = 1000f;
     private float currentHP;
-
 
     [Header("Boss Phase")]
     [SerializeField] private float phase2HP = 500f;
@@ -50,13 +48,11 @@ public class FinalBoss : MonoBehaviour, IDamage
     private bool phase2Transitioning;
     private bool phase2Triggered;
 
-
     [Header("Movement")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private float phase1Speed = 3.5f;
     [SerializeField] private float phase2Speed = 5f;
     [SerializeField] private float phase3Speed = 7f;
-
 
     [Header("Melee Attack")]
     [SerializeField] private float attackCooldown = 2f;
@@ -67,7 +63,6 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private float meleeTimer;
     private int attack;
-
 
     [Header("Ranged Attack")]
     [SerializeField] private GameObject projectile;
@@ -88,6 +83,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     bool isShooting = false;
     private float rangedTimer = 5f;
     private bool chargingRangedAttack;
+    private GameObject currentBeam;
 
     [Header("Ranged Animation (Rage)")]
     [SerializeField] private string rangeAnimationName = "Rage";
@@ -112,14 +108,12 @@ public class FinalBoss : MonoBehaviour, IDamage
     private bool maxEnemies;
     private float summonTimer;
 
-
     [Header("Teleporting")]
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
     [SerializeField] private float teleportCooldown = 20f;
 
     private float teleportTimer;
-
 
     [Header("Energy Fields")]
     [SerializeField] private GameObject energyFieldPrefab;
@@ -128,11 +122,16 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] float energyFieldCooldown = 10f;
     [SerializeField] float energyFieldDuration = 6f;
 
+    [Header("Sleep/Wake")]
+    [SerializeField] private float wakeDistance = 50f;
+    private bool isSleeping = true;
+    private bool isWaking = false;
+
     private float energyFieldTimer;
     private int spawnAreaMask;
     private Vector3 startPosition;
     private Quaternion startRotation;
-
+    
     private Transform PlayerTransform
     {
         get
@@ -188,6 +187,11 @@ public class FinalBoss : MonoBehaviour, IDamage
             agent = GetComponent<NavMeshAgent>();
         }
 
+        if (animator != null)
+        {
+            animator.ResetTrigger("SleepStart");
+            animator.SetTrigger("SleepStart");
+        }
 
         if (meleeHitbox != null)
         {
@@ -203,7 +207,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         agent.stoppingDistance = meleeRange;
     }
 
-
     // Update is called once per frame
     void Update()
     {
@@ -211,16 +214,16 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (currentPhase == BossPhase.Dead) return;
 
-        float distanceToPlayer =
-            Vector3.Distance(
-                transform.position,
-                PlayerTransform.position
-            );
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
-        if (distanceToPlayer > 500f)
+        if (isSleeping)
         {
+            HandleSleepWake();
             return;
         }
+
+        if (isWaking)
+            return;
 
         if (animator != null && agent != null && !chargingRangedAttack)
         {
@@ -230,10 +233,6 @@ public class FinalBoss : MonoBehaviour, IDamage
                 animator.SetFloat("Walk", 0f);
         }
 
-        
-     
-
-
         meleeTimer -= Time.deltaTime;
         rangedTimer -= Time.deltaTime;
         teleportTimer -= Time.deltaTime;
@@ -242,12 +241,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         CheckPhase();
         UpdateSummonTimer();
 
-
         if (spawnedEnemies.Count >= maxEnemiesAlive)
         {
             maxEnemies = true;
         }
-
 
         switch (currentPhase)
         {
@@ -264,7 +261,6 @@ public class FinalBoss : MonoBehaviour, IDamage
                 break;
         }
     }
-
 
     private void FacePlayer()
     {
@@ -372,19 +368,13 @@ public class FinalBoss : MonoBehaviour, IDamage
         phase2Transitioning = true;
         phase2Triggered = true;
 
+        Debug.Log("Rift Warden is syphoning the power from the rift machines!");
 
-        Debug.Log(
-            "Rift Warden is syphoning the power from the rift machines!"
-        );
-
+        CancelRangedAttack();
 
         agent.isStopped = true;
 
-
-        yield return new WaitForSeconds(
-            phase2TransitionDelay
-        );
-
+        yield return new WaitForSeconds(phase2TransitionDelay);
 
         if (PlayerTransform == null)
         {
@@ -394,20 +384,14 @@ public class FinalBoss : MonoBehaviour, IDamage
             yield break;
         }
 
-
-        Debug.Log(
-            "Rift Power activated! Boss is teleporting"
-        );
-
+        Debug.Log("Rift Power activated! Boss is teleporting");
 
         TeleportNearPlayer();
-
 
         meleeTimer = 0f;
         rangedTimer = 10f;
         energyFieldTimer = 0f;
         teleportTimer = teleportCooldown;
-
 
         agent.isStopped = false;
         phase2Transitioning = false;
@@ -616,7 +600,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     public void FireBeam()
     {
-        if (currentPhase == BossPhase.Dead)
+        if (currentPhase == BossPhase.Dead || phase2Transitioning)
             return;
 
         if (!chargingRangedAttack)
@@ -631,6 +615,28 @@ public class FinalBoss : MonoBehaviour, IDamage
         PauseRangeAnimation();
     }
 
+    private void CancelRangedAttack()
+    {
+        chargingRangedAttack = false;
+        isShooting = false;
+        beamFired = true;
+
+        if (currentBeam != null)
+        {
+            Destroy(currentBeam);
+            currentBeam = null;
+        }
+
+        if (animator != null)
+        {
+            animator.speed = 1f;
+            rangeAnimationPaused = false;
+        }
+
+        if (agent != null)
+            agent.isStopped = true;
+    }
+
     private void SpawnBeam()
     {
         if (PlayerTransform == null)
@@ -639,18 +645,18 @@ public class FinalBoss : MonoBehaviour, IDamage
         FacePlayer();
 
         Vector3 direction = (PlayerTransform.position - projectileSpawnPoint.position).normalized;
-        GameObject newProjectile = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
-        BoxCollider hitboxCollider = newProjectile.GetComponent<BoxCollider>();
-        ProjectileCollision sonicBoom = newProjectile.GetComponent<ProjectileCollision>();
-        //Transform core = newProjectile.transform.Find("Beam Core");
-        ParticleSystem core = newProjectile.transform.Find("Beam Particle")?.GetComponent<ParticleSystem>();
-        ParticleSystem energy = newProjectile.transform.Find("Beam Energy")?.GetComponent<ParticleSystem>();
-        ParticleSystem sparkEffect = newProjectile.transform.Find("Beam Sparks")?.GetComponent<ParticleSystem>();
+        currentBeam = Instantiate(projectile, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+        BoxCollider hitboxCollider = currentBeam.GetComponent<BoxCollider>();
+        ProjectileCollision sonicBoom = currentBeam.GetComponent<ProjectileCollision>();
+        //Transform core = currentBeam.transform.Find("Beam Core");
+        ParticleSystem core = currentBeam.transform.Find("Beam Particle")?.GetComponent<ParticleSystem>();
+        ParticleSystem energy = currentBeam.transform.Find("Beam Energy")?.GetComponent<ParticleSystem>();
+        ParticleSystem sparkEffect = currentBeam.transform.Find("Beam Sparks")?.GetComponent<ParticleSystem>();
 
         if (hitboxCollider == null)
         {
             Debug.LogError("Projectile needs a box collider!");
-            Destroy(newProjectile);
+            Destroy(currentBeam);
             return;
         }
 
@@ -658,7 +664,7 @@ public class FinalBoss : MonoBehaviour, IDamage
         hitboxCollider.size = new Vector3(projectileWidth, projectileHeight, newLength);
         hitboxCollider.center = new Vector3(0f, 0f, newLength / 2f);
 
-        StartCoroutine(ExtendBeam(newProjectile, hitboxCollider, core, energy, sparkEffect, sonicBoom));
+        StartCoroutine(ExtendBeam(currentBeam, hitboxCollider, core, energy, sparkEffect, sonicBoom));
     }
 
     private IEnumerator ExtendBeam(GameObject beam, BoxCollider hitboxCollider, ParticleSystem core, ParticleSystem energy, ParticleSystem sparks, ProjectileCollision sonicBoom)
@@ -671,6 +677,24 @@ public class FinalBoss : MonoBehaviour, IDamage
             if (beam == null)
             {
                 chargingRangedAttack = false;
+                isShooting = false;
+                currentBeam = null;
+
+                yield break;
+            }
+
+            if (phase2Transitioning)
+            {
+                Destroy(beam);
+                chargingRangedAttack = false;
+                isShooting = false;
+                currentBeam = null;
+
+                if (animator != null)
+                {
+                    animator.speed = 1f;
+                    rangeAnimationPaused = false;
+                }
                 yield break;
             }
 
@@ -702,10 +726,12 @@ public class FinalBoss : MonoBehaviour, IDamage
             attackTime += Time.deltaTime;
             yield return null;
         }
-        Debug.Log("Sonic Boom ended");
 
         if (sonicBoom != null)
             sonicBoom.StartMoving();
+
+        if (currentBeam == beam)
+            currentBeam = null;
 
         agent.isStopped = false;
         chargingRangedAttack = false;
@@ -879,61 +905,52 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private bool nextDamageIsCritical = false;
+
+    public void SetNextDamageCritical(bool critical)
+    {
+        nextDamageIsCritical = critical;
+    }
 
     public void takeDamage(int amount)
     {
+        if (isSleeping || isWaking)
+            return;
+
         if (currentPhase == BossPhase.Dead)
         {
             return;
         }
-
 
         if (phase2Transitioning)
         {
             return;
         }
 
-
         currentHP -= amount;
 
+        if (DamageNumberManager.instance != null)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.35f, 0.35f), Random.Range(-0.1f, 0.15f), 0f);
+            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount, nextDamageIsCritical);
+        }
+        nextDamageIsCritical = false;
 
         // ADDED FOR BOSS HEALTH BAR:
         // Update the HUD every time boss health changes.
-        BossHealthChanged?.Invoke(
-            Mathf.Max(
-                currentHP,
-                0f
-            ),
-            maxHP
-        );
-
-
-        Debug.Log(
-            "Rift Boss Health:" +
-            currentHP +
-            "/" +
-            maxHP
-        );
-
+        BossHealthChanged?.Invoke(Mathf.Max(currentHP, 0f), maxHP);
 
         CheckPhase();
 
-
         if (currentPhase == BossPhase.Phase2)
         {
-            Debug.Log(
-                "Rift Boss has entered Phase 2!"
-            );
+            Debug.Log("Rift Boss has entered Phase 2!");
         }
-
 
         if (currentPhase == BossPhase.Phase3)
         {
-            Debug.Log(
-                "Rift Boss has entered Phase 3!"
-            );
+            Debug.Log("Rift Boss has entered Phase 3!");
         }
-
 
         if (currentHP <= 0)
         {
@@ -966,60 +983,25 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         CleanEnemyList();
 
-
-        if (spawnedEnemies.Count > 0 &&
-            maxEnemies)
+        if (spawnedEnemies.Count > 0 && maxEnemies)
         {
-            waitingToSummon =
-                false;
-
-
-            summonTimer =
-                summonCooldown;
-
-
+            waitingToSummon = false;
+            summonTimer = summonCooldown;
             return;
         }
 
-
         if (!waitingToSummon)
         {
-            waitingToSummon =
-                true;
-
-
-            summonTimer =
-                summonCooldown;
-
-
-            maxEnemies =
-                false;
-
-
-            Debug.Log(
-                "All summoned enemies defeated. " +
-                "Boss will summon again in " +
-                summonCooldown +
-                " seconds."
-            );
+            waitingToSummon = true;
+            summonTimer = summonCooldown;
+            maxEnemies = false;
         }
 
-
-        summonTimer -=
-            Time.deltaTime;
-
+        summonTimer -= Time.deltaTime;
 
         if (summonTimer <= 0)
         {
-            waitingToSummon =
-                false;
-
-
-            Debug.Log(
-                "Rift Warden is summoning more enemies!"
-            );
-
-
+            waitingToSummon = false;
             SummonEnemies();
         }
     }
@@ -1069,9 +1051,6 @@ public class FinalBoss : MonoBehaviour, IDamage
         {
             ObjectiveManager.Instance.CompleteObjective(bossObjective.objectiveID);
         }
-
-
-
 
         // ADDED FOR BOSS HEALTH BAR:
         // Hide the HUD when the boss dies.
@@ -1150,6 +1129,14 @@ public class FinalBoss : MonoBehaviour, IDamage
             {
                 Debug.Log("Ranged attack cancelled because boss died.");
 
+                chargingRangedAttack = false;
+                isShooting = false;
+
+                yield break;
+            }
+
+            if (phase2Transitioning)
+            {
                 chargingRangedAttack = false;
                 isShooting = false;
 
@@ -1246,6 +1233,48 @@ public class FinalBoss : MonoBehaviour, IDamage
         }
     }
 
+    private void HandleSleepWake()
+    {
+        if (PlayerTransform == null)
+            return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
+
+        if (distanceToPlayer <= wakeDistance)
+            StartCoroutine(WakeBoss());
+    }
+
+    private IEnumerator WakeBoss()
+    {
+        if (isWaking)
+            yield break;
+
+        isWaking = true;
+
+        if (agent != null)
+            agent.isStopped = true;
+
+        if (animator != null)
+        {
+            animator.ResetTrigger("SleepEnd");
+            animator.SetTrigger("SleepEnd");
+        }
+
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("SleepEnd"));
+
+        yield return new WaitUntil(() =>
+        {
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            return state.IsName("SleepEnd") && state.normalizedTime >= 1f;
+        });
+
+        isSleeping = false;
+        isWaking = false;
+
+        if (agent != null)
+            agent.isStopped = false;
+    }
+
     public void ResetBoss()
     {
         StopAllCoroutines();
@@ -1315,10 +1344,14 @@ public class FinalBoss : MonoBehaviour, IDamage
             animator.ResetTrigger("Hit2");
             animator.ResetTrigger("Rage");
             animator.ResetTrigger("Die");
+            animator.ResetTrigger("sleep_end");
 
             animator.Rebind();
             animator.Update(0f);
         }
+
+        isSleeping = true;
+        isWaking = false;
 
         BossHealthChanged?.Invoke(currentHP, maxHP);
     }
