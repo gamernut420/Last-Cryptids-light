@@ -12,6 +12,9 @@ public class ScavengeItem : MonoBehaviour, IInteract
     [Header("References")]
     [SerializeField] string PromptMessage = "Press E to pick up";
 
+    [Header("Objective Settings")]
+    public ObjectiveData targetObjective;
+    public int amountPicked;
     float currentHoldTimer;
     string currentPropmt;
     
@@ -30,7 +33,8 @@ public class ScavengeItem : MonoBehaviour, IInteract
             player.PlayerAddItem(itemData, itemData.stackCount);
 
             Destroy(gameObject);
-
+            if (targetObjective != null && ObjectiveManager.Instance != null)
+                ObjectiveManager.Instance.AddObjectiveProgress(targetObjective.objectiveID, amountPicked);
             return true;
         }
 

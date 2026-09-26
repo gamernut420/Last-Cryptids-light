@@ -41,7 +41,7 @@ public class WeaponUpgrades : MonoBehaviour
 
     private void Awake()
     {
-        FireRateMax = (int)(100 / FireRateIncrease);
+        FireRateMax = (int)(100 - FireRateIncrease);
 
         StatMap = new Dictionary<string, UpgradeFuncs>()
         {

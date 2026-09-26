@@ -9,4 +9,6 @@ public interface IWeapon
     void SetWeaponUse(bool inUse);
 
     string GetWeaponName();
+
+    Sprite GetWeaponImage();
 }

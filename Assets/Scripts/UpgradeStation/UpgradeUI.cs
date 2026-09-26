@@ -11,6 +11,9 @@ public class UpgradeUI : MonoBehaviour
     [SerializeField] GameObject CategoryUIPrefab;
     [SerializeField] GameObject UpgradeUIPrefab;
 
+    [SerializeField] AudioSource ShopAudio;
+    [SerializeField] AudioClip PurchaceAudio;
+
     PlayerUpgrades PlayerUpgrader;
     WeaponUpgrades WeaponUpgrader;
 
@@ -122,6 +125,11 @@ public class UpgradeUI : MonoBehaviour
 
     public void OnPurchase(int price)
     {
+        if (ShopAudio != null && PurchaceAudio != null)
+        {
+            ShopAudio.PlayOneShot(PurchaceAudio);
+        }
+
         Player.GetComponent<IPlayer>().ModifyPlayerFunds(-price);
 
         RefreshUI_General();
