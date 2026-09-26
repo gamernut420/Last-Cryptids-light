@@ -44,8 +44,7 @@ public class ObjectiveData : ScriptableObject
     // Side = optional/secondary objective
     [Header("HUD Display")]
 
-    public ObjectiveDisplayType displayType =
-        ObjectiveDisplayType.Main;
+    public ObjectiveDisplayType displayType = ObjectiveDisplayType.Main;
 
 
     // ADDED:

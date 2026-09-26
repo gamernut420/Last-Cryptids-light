@@ -10,4 +10,5 @@ public class ScriptableItem : ScriptableObject
     public string itemDescription;
     public Sprite itemIcon;
     public int stackCount;
+    
 }

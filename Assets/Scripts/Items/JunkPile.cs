@@ -28,7 +28,8 @@ public class JunkPile : MonoBehaviour, IInteract
 
     [Header("Objective Settings")]
     public ObjectiveData targetObjective;
-    public int searchProgressAmount;    float currentHoldTimer;
+    public int searchProgressAmount;    
+    float currentHoldTimer;
     string currentPropmt;
 
     private void Start()

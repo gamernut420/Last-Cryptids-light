@@ -5,8 +5,11 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
 {
     [SerializeField] GameObject WeaponModel;
 
-    [Header("----- Gun Stats -----")]
+    [Header("----- Gun Info -----")]
     [SerializeField] string WeaponName;
+    [SerializeField] Sprite WeaponImage;
+
+    [Header("----- Gun Stats -----")]
     [Tooltip("This is in Rounds per Minute")]
     [SerializeField][Min(0f)] float FireRate = 500;
     [SerializeField] bool IsAuto = false;
@@ -442,6 +445,11 @@ public class GunController : MonoBehaviour, IWeapon, IInteract
     public string GetWeaponName()
     {
         return WeaponName;
+    }
+
+    public Sprite GetWeaponImage()
+    {
+        return WeaponImage;
     }
 
     public int GetCurrentAmmoForCheckpoint()
