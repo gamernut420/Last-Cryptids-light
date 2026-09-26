@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3247730010647925676}
   - component: {fileID: 4351717982330274797}
   - component: {fileID: 4347246143271695643}
+  - component: {fileID: 242721992238638074}
   m_Layer: 0
   m_Name: CaveToWorldMap
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.73457724, z: 0, w: -0.6785251}
   m_LocalPosition: {x: 2367.37, y: 59.39, z: 2636.21}
-  m_LocalScale: {x: 6.846914, y: 6.5825534, z: 12.908091}
+  m_LocalScale: {x: 2.236333, y: 4.526361, z: 6.0473895}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -104,3 +105,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7863654136611338266}
   m_Mesh: {fileID: -5495902117074765545, guid: cf4c16720fab71d439b0e6f26e63d921, type: 3}
+--- !u!65 &242721992238638074
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7863654136611338266}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.0000005, y: 1.9999999, z: 2.0000007}
+  m_Center: {x: 0, y: 0, z: 0}

@@ -14,9 +14,19 @@ public class BasicEnemyDamageReceiver : MonoBehaviour, IDamage
     {
         if (enemy != null)
         {
+            int finalDamage = amount;
+
             if (isHead)
-                amount += 5;
-            enemy.takeDamage(amount);
+            {
+                finalDamage = Mathf.RoundToInt(amount * 1.5f);
+                enemy.SetNextDamageCritical(true);
+            }
+            else
+            {
+                enemy.SetNextDamageCritical(false);
+            }
+
+            enemy.takeDamage(finalDamage);
         }
     }
 }

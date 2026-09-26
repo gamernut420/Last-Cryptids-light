@@ -12,6 +12,15 @@ public class DamageNumber : MonoBehaviour
     [Header("Fade")]
     [SerializeField] private float fadeStartTime = 0.5f;
 
+    [Header("Damage Number Scale")]
+    [SerializeField] private float normalScale = 1f;
+    [SerializeField] private Color normalColor = Color.yellow;
+    [SerializeField] private FontStyles normalStyle = FontStyles.Normal;
+
+    [SerializeField] private float criticalScale = 1.5f;
+    [SerializeField] private Color critColor = new Color(1f, 0.5f, 0f);
+    [SerializeField] private FontStyles criticalStyle = FontStyles.Bold;
+
     private float timer;
     private Color textColor;
     private Camera playerCamera;
@@ -22,9 +31,24 @@ public class DamageNumber : MonoBehaviour
         textColor = damageText.color;
     }
 
-    public void SetDamage(int damage)
+    public void SetDamage(int damage, bool isCritical)
     {
         damageText.text = damage.ToString();
+
+        if (isCritical)
+        {
+            damageText.transform.localScale = Vector3.one * criticalScale;
+            damageText.color = critColor;
+            damageText.fontStyle = criticalStyle;
+        }
+        else
+        {
+            damageText.transform.localScale = Vector3.one * normalScale;
+            damageText.color = normalColor;
+            damageText.fontStyle = normalStyle;
+        }
+
+        textColor = damageText.color;
     }
 
     // Update is called once per frame
@@ -41,9 +65,13 @@ public class DamageNumber : MonoBehaviour
         if (timer >= fadeStartTime)
         {
             float fadeTime = lifetime - fadeStartTime;
-            float alpha = 1f - ((timer - fadeStartTime) / fadeTime);
-            textColor.a = alpha;
-            damageText.color = textColor;
+            if (fadeTime > 0f)
+            {
+                float alpha = 1f - ((timer - fadeStartTime) / fadeTime);
+                Color fadeColor = textColor;
+                fadeColor.a = alpha;
+                damageText.color = textColor;
+            }
         }
 
         if (timer >= lifetime)

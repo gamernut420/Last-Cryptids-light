@@ -662,6 +662,13 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
         isPlayingStep = false;
     }
 
+    private bool nextDamageIsCritical = false;
+
+    public void SetNextDamageCritical(bool critical)
+    {
+        nextDamageIsCritical = critical;
+    }
+
     public void takeDamage(int amount)
     {
         if (dead)
@@ -673,8 +680,9 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
         if (DamageNumberManager.instance != null)
         {
             Vector3 offset = new Vector3(Random.Range(-0.35f, 0.35f), Random.Range(-0.1f, 0.15f), 0f);
-            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount);
+            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount, nextDamageIsCritical);
         }
+        nextDamageIsCritical = false;
 
         if (currentHP <= 0)
         {
