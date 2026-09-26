@@ -8,8 +8,33 @@ public class InventoryToggle : MonoBehaviour
     [Header("Input Key")]
     public KeyCode toggleKey;
 
-    [Header("Other UI")]
-    [SerializeField] private GameObject[] otherUI;
+    //References to the HUD and weapon UI
+    [SerializeField] private GameObject hudRoot;
+    [SerializeField] private GameObject weaponUI;
+
+
+// ADDED: Automatically finds the UI objects
+void Awake()
+    {
+        Transform ui = transform.parent;
+
+        if (ui != null)
+        {
+            if (inventoryPanel == null)
+            {
+                inventoryPanel = ui.Find("InventoryPanel")?.gameObject;
+            }
+
+            //Finds WeaponUI under UI.
+            weaponUI = ui.Find("WeaponUI")?.gameObject;
+
+            //Finds HUD_Root outside UI
+            if (ui.parent != null)
+            {
+                hudRoot = ui.parent.Find("HUD_Root")?.gameObject;
+            }
+        }
+    }
 
 
     void Start()
@@ -73,14 +98,6 @@ public class InventoryToggle : MonoBehaviour
     private void SetInventoryState(
         bool isActive)
     {
-        if (isActive)
-        {
-            Cursor.lockState =
-                CursorLockMode.None;
-
-            Cursor.visible =
-                true;
-        }
 
         if (inventoryPanel == null)
         {
@@ -100,9 +117,15 @@ public class InventoryToggle : MonoBehaviour
 
             gameManager.instance.playerScript.enabled = false;
 
-            for (int i = 0; i < otherUI.Length; i++)
+            //Hides the HUD and weapon UI
+            if (hudRoot != null)
             {
-                otherUI[i].SetActive(false);
+                hudRoot.SetActive(false);
+            }
+
+            if (weaponUI != null)
+            {
+                weaponUI.SetActive(false);
             }
 
 
@@ -118,9 +141,15 @@ public class InventoryToggle : MonoBehaviour
 
             gameManager.instance.playerScript.enabled = true;
 
-            for (int i = 0; i < otherUI.Length; i++)
+            //Shows the HUD and weapon UI again
+            if (hudRoot != null)
             {
-                otherUI[i].SetActive(true);
+                hudRoot.SetActive(true);
+            }
+
+            if (weaponUI != null)
+            {
+                weaponUI.SetActive(true);
             }
 
 
