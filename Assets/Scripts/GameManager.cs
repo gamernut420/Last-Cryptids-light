@@ -122,8 +122,6 @@ public class gameManager : MonoBehaviour
     void Start()
     {
         UpateKillUI();
-        Debug.Log("HUD: " + hud);
-        Debug.Log("HP BAR: " + playerHPBar);
 
         if (playerHPBar != null)
         {

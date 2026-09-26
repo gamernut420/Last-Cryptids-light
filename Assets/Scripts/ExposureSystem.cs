@@ -116,7 +116,7 @@ public class ExposureSystem : MonoBehaviour
     {
         damageAccumlator += deltaDanage;
         // Once accumulated damage hit 1 or more, deal 1 point of damage
-        if (damageAccumlator >= 0.25f)
+        if (damageAccumlator >= 1.0f)
         {
             int damageToDeal = Mathf.FloorToInt(damageAccumlator); 
             damageAccumlator -= damageToDeal;

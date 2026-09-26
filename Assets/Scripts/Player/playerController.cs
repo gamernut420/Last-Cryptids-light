@@ -50,12 +50,11 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
     Vector3 moveDir;
     Vector3 playerVel;
 
-
-    bool isDead = false;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Debug.Log("Started");
+
         currentHP = MaxHP;
         currentSpeed = BaseSpeed;
 
@@ -81,7 +80,8 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         if (gameManager.instance.isPaused) return;
 
-        if (isDead) return;
+        //Debug.Log(Input.GetAxis("Horizontal"));
+        //Debug.Log(Input.GetAxis("Vertical"));
 
         movement();
 
@@ -117,6 +117,10 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
         jump();
         controller.Move(playerVel * Time.deltaTime);
+
+        //Debug.Log(controller);
+        //Debug.Log(playerVel);
+
         playerVel.y -= gravity * Time.deltaTime;
     }
 
@@ -181,17 +185,17 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void takeDamage(int amount, bool showFlash = true)
     {
-
         currentHP -= amount;
-        updatePlayerUI();
-        if (showFlash)
-            StartCoroutine(flashDamage());
 
         if (currentHP <= 0)
         {
             // you i'm dead!!!
             gameManager.instance.youLose();
         }
+
+        updatePlayerUI();
+
+        if (showFlash) StartCoroutine(flashDamage());
     }
 
     IEnumerator flashDamage()
@@ -203,7 +207,7 @@ public class playerController : MonoBehaviour, IPlayer, IDamage
 
     public void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)currentHP / MaxHP;
+        gameManager.instance.playerHPBar.fillAmount = currentHP / MaxHP;
     }
 
     public void PlayerAddItem(ScriptableItem itemName, int amount)
