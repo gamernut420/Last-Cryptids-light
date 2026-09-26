@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
 {
+    [SerializeField] private Transform damageNumberPoint;
+
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
     public float timeToForgetSound = 2f;
@@ -657,13 +659,25 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
         animationFinished = true;
     }
 
+    private bool nextDamageIsCritical = false;
+
+    public void SetNextDamageCritical(bool critical)
+    {
+        nextDamageIsCritical = critical;
+    }
+
     public void takeDamage(int amount)
     {
         if (currentHP <= 0) return;
 
         currentHP -= amount;
 
-        Debug.Log("Enemy takes" + amount + " damage");
+        if (DamageNumberManager.instance != null)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.35f, 0.35f), Random.Range(-0.1f, 0.15f), 0f);
+            DamageNumberManager.instance.ShowDamage(damageNumberPoint.position + offset, amount, nextDamageIsCritical);
+        }
+        nextDamageIsCritical = false;
 
         PlayAnimation(hurtAnimation);
 

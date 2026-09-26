@@ -45,7 +45,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0, g: 0.9723275, b: 1, a: 1}
   m_Intensity: 2.2
-  m_Range: 4.92
+  m_Range: 6.14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -196,6 +196,8 @@ MonoBehaviour:
   canBeSearchMultipleTimes: 1
   HoldTimer: 5
   PromptMessage: E to search
+  targetObjective: {fileID: 11400000, guid: 8421bea2f19413b4daaa4339663ca7d5, type: 2}
+  searchProgressAmount: 1
 --- !u!33 &8424814077674648907
 MeshFilter:
   m_ObjectHideFlags: 0
