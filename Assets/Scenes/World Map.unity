@@ -1712,6 +1712,93 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!1 &171940338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 171940339}
+  - component: {fileID: 171940341}
+  - component: {fileID: 171940340}
+  m_Layer: 0
+  m_Name: BossArenaSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &171940339
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171940338}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -294, y: -0.00000036043, z: -38}
+  m_LocalScale: {x: 934.14813, y: 161.5906, z: 905.0232}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 860553911}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &171940340
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171940338}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &171940341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171940338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 2896155888527484136, guid: cc308a9056c9667469f04e66435bfd1a, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 171940340}
+  maxSpawnAttempts: 10
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 25
+  spawnRate: 0.5
+  maxTotalSpawns: 25
+  randomEnemyType: 1
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 0
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 1000
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5
 --- !u!1001 &199703206
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12977,6 +13064,11 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!4 &860553911 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+  m_PrefabInstance: {fileID: 1541097845}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &878589646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4932589330261882923, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
@@ -24322,7 +24414,10 @@ PrefabInstance:
     - {fileID: 1624577924576465218, guid: d0477789ea414ab43acc698988824d27, type: 3}
     - {fileID: 5185185945173194965, guid: d0477789ea414ab43acc698988824d27, type: 3}
     - {fileID: 1820833327498254236, guid: d0477789ea414ab43acc698988824d27, type: 3}
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4786909378402666199, guid: d0477789ea414ab43acc698988824d27, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 171940339}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5878459771673870818, guid: d0477789ea414ab43acc698988824d27, type: 3}
       insertIndex: -1
@@ -33952,11 +34047,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4487652591761963370}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 6068257237294490860, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
-    - {fileID: 633396371011072638, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
-    - {fileID: 7375684512236298479, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
-    - {fileID: 5320499147450955085, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52e9bae0861a5ca409a9fff98fc80f3c, type: 3}
