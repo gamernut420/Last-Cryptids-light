@@ -786,6 +786,9 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) yield break;
 
+        if (chargingRangedAttack || isShooting)
+            yield break;
+
         if (phase2WarpShield != null)
         {
             phase2WarpShield.SetActive(true);
