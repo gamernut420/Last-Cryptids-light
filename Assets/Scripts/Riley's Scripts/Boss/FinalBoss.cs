@@ -422,39 +422,24 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (phase2Transitioning || isTeleporting) return;
 
-
         agent.speed = phase2Speed;
         rangedAttackCooldown = 10f;
 
-
         ChasePlayer();
 
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
-        float distanceToPlayer =
-            Vector3.Distance(
-                transform.position,
-                PlayerTransform.position
-            );
+        float teleportChance = Random.Range(0, 100);
 
-
-        float teleportChance =
-            Random.Range(0, 100);
-
-
-        if (teleportChance < 10)
+        if (teleportChance < 35)
         {
             CheckTeleport();
         }
 
-
         if (energyFieldTimer <= 0f)
         {
-            StartCoroutine(
-                EnergyFieldAttack()
-            );
-
-            energyFieldTimer =
-                energyFieldCooldown;
+            StartCoroutine(EnergyFieldAttack());
+            energyFieldTimer = energyFieldCooldown;
         }
 
 
