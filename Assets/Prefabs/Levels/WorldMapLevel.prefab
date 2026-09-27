@@ -1782,6 +1782,94 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1602862834254017519
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8884829457899259205}
+  - component: {fileID: 1316639401887715491}
+  - component: {fileID: 8618291968077420665}
+  m_Layer: 0
+  m_Name: Base1Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8884829457899259205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1602862834254017519}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.9446858, z: -0, w: -0.3279769}
+  m_LocalPosition: {x: 1.9, y: -0.00002002716, z: -7.8}
+  m_LocalScale: {x: 95.36038, y: 8.5222, z: 106.079575}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6451424891659812347}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1316639401887715491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1602862834254017519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+  - {fileID: 2896155888527484136, guid: cc308a9056c9667469f04e66435bfd1a, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 8618291968077420665}
+  maxSpawnAttempts: 10
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 15
+  spawnRate: 0.5
+  maxTotalSpawns: 15
+  randomEnemyType: 1
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 0
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 300
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5
+--- !u!65 &8618291968077420665
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1602862834254017519}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1641512783520344761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2682,6 +2770,94 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2343532966989030314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 388479531016106070}
+  - component: {fileID: 5694069445687217799}
+  - component: {fileID: 2888808155110782434}
+  m_Layer: 0
+  m_Name: Base3Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &388479531016106070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2343532966989030314}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.28572294, z: -0, w: 0.9583123}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 108.47807, y: 14.097, z: 163.99577}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8073303118966186936}
+  m_LocalEulerAnglesHint: {x: 0, y: -33.204, z: 0}
+--- !u!114 &5694069445687217799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2343532966989030314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+  - {fileID: 2896155888527484136, guid: cc308a9056c9667469f04e66435bfd1a, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 2888808155110782434}
+  maxSpawnAttempts: 10
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 20
+  spawnRate: 0.5
+  maxTotalSpawns: 20
+  randomEnemyType: 1
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 0
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 300
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5
+--- !u!65 &2888808155110782434
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2343532966989030314}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2407158724654377563
 GameObject:
   m_ObjectHideFlags: 0
@@ -7894,6 +8070,94 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6279481449897691013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8785133638245932960}
+  - component: {fileID: 7870210976395877282}
+  - component: {fileID: 8267853945426581107}
+  m_Layer: 0
+  m_Name: Base2Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8785133638245932960
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6279481449897691013}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.35300016, z: -0, w: 0.9356233}
+  m_LocalPosition: {x: -1.7, y: 0, z: 5.8}
+  m_LocalScale: {x: 115.472534, y: 14.265, z: 136.33168}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 115333777438968350}
+  m_LocalEulerAnglesHint: {x: 0, y: -41.342, z: 0}
+--- !u!114 &7870210976395877282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6279481449897691013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 4968294969025963930, guid: ea6b2c6807dc2ec4d95518c261ded344, type: 3}
+  - {fileID: 2896155888527484136, guid: cc308a9056c9667469f04e66435bfd1a, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 8267853945426581107}
+  maxSpawnAttempts: 10
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 20
+  spawnRate: 0.5
+  maxTotalSpawns: 20
+  randomEnemyType: 1
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 0
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 300
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5
+--- !u!65 &8267853945426581107
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6279481449897691013}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6281413382708448817
 GameObject:
   m_ObjectHideFlags: 0
@@ -15574,6 +15838,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7172744081088526737, guid: 5c2e5d8a7d33ca842b383c8eaab967da, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6627439991955670545}
+    - targetCorrespondingSourceObject: {fileID: 7172744081088526737, guid: 5c2e5d8a7d33ca842b383c8eaab967da, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 388479531016106070}
     - targetCorrespondingSourceObject: {fileID: 3679158997925386793, guid: 5c2e5d8a7d33ca842b383c8eaab967da, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4957072410758146717}
@@ -20085,6 +20352,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7995709305366136711, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
       insertIndex: 15
       addedObject: {fileID: 8351006388738614280}
+    - targetCorrespondingSourceObject: {fileID: 7995709305366136711, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
+      insertIndex: 34
+      addedObject: {fileID: 8884829457899259205}
     - targetCorrespondingSourceObject: {fileID: 1032552521760613562, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5548905888578043329}
@@ -26255,6 +26525,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7865224890575367436, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
       insertIndex: -1
       addedObject: {fileID: 838984248848710583}
+    - targetCorrespondingSourceObject: {fileID: 7865224890575367436, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8785133638245932960}
     - targetCorrespondingSourceObject: {fileID: 4441305136041119412, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2269232927853790159}

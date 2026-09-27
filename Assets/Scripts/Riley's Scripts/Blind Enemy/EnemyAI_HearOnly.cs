@@ -700,13 +700,11 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
         if (dead) return;
 
         dead = true;
-        Debug.Log("Blind Enemy Defeated!");
         gameManager.instance.playerScript.ModifyPlayerFunds(10);
         gameManager.instance.AddKill();
         StopAllCoroutines();
         attacking = false;
         throwing = false;
-
 
         DisableAllAttackHitboxes();
 
