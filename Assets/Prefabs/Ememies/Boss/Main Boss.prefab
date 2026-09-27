@@ -791,7 +791,7 @@ MonoBehaviour:
   turnSpeed: 8
   animator: {fileID: 0}
   damageNumberPoint: {fileID: 5535355770025143335}
-  bossObjective: {fileID: 0}
+  bossObjective: {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
   maxHP: 1000
   phase2HP: 500
   phase3HP: 200
@@ -830,6 +830,11 @@ MonoBehaviour:
   teleportDistance: 30
   teleportNearPlayerDistance: 8
   teleportCooldown: 20
+  phase2WarpShield: {fileID: 0}
+  phase2WarpShieldTransform: {fileID: 0}
+  shieldPulseSpeed: 3
+  shieldPulseAmount: 0.15
+  teleportShieldDuration: 0.75
   energyFieldPrefab: {fileID: 7060007482161181010, guid: a28a77c5071645041a88169ee8ddfa67, type: 3}
   energyFieldSpawnPoints:
   - {fileID: 0}
