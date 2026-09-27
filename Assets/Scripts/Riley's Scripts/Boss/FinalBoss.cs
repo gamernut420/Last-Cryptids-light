@@ -112,7 +112,13 @@ public class FinalBoss : MonoBehaviour, IDamage
     [SerializeField] private float teleportDistance = 30f;
     [SerializeField] private float teleportNearPlayerDistance = 8f;
     [SerializeField] private float teleportCooldown = 20f;
+    [SerializeField] private GameObject phase2WarpShield;
+    [SerializeField] private Transform phase2WarpShieldTransform;
+    [SerializeField] private float shieldPulseSpeed = 3f;
+    [SerializeField] private float shieldPulseAmount = 0.15f;
+    [SerializeField] private float teleportShieldDuration = 0.75f;
 
+    private Vector3 shieldBaseScale;
     private float teleportTimer;
 
     [Header("Energy Fields")]
@@ -193,6 +199,12 @@ public class FinalBoss : MonoBehaviour, IDamage
             animator.SetTrigger("SleepStart");
         }
 
+        if (phase2WarpShieldTransform != null)
+        {
+            shieldBaseScale = phase2WarpShieldTransform.localScale;
+            phase2WarpShield.SetActive(false);
+        }
+
         if (meleeHitbox != null)
         {
             meleeHitbox.SetActive(false);
@@ -231,6 +243,12 @@ public class FinalBoss : MonoBehaviour, IDamage
                 animator.SetFloat("Walk", 1f);
             else
                 animator.SetFloat("Walk", 0f);
+        }
+
+        if (phase2Transitioning && phase2WarpShieldTransform != null)
+        {
+            float pulse = 1f + Mathf.Sin(Time.time * shieldPulseSpeed) * shieldPulseAmount;
+            phase2WarpShieldTransform.localScale = shieldBaseScale * pulse;
         }
 
         meleeTimer -= Time.deltaTime;
@@ -304,7 +322,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (distanceToPlayer >= teleportDistance)
         {
-            TeleportNearPlayer();
+            StartCoroutine(TeleportNearPlayer());
         }
     }
 
@@ -368,7 +386,10 @@ public class FinalBoss : MonoBehaviour, IDamage
         phase2Transitioning = true;
         phase2Triggered = true;
 
-        Debug.Log("Rift Warden is syphoning the power from the rift machines!");
+        if (phase2WarpShield != null)
+        {
+            phase2WarpShield.SetActive(true);
+        }
 
         CancelRangedAttack();
 
@@ -381,12 +402,15 @@ public class FinalBoss : MonoBehaviour, IDamage
             phase2Transitioning = false;
             agent.isStopped = false;
 
+            if (phase2WarpShield != null)
+                phase2WarpShield.SetActive(false);
+
             yield break;
         }
 
         Debug.Log("Rift Power activated! Boss is teleporting");
 
-        TeleportNearPlayer();
+        StartCoroutine(TeleportNearPlayer());
 
         meleeTimer = 0f;
         rangedTimer = 10f;
@@ -758,44 +782,37 @@ public class FinalBoss : MonoBehaviour, IDamage
 
 
     // TELEPORT NEAR PLAYER
-    private void TeleportNearPlayer()
+    private IEnumerator TeleportNearPlayer()
     {
-        if (PlayerTransform == null) return;
+        if (PlayerTransform == null) yield break;
+
+        if (phase2WarpShield != null)
+        {
+            phase2WarpShield.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(1f);
 
         Vector2 randomDirection = Random.insideUnitCircle.normalized;
 
         Vector3 teleportPosition = PlayerTransform.position + new Vector3(randomDirection.x, 0, randomDirection.y) * teleportNearPlayerDistance;
 
-
         NavMeshHit hit;
 
-
-        if (NavMesh.SamplePosition(
-                teleportPosition,
-                out hit,
-                8f,
-                NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(teleportPosition, out hit, 8f, NavMesh.AllAreas))
         {
-            transform.position =
-                hit.position;
-
-
+            agent.Warp(hit.position);
             FacePlayer();
-
-
-            agent.Warp(
-                hit.position
-            );
-
-
-            teleportTimer =
-                teleportCooldown;
-
-
-            Debug.Log(
-                "Rift Boss teleported near player!"
-            );
         }
+
+        yield return new WaitForSeconds(teleportShieldDuration);
+
+        if (phase2WarpShield != null)
+        {
+            phase2WarpShield.SetActive(false);
+        }
+
+        teleportTimer = teleportCooldown;
     }
 
 
