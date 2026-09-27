@@ -9695,9 +9695,9 @@ MonoBehaviour:
   spawnArea: {fileID: 533995463}
   maxSpawnAttempts: 10
   navMeshSampleDistance: 5
-  maxEnemiesAlive: 50
+  maxEnemiesAlive: 30
   spawnRate: 0.2
-  maxTotalSpawns: 50
+  maxTotalSpawns: 30
   randomEnemyType: 1
   randomSpawnLocation: 1
   useTrigger: 0
@@ -9706,7 +9706,7 @@ MonoBehaviour:
   disableSpawnerAfterCompletion: 0
   resetOnPlayerDeath: 1
   resetWhenPlayerLeaves: 1
-  resetDistance: 500
+  resetDistance: 250
   destroyEnemiesOnReset: 1
   resetCheckRate: 0.5
 --- !u!65 &533995463
@@ -13782,9 +13782,9 @@ MonoBehaviour:
   spawnArea: {fileID: 909963116}
   maxSpawnAttempts: 10
   navMeshSampleDistance: 5
-  maxEnemiesAlive: 50
+  maxEnemiesAlive: 30
   spawnRate: 0.2
-  maxTotalSpawns: 50
+  maxTotalSpawns: 30
   randomEnemyType: 1
   randomSpawnLocation: 1
   useTrigger: 0
@@ -13793,7 +13793,7 @@ MonoBehaviour:
   disableSpawnerAfterCompletion: 0
   resetOnPlayerDeath: 1
   resetWhenPlayerLeaves: 1
-  resetDistance: 500
+  resetDistance: 250
   destroyEnemiesOnReset: 1
   resetCheckRate: 0.5
 --- !u!65 &909963116
@@ -16906,17 +16906,25 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: 'activeObjectives.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+    - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
+      propertyPath: 'activeObjectives.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: ca5f08c396c98ec4394337b57108168a, type: 2}
+    - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: 'activeObjectives.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
+      objectReference: {fileID: 11400000, guid: 25c1116f1c4d45445b46128413a9444a, type: 2}
     - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: 'activeObjectives.Array.data[3]'
       value: 
-      objectReference: {fileID: 11400000, guid: f2c856be9902d8449bf2937dd7f09b2b, type: 2}
+      objectReference: {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
     - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: 'activeObjectives.Array.data[4]'
       value: 
-      objectReference: {fileID: 11400000, guid: 3438939012bde544ea6fad21f116baaf, type: 2}
+      objectReference: {fileID: 11400000, guid: f2c856be9902d8449bf2937dd7f09b2b, type: 2}
     - target: {fileID: 5745120826524010943, guid: e65246918bff51042a211786b1266831, type: 3}
       propertyPath: 'activeObjectives.Array.data[5]'
       value: 
@@ -23215,9 +23223,9 @@ MonoBehaviour:
   spawnArea: {fileID: 1463021811}
   maxSpawnAttempts: 10
   navMeshSampleDistance: 5
-  maxEnemiesAlive: 50
+  maxEnemiesAlive: 30
   spawnRate: 0.2
-  maxTotalSpawns: 50
+  maxTotalSpawns: 30
   randomEnemyType: 1
   randomSpawnLocation: 1
   useTrigger: 0
@@ -23226,7 +23234,7 @@ MonoBehaviour:
   disableSpawnerAfterCompletion: 0
   resetOnPlayerDeath: 1
   resetWhenPlayerLeaves: 1
-  resetDistance: 500
+  resetDistance: 250
   destroyEnemiesOnReset: 1
   resetCheckRate: 0.5
 --- !u!65 &1463021811
