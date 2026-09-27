@@ -186,9 +186,10 @@ public class Spawner : MonoBehaviour
                 return;
 
             spawnPosition = location.spawnPoint.position;
-            spawnPosition.y = 4;
+            spawnPosition.y += 4;
             spawnRotation = location.spawnPoint.rotation;
         }
+
 
         if (prefab == null)
             return;
