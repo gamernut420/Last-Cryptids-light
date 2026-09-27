@@ -42,6 +42,14 @@ public class ShopUI : MonoBehaviour
         RefreshUI_Categories();
     }
 
+    private void Update()
+    {
+        if (Player != null)
+        {
+            Funds.text = $"Points: {Player.GetPlayerFunds()}";
+        }
+    }
+
     public void SetStation(IPlayer _player, List<ShopItem> items, Vector3 _spawnLocation)
     {
         Player = _player;
@@ -55,7 +63,7 @@ public class ShopUI : MonoBehaviour
     {
         if(Player != null)
         {
-            Funds.text = $"Points: {Player.GetPlayerFunds().ToString()}";
+            Funds.text = $"Points: {Player.GetPlayerFunds()}";
         }
 
         PurchaseButton.interactable = (
