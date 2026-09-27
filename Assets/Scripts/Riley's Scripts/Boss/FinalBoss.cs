@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -137,6 +138,7 @@ public class FinalBoss : MonoBehaviour, IDamage
     private int spawnAreaMask;
     private Vector3 startPosition;
     private Quaternion startRotation;
+    private bool isTeleporting;
     
     private Transform PlayerTransform
     {
@@ -310,15 +312,9 @@ public class FinalBoss : MonoBehaviour, IDamage
 
         if (teleportTimer > 0f) return;
 
-        if (isShooting) return;
+        if (isShooting || chargingRangedAttack) return;
 
-
-        float distanceToPlayer =
-            Vector3.Distance(
-                transform.position,
-                PlayerTransform.position
-            );
-
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
 
         if (distanceToPlayer >= teleportDistance)
         {
@@ -424,7 +420,7 @@ public class FinalBoss : MonoBehaviour, IDamage
 
     private void Phase2Behavior()
     {
-        if (phase2Transitioning) return;
+        if (phase2Transitioning || isTeleporting) return;
 
 
         agent.speed = phase2Speed;
@@ -767,6 +763,8 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (rangedTimer > 0) return;
 
+        if (isTeleporting || phase2Transitioning) return;
+
         if (chargingRangedAttack) return;
 
         if (isShooting) return;
@@ -786,8 +784,16 @@ public class FinalBoss : MonoBehaviour, IDamage
     {
         if (PlayerTransform == null) yield break;
 
-        if (chargingRangedAttack || isShooting)
-            yield break;
+        isTeleporting = true;
+        agent.isStopped = true;
+
+        if (animator != null)
+        {
+            animator.ResetTrigger("Rage");
+            animator.ResetTrigger("Hit1");
+            animator.ResetTrigger("Hit2");
+            animator.SetBool("IsWalking", false);
+        }
 
         if (phase2WarpShield != null)
         {
@@ -815,7 +821,9 @@ public class FinalBoss : MonoBehaviour, IDamage
             phase2WarpShield.SetActive(false);
         }
 
+        agent.isStopped = false;
         teleportTimer = teleportCooldown;
+        isTeleporting = false;
     }
 
 
