@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class WaveEnemySpawner : MonoBehaviour
+public class WaveEnemySpawner : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [Header("Spawn Settings")]
     [SerializeField] GameObject enemyWavePrefab;

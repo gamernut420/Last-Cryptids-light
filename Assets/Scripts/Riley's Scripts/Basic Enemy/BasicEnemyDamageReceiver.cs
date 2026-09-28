@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BasicEnemyDamageReceiver : MonoBehaviour, IDamage
+public class BasicEnemyDamageReceiver : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private BasicEnemy enemy;
     [SerializeField] private bool isHead;

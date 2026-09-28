@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class DamageNumber : MonoBehaviour
+public class DamageNumber : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private TMP_Text damageText;
 

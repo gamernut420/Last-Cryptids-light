@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyStalk : MonoBehaviour, IDamage
+public class EnemyStalk : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent agent;

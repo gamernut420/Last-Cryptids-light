@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DamageNumberManager : MonoBehaviour
+public class DamageNumberManager : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     public static DamageNumberManager instance;
 

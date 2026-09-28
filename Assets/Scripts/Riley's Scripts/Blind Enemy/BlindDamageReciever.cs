@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BlindDamageReciever : MonoBehaviour, IDamage
+public class BlindDamageReciever : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private EnemyAI_HearOnly enemy;
     [SerializeField] private bool isHead;

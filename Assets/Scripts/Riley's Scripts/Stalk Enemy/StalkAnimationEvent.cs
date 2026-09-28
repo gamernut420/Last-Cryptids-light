@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StalkAnimationEvent : MonoBehaviour
+public class StalkAnimationEvent : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private EnemyStalk enemy;
 

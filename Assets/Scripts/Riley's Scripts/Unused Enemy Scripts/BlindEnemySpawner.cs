@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BlindEnemySpawner : MonoBehaviour
+public class BlindEnemySpawner : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [Header("Spawn Settings")]
     [SerializeField] private GameObject enemyPrefab;

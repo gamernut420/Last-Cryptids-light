@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BossDamageReceiver : MonoBehaviour, IDamage
+public class BossDamageReceiver : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private bool isHeadHitbox = false;
     private FinalBoss boss;

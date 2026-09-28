@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BossAnimationEvents : MonoBehaviour
+public class BossAnimationEvents : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private FinalBoss boss;
 

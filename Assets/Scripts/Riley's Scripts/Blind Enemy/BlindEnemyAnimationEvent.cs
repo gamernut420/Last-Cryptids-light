@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyAnimationEvents : MonoBehaviour
+public class EnemyAnimationEvents : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private EnemyAI_HearOnly enemy;
 

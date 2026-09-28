@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class EnemyAudioManager : MonoBehaviour
+public class EnemyAudioManager : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [Header("Audio Source")]
     [SerializeField] private AudioSource audioSource;

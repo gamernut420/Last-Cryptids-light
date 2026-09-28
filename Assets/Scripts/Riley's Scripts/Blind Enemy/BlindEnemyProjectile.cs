@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-public class HearOnlyProjectile : MonoBehaviour
+public class HearOnlyProjectile : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private EnemyAI_HearOnly owner;
     private bool hasHit;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StalkDamageReciever : MonoBehaviour, IDamage
+public class StalkDamageReciever : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     private EnemyStalk enemy;
     [SerializeField] private bool isHead;

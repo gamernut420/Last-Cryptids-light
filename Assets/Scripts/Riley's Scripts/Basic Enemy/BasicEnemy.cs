@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
-public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI
+public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     public enum AIType 
     { 

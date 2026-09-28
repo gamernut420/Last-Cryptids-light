@@ -1257,7 +1257,7 @@ public class FinalBoss : MonoBehaviour, IDamage
             StartCoroutine(WakeBoss());
     }
 
-    private IEnumerator WakeBoss()
+    private IEnumerator WakeBoss()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
     {
         if (isWaking)
             yield break;

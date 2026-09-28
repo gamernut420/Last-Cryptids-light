@@ -18,7 +18,7 @@ public class BasiceEnemyAnimationEven : MonoBehaviour
     public void DisableHitbox()
     {
         if (enemy != null)
-            enemy.DisableAttackHitbox();
+            enemy.DisableAttackHitbox();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
     }
 
     public void Shoot()

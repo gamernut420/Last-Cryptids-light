@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BossProjectileCollision : MonoBehaviour
+public class BossProjectileCollision : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private float speed = 20f;
     [SerializeField] private float lifetime = 5f;

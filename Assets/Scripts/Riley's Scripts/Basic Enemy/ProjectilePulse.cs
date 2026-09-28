@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ProjectilePulse : MonoBehaviour
+public class ProjectilePulse : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private float pulseSpeed = 8f;
     [SerializeField] private float pulseAmount = 0.15f;

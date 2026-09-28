@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
 
-public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI
+public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private Transform damageNumberPoint;
 

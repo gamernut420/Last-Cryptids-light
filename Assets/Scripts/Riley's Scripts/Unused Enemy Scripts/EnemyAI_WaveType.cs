@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI_WaveType : MonoBehaviour, IDamage
+public class EnemyAI_WaveType : MonoBehaviour, IDamage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     public enum AIType { Tanky, Fast, Strafer}
     [Tooltip("Leave as is; it will randomize with weights automatically on spawn.")]

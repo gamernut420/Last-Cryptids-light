@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyLoseAggro : MonoBehaviour
+public class EnemyLoseAggro : MonoBehaviour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [Header("Enemy Blocking")]
     [SerializeField] private LayerMask enemyLayer;
