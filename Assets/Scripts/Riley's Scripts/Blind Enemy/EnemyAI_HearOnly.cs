@@ -6,6 +6,8 @@ using Unity.VisualScripting;
 public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //Riley Bohn's code
 {
     [SerializeField] private Transform damageNumberPoint;
+    [Header("Objective")]
+    [SerializeField] private ObjectiveData killsObjective;
 
     [Header("Hearing Settings")]
     public float hearingSensitivity = 1f;
@@ -712,6 +714,10 @@ public class EnemyAI_HearOnly : MonoBehaviour, IDamage, IEnemyAI                
         {
             agent.isStopped = true;
             agent.enabled = false;
+        }
+        if (killsObjective != null)
+        {
+            ObjectiveManager.Instance.AddObjectiveProgress(killsObjective.objectiveID, 1);
         }
 
         PlayAnimation(deathAnimation);

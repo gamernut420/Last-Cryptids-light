@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9185440735133919049
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7518102853418322397}
+  - component: {fileID: 6700051560026496156}
+  - component: {fileID: 8479835868538590121}
+  - component: {fileID: 383660960505979150}
+  m_Layer: 0
+  m_Name: JumpScarySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7518102853418322397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9185440735133919049}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 515, y: 168.1, z: 558}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6700051560026496156
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9185440735133919049}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 659.36255, y: 19.53228, z: 732.7993}
+  m_Center: {x: 0.20874023, y: 10.155445, z: -54.8882}
+--- !u!114 &8479835868538590121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9185440735133919049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 305cf9b54da83cd44a56d77140994070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponSpawner
+  weaponPrefabs: []
+--- !u!114 &383660960505979150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9185440735133919049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f23847582ad00944ba54e5f7e9519c8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Spawner
+  enemyPrefabs:
+  - {fileID: 8173036596550709624, guid: bf9212cfa59a81042b31e45bb18af94e, type: 3}
+  spawnLocations: []
+  useSpawnArea: 1
+  spawnArea: {fileID: 6700051560026496156}
+  maxSpawnAttempts: 6
+  navMeshSampleDistance: 5
+  maxEnemiesAlive: 6
+  spawnRate: 0.02
+  maxTotalSpawns: 6
+  randomEnemyType: 0
+  randomSpawnLocation: 1
+  useTrigger: 0
+  triggerOnce: 0
+  requireAllEnemiesDead: 0
+  disableSpawnerAfterCompletion: 0
+  resetOnPlayerDeath: 1
+  resetWhenPlayerLeaves: 1
+  resetDistance: 200
+  destroyEnemiesOnReset: 1
+  resetCheckRate: 0.5

@@ -41,6 +41,9 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI                      
     [SerializeField] private float attackDuration = 0.5f;
     [SerializeField] private float loseAggro = 2f;
 
+    [Header("Objective")]
+    [SerializeField] private ObjectiveData killsObjective;
+
     private float aggroTimer;
     private float attackTimer;
     private bool attacking;
@@ -710,6 +713,10 @@ public class BasicEnemy : MonoBehaviour, IDamage, IEnemyAI                      
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
+        }
+        if(killsObjective != null)
+        {
+            ObjectiveManager.Instance.AddObjectiveProgress(killsObjective.objectiveID,1);
         }
 
         StartCoroutine(DestroyAfterDeath());

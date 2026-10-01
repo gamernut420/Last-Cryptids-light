@@ -3804,7 +3804,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 503
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -6851,7 +6851,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 1da5f6d65bbf53d48b61f1884aa57c56, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 7325db19fa8209f4d95c9745fdfd4c4e, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &5371935243268496967
 GameObject:
@@ -10060,7 +10060,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 47cbd794fa4b07c4c9fe890f4e7572de, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 0f5279182ae58cf4f88f544aaecc293a, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &7212992516947214166
 GameObject:
@@ -13953,9 +13953,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7293334181229419499}
     m_Modifications:
+    - target: {fileID: 952264496611188971, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 503
+      objectReference: {fileID: 0}
     - target: {fileID: 5220084426871346791, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
       propertyPath: m_Name
       value: AbandonedBaseSpawnerTrigger (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6623824515599776889, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
+      propertyPath: useSpawnArea
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6623824515599776889, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
       propertyPath: randomEnemyType
@@ -13963,6 +13971,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6623824515599776889, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
       propertyPath: randomSpawnLocation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6623824515599776889, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
+      propertyPath: spawnLocations.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6623824515599776889, guid: c1eb5a15a6f591e43929820feb325065, type: 3}
@@ -18637,6 +18649,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8073303118966186936}
     m_Modifications:
+    - target: {fileID: 1235236262952483538, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 503
+      objectReference: {fileID: 0}
     - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
       propertyPath: m_Name
       value: ObjectiveTriggerBase3
@@ -20280,7 +20296,7 @@ PrefabInstance:
     - target: {fileID: 5358240243842719418, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: fbd96d11ff81d5344ba4693778c5ebe0, type: 2}
+      objectReference: {fileID: 23800000, guid: e367b0079d29724408e7c52b190d9e74, type: 2}
     - target: {fileID: 5935708107554134901, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
       propertyPath: m_Name
       value: Abandoned Base1
@@ -20353,7 +20369,7 @@ PrefabInstance:
       insertIndex: 15
       addedObject: {fileID: 8351006388738614280}
     - targetCorrespondingSourceObject: {fileID: 7995709305366136711, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
-      insertIndex: 34
+      insertIndex: -1
       addedObject: {fileID: 8884829457899259205}
     - targetCorrespondingSourceObject: {fileID: 1032552521760613562, guid: 3441e7697f757f5489ff4b6e5884b2de, type: 3}
       insertIndex: -1
@@ -24514,6 +24530,10 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: -0.000000002403601
       objectReference: {fileID: 0}
+    - target: {fileID: 1235236262952483538, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 503
+      objectReference: {fileID: 0}
     - target: {fileID: 4207597161714621193, guid: bf7040f18512aef48b5b78f2f1f439ef, type: 3}
       propertyPath: m_Name
       value: ObjectiveTriggerBase2
@@ -26544,9 +26564,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7222215503571152388}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7036354508155900419, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4999530415911612525}
     - targetCorrespondingSourceObject: {fileID: 9058852118264302829, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5825951634263968839}
@@ -26613,27 +26630,6 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
---- !u!1 &943921994331419921 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7036354508155900419, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
-  m_PrefabInstance: {fileID: 7836082105675458322}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4999530415911612525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 943921994331419921}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b783391610cd9fb4dba4af5555e87501, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTrigger
-  targetObjective: {fileID: 11400000, guid: 3025d577d1d656640ac34e78fef0e4e7, type: 2}
-  isCompletionTrigger: 0
-  addsProgress: 1
-  progressAmount: 1
 --- !u!1 &1227469668951059455 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9058852118264302829, guid: 3bf2eb3aba8d7c547ab95ccb944f2649, type: 3}
@@ -27475,6 +27471,10 @@ PrefabInstance:
       propertyPath: 'spawnLocations.Array.data[2].enemyPrefabs.Array.data[1]'
       value: 
       objectReference: {fileID: 3009523618388480875, guid: 6a129dd9e91fe624fabda868b2daeac8, type: 3}
+    - target: {fileID: 5272994365721517298, guid: 0a28c065c03717c428d49a00a79a7692, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 503
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

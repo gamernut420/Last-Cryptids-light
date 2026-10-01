@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class UpgradeUI : MonoBehaviour
 {
+    [SerializeField] ObjectiveData UpgradeObjective;
     [SerializeField] TextMeshProUGUI Funds;
     [SerializeField] Transform CategoryUIRoot;
     [SerializeField] Transform UpgradeUIRoot;
@@ -125,6 +126,12 @@ public class UpgradeUI : MonoBehaviour
 
     public void OnPurchase(int price)
     {
+        if (UpgradeObjective != null)
+        {
+            ObjectiveManager.Instance.CompleteObjective(UpgradeObjective.name);
+            UpgradeObjective.isCompleted = true;
+
+        }
         if (ShopAudio != null && PurchaceAudio != null)
         {
             ShopAudio.PlayOneShot(PurchaceAudio);
